@@ -1,3 +1,5 @@
+import { useState } from "react";
+export const ciProbe = useState;
 export type Currency = "JPY" | "USD" | "AUD" | "SGD";
 export type Result = "Pending" | "Won" | "Lost" | "Waitlisted";
 export type Payment = "Unpaid" | "Paid" | "Not required" | "Refunded";
