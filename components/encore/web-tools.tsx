@@ -20,7 +20,10 @@ type Registry = {
 export function WebTools() {
   const planner = usePlanner();
   const latest = useRef(planner);
-  latest.current = planner;
+  // Tools run later, outside rendering; keep them reading the newest store.
+  useEffect(() => {
+    latest.current = planner;
+  });
   useEffect(() => {
     const registry = (document as Document & { modelContext?: Registry })
       .modelContext;

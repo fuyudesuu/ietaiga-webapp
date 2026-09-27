@@ -13,7 +13,6 @@ import {
   Download,
   RotateCcw,
   ShieldCheck,
-  ArrowUpRight,
   LoaderCircle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -32,7 +31,7 @@ import {
   AlertDialogAction,
 } from "@/components/ui/alert-dialog";
 import { usePlanner } from "@/lib/encore/store";
-import { type Preferences, type Currency, DEMO_NOW } from "@/lib/encore/model";
+import { type Preferences, type Currency } from "@/lib/encore/model";
 import { PageHeading, Choice, Pill } from "./ui";
 export function Settings() {
   const { state, update, notify, reset } = usePlanner();

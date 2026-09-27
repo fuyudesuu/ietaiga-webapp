@@ -1,21 +1,8 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { readFile } from "node:fs/promises";
-import ts from "typescript";
+import { loadTypeScript as load } from "./load-typescript.mjs";
 
-// Load the production pure functions, rather than duplicating them in tests.
-async function loadTypeScript(path) {
-  const source = await readFile(new URL(path, import.meta.url), "utf8");
-  const output = ts.transpileModule(source, {
-    compilerOptions: {
-      module: ts.ModuleKind.ESNext,
-      target: ts.ScriptTarget.ES2022,
-    },
-  }).outputText;
-  return import(
-    `data:text/javascript;base64,${Buffer.from(output).toString("base64")}`
-  );
-}
+const loadTypeScript = (path) => load(path, import.meta.url);
 const { costs, money, due, instant, day } = await loadTypeScript(
   "../lib/encore/model.ts",
 );

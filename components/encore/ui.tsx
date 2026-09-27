@@ -21,7 +21,6 @@ export function Pill({
   return <span className={`pill ${tone}`}>{children}</span>;
 }
 export function PageHeading({
-  eyebrow,
   title,
   subtitle,
   action,

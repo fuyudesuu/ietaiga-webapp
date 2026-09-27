@@ -21,7 +21,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Checkbox } from "@/components/ui/checkbox";
 import { usePlanner } from "@/lib/encore/store";
 import {
   type Editor,
@@ -30,8 +29,6 @@ import {
   type Hotel,
   type Trip,
   type Currency,
-  instant,
-  DEMO_NOW,
 } from "@/lib/encore/model";
 import { ItemImageField } from "./item-image-field";
 import { Choice } from "./ui";

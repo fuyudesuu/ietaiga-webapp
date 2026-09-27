@@ -11,7 +11,6 @@ import {
   Pencil,
   Plus,
   Check,
-  Wallet,
   Trash2,
   Luggage,
 } from "lucide-react";
@@ -37,15 +36,7 @@ import {
   costs,
   instant,
 } from "@/lib/encore/model";
-import {
-  PageHeading,
-  AddButton,
-  Pill,
-  ConcertMark,
-  Empty,
-  Choice,
-  DateTile,
-} from "./ui";
+import { PageHeading, AddButton, Pill, ConcertMark, Empty, Choice } from "./ui";
 import { withBasePath } from "@/lib/encore/paths";
 export function Trips() {
   const { state, setEditor } = usePlanner();
@@ -62,7 +53,7 @@ export function Trips() {
         }
       />
       <div className="trip-grid">
-        {state.trips.map((t, i) => (
+        {state.trips.map((t) => (
           <a
             key={t.id}
             href={withBasePath("/trips/" + t.id)}

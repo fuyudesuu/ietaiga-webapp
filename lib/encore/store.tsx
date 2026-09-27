@@ -5,8 +5,10 @@ import {
   useState,
   useEffect,
   useCallback,
+  useSyncExternalStore,
   type ReactNode,
 } from "react";
+import { createPlannerStore } from "./demo-storage";
 import { seed } from "./fixtures";
 import { PlannerState, Editor, Application } from "./model";
 type Store = {
@@ -20,41 +22,19 @@ type Store = {
   setApplication: (id: string, changes: Partial<Application>) => void;
 };
 const Context = createContext<Store | null>(null);
+const STORAGE_FAILED_NOTICE =
+  "Browser storage is full or unavailable. Changes are only kept until this page closes. Remove a photo or free some storage, then try again.";
+const plannerStore = createPlannerStore(seed, () =>
+  typeof window === "undefined" ? null : window.localStorage,
+);
 export function PlannerProvider({ children }: { children: ReactNode }) {
-  const [state, setState] = useState<PlannerState>(seed);
+  const state = useSyncExternalStore(
+    plannerStore.subscribe,
+    plannerStore.getSnapshot,
+    plannerStore.getServerSnapshot,
+  );
   const [editor, setEditor] = useState<Editor>(null);
   const [notice, setNotice] = useState("");
-  const [ready, setReady] = useState(false);
-  useEffect(() => {
-    try {
-      const value = localStorage.getItem("encore-mobile-demo-v1");
-      if (value) {
-        const saved = JSON.parse(value);
-        if (
-          saved.version === 1 &&
-          ["concerts", "applications", "trips", "hotels", "deliveries"].every(
-            (key) => Array.isArray(saved.data?.[key]),
-          ) &&
-          typeof saved.data?.preferences?.zone === "string"
-        )
-          setState(saved.data);
-      }
-    } catch {}
-    setReady(true);
-  }, []);
-  useEffect(() => {
-    if (ready)
-      try {
-        localStorage.setItem(
-          "encore-mobile-demo-v1",
-          JSON.stringify({ version: 1, data: state }),
-        );
-      } catch {
-        setNotice(
-          "Browser storage is full or unavailable. Changes are only kept until this page closes. Remove a photo or free some storage, then try again.",
-        );
-      }
-  }, [state, ready]);
   useEffect(() => {
     const dark =
       state.preferences.theme === "dark" ||
@@ -76,21 +56,21 @@ export function PlannerProvider({ children }: { children: ReactNode }) {
       return () => clearTimeout(timer);
     }
   }, [notice]);
-  const update = useCallback(
-    (fn: (s: PlannerState) => PlannerState) => setState(fn),
-    [],
-  );
+  const update = useCallback((fn: (s: PlannerState) => PlannerState) => {
+    if (!plannerStore.set(fn(plannerStore.getSnapshot())))
+      setNotice(STORAGE_FAILED_NOTICE);
+  }, []);
   const notify = useCallback((s: string) => setNotice(s), []);
   const setApplication = useCallback(
     (id: string, changes: Partial<Application>) => {
-      setState((s) => ({
+      update((s) => ({
         ...s,
         applications: s.applications.map((a) =>
           a.id === id ? { ...a, ...changes } : a,
         ),
       }));
     },
-    [],
+    [update],
   );
   return (
     <Context.Provider
@@ -102,8 +82,11 @@ export function PlannerProvider({ children }: { children: ReactNode }) {
         notify,
         notice,
         reset: () => {
-          setState(structuredClone(seed));
-          setNotice("Sample plans restored.");
+          setNotice(
+            plannerStore.set(structuredClone(seed))
+              ? "Sample plans restored."
+              : STORAGE_FAILED_NOTICE,
+          );
         },
         setApplication,
       }}
