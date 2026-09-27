@@ -1,0 +1,276 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "../vendor/shadcn-tailwind-4.13.0.css";
+@import "./styles/shell.css";
+@import "./styles/overview.css";
+@import "./styles/features.css";
+@import "./styles/responsive.css";
+@import "./styles/wallet.css";
+@custom-variant dark (&:where(.dark, .dark *));
+:root {
+  --background: #f4f6fa;
+  --foreground: #14233e;
+  --card: #fff;
+  --card-foreground: #14233e;
+  --popover: #fff;
+  --popover-foreground: #14233e;
+  --primary: #0865ee;
+  --primary-foreground: #fff;
+  --secondary: #eaf0fa;
+  --secondary-foreground: #253f64;
+  --muted: #edf1f7;
+  --muted-foreground: #58677e;
+  --accent: #eaf1ff;
+  --accent-foreground: #164eb4;
+  --destructive: #b83c36;
+  --border: #dbe2ec;
+  --input: #c8d2df;
+  --ring: #0865ee;
+  --radius: 1rem;
+  --sidebar: rgba(234, 242, 255, 0.78);
+  --sidebar-foreground: #51617b;
+  --sidebar-primary: #0865ee;
+  --sidebar-primary-foreground: #fff;
+  --sidebar-accent: #deebff;
+  --sidebar-accent-foreground: #064fae;
+  --sidebar-border: #dbe2ec;
+  --sidebar-ring: #0865ee;
+  --glass: rgba(255, 255, 255, 0.78);
+  --soft-shadow: none;
+  --amber-bg: #fbf0da;
+  --amber-text: #8c601c;
+  --blue-bg: #eaf0fa;
+  --blue-text: #476998;
+  --mint-bg: #e9f2e9;
+  --mint-text: #456d4d;
+  --lilac-bg: #eeebf8;
+  --lilac-text: #76628e;
+  --pink-bg: #f8eaf0;
+  --pink-text: #a2637d;
+  --peach-bg: #faeee3;
+  --peach-text: #a56f49;
+}
+.dark {
+  --background: #101723;
+  --foreground: #edf3ff;
+  --card: #1a2434;
+  --card-foreground: #edf3ff;
+  --popover: #202d42;
+  --popover-foreground: #edf3ff;
+  --primary: #7badff;
+  --primary-foreground: #101e38;
+  --secondary: #253249;
+  --secondary-foreground: #d3e1fa;
+  --muted: #222f44;
+  --muted-foreground: #adbad0;
+  --accent: #263a5c;
+  --accent-foreground: #e3edff;
+  --border: #344158;
+  --input: #52627b;
+  --ring: #7badff;
+  --sidebar: rgba(21, 31, 48, 0.85);
+  --sidebar-foreground: #bfcee5;
+  --sidebar-accent: #243b60;
+  --sidebar-accent-foreground: #dceaff;
+  --sidebar-border: #344158;
+  --glass: rgba(21, 31, 48, 0.85);
+  --amber-bg: #443720;
+  --amber-text: #efcb86;
+  --blue-bg: #29384b;
+  --blue-text: #b2c9e8;
+  --mint-bg: #293f2d;
+  --mint-text: #b4d7b8;
+  --lilac-bg: #3b334a;
+  --lilac-text: #d0bfe4;
+  --pink-bg: #442f3a;
+  --pink-text: #e3b3cc;
+  --peach-bg: #43382d;
+  --peach-text: #e7c09d;
+}
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --radius-sm: 8px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 20px;
+  --font-sans:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Sans", "Yu Gothic",
+    sans-serif;
+}
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+button,
+a,
+input,
+textarea {
+  -webkit-tap-highlight-color: transparent;
+}
+button {
+  cursor: pointer;
+}
+button:disabled {
+  cursor: default;
+}
+h1,
+h2,
+h3,
+p {
+  margin: 0;
+}
+a {
+  text-decoration: none;
+}
+button,
+input,
+textarea {
+  font: inherit;
+}
+svg {
+  flex-shrink: 0;
+}
+button,
+a {
+  touch-action: manipulation;
+}
+::selection {
+  background: #c9dfff;
+  color: #102b53;
+}
+a:focus-visible,
+button:focus-visible,
+summary:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 4px;
+}
+.skip-link {
+  position: fixed;
+  top: -100px;
+  left: 20px;
+  z-index: 100;
+  background: var(--card);
+  padding: 12px;
+}
+.skip-link:focus {
+  top: 12px;
+}
+[data-slot="button"] {
+  min-height: 44px;
+  border-radius: 10px;
+  font-size: 0.875rem;
+  box-shadow: none;
+}
+[data-slot="button"][data-size="icon"] {
+  min-width: 40px;
+}
+.primary-button {
+  min-height: 42px;
+  padding: 0 18px;
+  background: var(--primary);
+  color: var(--primary-foreground);
+  font-weight: 550;
+  border: 1px solid transparent;
+  box-shadow: 0 3px 7px #2848350c;
+}
+.primary-button:hover {
+  filter: brightness(1.07);
+  background: var(--primary);
+}
+[data-slot="select-trigger"] {
+  background: var(--card);
+  min-height: 42px;
+  border-radius: 9px;
+  font-size: 0.875rem;
+}
+[data-slot="input"],
+[data-slot="textarea"] {
+  background: var(--card);
+  min-height: 44px;
+  border-radius: 9px;
+  font-size: 1rem;
+  box-shadow: none;
+  color: var(--foreground);
+}
+[data-slot="textarea"] {
+  min-height: 100px;
+}
+[data-slot="switch"] {
+  width: 36px !important;
+  height: 22px !important;
+}
+[data-slot="switch-thumb"] {
+  width: 18px !important;
+  height: 18px !important;
+}
+[data-slot="dialog-overlay"],
+[data-slot="alert-dialog-overlay"] {
+  background: rgba(12, 25, 48, 0.3);
+  backdrop-filter: blur(4px);
+}
+[data-slot="dialog-content"],
+[data-slot="alert-dialog-content"] {
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  box-shadow: 0 20px 100px #14261e25;
+}
+
+html {
+  color-scheme: light;
+  scroll-padding-top: 90px;
+}
+html.dark {
+  color-scheme: dark;
+}
+body {
+  font-variant-numeric: tabular-nums;
+}
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--input) transparent;
+}
+input,
+textarea {
+  caret-color: var(--primary);
+}
+a {
+  text-underline-offset: 4px;
+}
+h1,
+h2,
+h3 {
+  text-wrap: balance;
+}
