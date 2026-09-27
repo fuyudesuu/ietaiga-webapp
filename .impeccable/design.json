@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "name": "Encore / glass itinerary",
+  "colors": {
+    "background": "#f4f6fa",
+    "foreground": "#14233e",
+    "primary": "#0865ee",
+    "muted": "#58677e",
+    "border": "#dbe2ec",
+    "card": "#ffffff"
+  },
+  "typography": {
+    "body": "system-ui, Hiragino Sans, sans-serif",
+    "bodySize": "16px",
+    "secondarySize": "14px",
+    "headingSize": "38px"
+  },
+  "radii": { "control": "10px", "panel": "16px", "navigation": "20px" }
+}

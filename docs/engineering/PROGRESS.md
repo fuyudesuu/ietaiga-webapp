@@ -29,29 +29,36 @@ Write the single next concrete step and its exit condition.
 
 ---
 
-## 26 September 2026 — Static UI prototype for GitHub Pages
+## 27 September 2026 — Baseline import and GitHub Pages test build
 
 ### Task and revision
-Build a runnable, testable UI prototype that deploys to GitHub Pages. Branch `claude/optimistic-ritchie-x37nds` of `ietaiga-webapp`.
-The original mobile prototype source (Vinext/Sites, HEAD `56249a1`) was **not** available in this repository, and its live URL was unreachable from the build environment, so this is a new Vite + React + TypeScript implementation. It does not reproduce the original visual design; the stage A–F plan in `REFACTOR-PLAN.md` still refers to the original source.
+Replace the repository contents with the exported mobile prototype (source commit `56249a1`), then add a static GitHub Pages build for UI testing. Branch `claude/optimistic-ritchie-x37nds`. This is not stage A of `REFACTOR-PLAN.md`.
+
+### Baseline (unmodified export, before any change)
+- `sha256sum -c SOURCE-FILES.sha256` — all tracked source files match.
+- `pnpm install --frozen-lockfile` (pnpm 11.25.0, Node 22.22) — pass.
+- `pnpm exec tsc --noEmit` — pass.
+- `pnpm test` — 6 pass, 0 fail.
+- `pnpm lint` — **fail**: 26 problems (10 errors, 16 warnings). Errors: 7 × `@next/next/no-html-link-for-pages` (intentional native anchors), `react-hooks/refs` in `components/encore/web-tools.tsx`, 2 × `react-hooks/set-state-in-effect` in `lib/encore/store.tsx`.
+- `pnpm build` (Vinext/Cloudflare) — pass.
 
 ### Completed
-- Vite 5 + React 18 + strict TypeScript app, pnpm lockfile, hash routing for Pages.
-- Screens: overview/attention, Wallet (Tickets/Trips), concerts list/search/filter/add/archive, concert detail with independent status selects, trip detail with per-currency cost totals, settings (export/reset).
-- Pure domain rules: `features/reminders/domain/attention.ts`, `features/trips/domain/costs.ts`, `lib/dates.ts`, `lib/money.ts`.
-- Workflows: `.github/workflows/ci.yml` (typecheck/test/build on every push/PR), `.github/workflows/pages.yml` (deploy on `main`).
+- `pnpm build:pages`: `ENCORE_STATIC_EXPORT=1` switches `next.config.ts` to `output: "export"` with `basePath` from `ENCORE_BASE_PATH`; `scripts/pages-artifact.mjs` assembles `dist/pages`. The default build and runtime are unchanged.
+- `patches/vinext@1.0.0-beta.5.patch` (via `pnpm patch`): the static-export prerenderer requested routes without `basePath`, so every route returned 404. The patch prefixes the three prerender request URLs with `config.basePath`. Remove when upstream fixes it.
+- `lib/encore/paths.ts` `withBasePath()` applied to root-absolute links, images and `commitAndNavigate`. Fixture image paths stay unchanged in stored data and are prefixed at render time.
+- Records created in the browser have no exported page. `app/not-found.tsx` redirects unknown `/concerts/<id>` and `/trips/<id>` paths to the pre-rendered `/concerts/view?id=…` / `/trips/view?id=…`; `useRecordId()` reads that id. `generateStaticParams` exports seeded records plus `view`.
+- `.github/workflows/ci.yml` (typecheck, tests, prettier, both builds) and `.github/workflows/pages.yml` (deploy on `main`).
 
 ### Verification
-- `pnpm typecheck` — pass.
-- `pnpm test` — 4 files, 14 tests pass (attention rules, cost rules, dates, router).
-- `BASE_PATH=/ietaiga-webapp/ pnpm build` — pass.
-- Headless Chromium smoke run against the built site served under `/ietaiga-webapp/` at 390×844 and 1280×860, light colour scheme: overview, wallet expand, status change, trip, add-concert validation, save and reload persistence; no console errors.
-- Not run: dark mode, reduced-motion, real devices, keyboard-only pass, lint/format (no ESLint configured yet), import-boundary checks, CI on GitHub (runs on push).
+- `pnpm exec tsc --noEmit` — pass. `pnpm test` — 6 pass. Prettier check on `app components/encore lib/encore tests` — pass. `pnpm build` — pass. `ENCORE_BASE_PATH=/ietaiga-webapp pnpm build:pages` — 14 routes pre-rendered.
+- `pnpm lint` — 19 problems (3 errors, 16 warnings). The 3 errors are the baseline ones above in untouched files. The 7 `no-html-link-for-pages` errors no longer appear only because hrefs are now `withBasePath(...)` calls the rule cannot read; the anchors themselves are unchanged. This is not a lint fix.
+- Headless Chromium against `dist/pages` served under `/ietaiga-webapp/` by a local server mimicking Pages (`X` → `X.html`, missing → `404.html`), at 390×844 and 1280×900, light scheme: all six routes render with images; no root-relative link lacks the base path; creating a concert lands on its fallback page and survives reload; an unknown concert id shows "Concert not found".
+- Not run: real GitHub Pages deploy, dark mode, reduced motion, keyboard pass, real devices.
 
 ### Remaining risks/blockers
-- GitHub Pages must be enabled with source "GitHub Actions" by a repository admin; the deploy workflow only runs on `main`.
-- Demo persistence only; no auth, backend, images or reminders (MVP-01, -09, -10, -11 not started).
-- No lint/boundary gates yet (QUALITY-GATES.md).
+- Pages must be enabled with source "GitHub Actions" by a repository admin; deploys only run from `main`.
+- Links to browser-created records open via one 404 → redirect hop on Pages (expected, visible in devtools).
+- Lint is not in CI until the 3 baseline errors are resolved.
 
 ### Next action
-Add ESLint + import-boundary rules (domain may not import React/app; features may not deep-import each other) with failing fixtures, wired into `pnpm check` and CI. Exit: `pnpm check` fails on a fixture violation and passes on the clean tree.
+Stage A from `START-HERE.md`: make `pnpm lint` pass without suppressions (decide the native-anchor rule explicitly), add import-boundary checks with fixtures, and add lint to CI. Exit: `pnpm lint` and CI are green on a clean tree and fail on fixture violations.
