@@ -35,6 +35,7 @@ import {
   DateTile,
   ConcertMark,
 } from "./ui";
+import { withBasePath } from "@/lib/encore/paths";
 
 export function Overview() {
   return (
@@ -140,7 +141,10 @@ function DesktopOverview() {
                     )}
                   </div>
                   <div className="deadline-details">
-                    <a className="deadline-title" href={"/concerts/" + c.id}>
+                    <a
+                      className="deadline-title"
+                      href={withBasePath("/concerts/" + c.id)}
+                    >
                       {kind === "payment"
                         ? "Ticket payment due"
                         : kind === "result"
@@ -177,7 +181,10 @@ function DesktopOverview() {
                         Record payment
                       </Button>
                     ) : (
-                      <a href={"/concerts/" + c.id} className="text-link">
+                      <a
+                        href={withBasePath("/concerts/" + c.id)}
+                        className="text-link"
+                      >
                         {kind === "result" ? "Check result" : "View round"}
                         <ChevronRight size={15} />
                       </a>
@@ -221,7 +228,7 @@ function DesktopOverview() {
                       return (
                         <a
                           className="stage-row"
-                          href={"/concerts/" + c.id}
+                          href={withBasePath("/concerts/" + c.id)}
                           key={c.id}
                         >
                           <DateTile date={c.date} />
@@ -259,11 +266,17 @@ function DesktopOverview() {
                 </div>
               </TabsContent>
             </Tabs>
-            <a href="/concerts" className="text-link calendar-more">
+            <a
+              href={withBasePath("/concerts")}
+              className="text-link calendar-more"
+            >
               See all concerts <ArrowRight size={15} />
             </a>
           </section>
-          <a className="reminder-strip" href="/settings#reminders">
+          <a
+            className="reminder-strip"
+            href={withBasePath("/settings#reminders")}
+          >
             <Bell size={20} />
             <div>
               <strong>Keep your deadlines close</strong>
@@ -281,7 +294,7 @@ function DesktopOverview() {
               {next.cities.toLowerCase().includes("tokyo") ? (
                 <div className="journey-photo">
                   <img
-                    src="/tokyo.jpg"
+                    src={withBasePath("/tokyo.jpg")}
                     alt="Tokyo Tower above the city at dusk"
                   />
                   <span className="glass-tag">
@@ -297,7 +310,10 @@ function DesktopOverview() {
                 </div>
               )}
               <div className="journey-body">
-                <a href={"/trips/" + next.id} className="journey-title">
+                <a
+                  href={withBasePath("/trips/" + next.id)}
+                  className="journey-title"
+                >
                   <h2>{next.cities}</h2>
                   <ArrowUpRight size={20} />
                 </a>
@@ -310,7 +326,7 @@ function DesktopOverview() {
                 <div className="journey-route">
                   {tripConcerts.map((c, i) => (
                     <a
-                      href={"/concerts/" + c.id}
+                      href={withBasePath("/concerts/" + c.id)}
                       className="journey-stop"
                       key={c.id}
                     >
@@ -383,7 +399,7 @@ function DesktopOverview() {
                   ))}
                 </div>
                 <Button asChild variant="outline" className="open-journey">
-                  <a href={"/trips/" + next.id}>
+                  <a href={withBasePath("/trips/" + next.id)}>
                     Open trip <ArrowRight size={16} />
                   </a>
                 </Button>

@@ -1,6 +1,5 @@
 "use client";
-import { useParams } from "next/navigation";
-import { commitAndNavigate } from "@/lib/encore/navigation";
+import { commitAndNavigate, useRecordId } from "@/lib/encore/navigation";
 import { useState } from "react";
 import {
   ArrowLeft,
@@ -47,6 +46,7 @@ import {
   Choice,
   DateTile,
 } from "./ui";
+import { withBasePath } from "@/lib/encore/paths";
 export function Trips() {
   const { state, setEditor } = usePlanner();
   return (
@@ -63,7 +63,11 @@ export function Trips() {
       />
       <div className="trip-grid">
         {state.trips.map((t, i) => (
-          <a key={t.id} href={"/trips/" + t.id} className="trip-card panel">
+          <a
+            key={t.id}
+            href={withBasePath("/trips/" + t.id)}
+            className="trip-card panel"
+          >
             <div
               className={
                 "trip-card-cover " +
@@ -73,7 +77,7 @@ export function Trips() {
               }
             >
               {t.cities.toLowerCase().includes("tokyo") && (
-                <img src="/tokyo.jpg" alt="Tokyo at dusk" />
+                <img src={withBasePath("/tokyo.jpg")} alt="Tokyo at dusk" />
               )}
               <span className="glass-tag">
                 <MapPin size={14} />
@@ -131,9 +135,9 @@ export function Trips() {
   );
 }
 export function TripDetail() {
-  const params = useParams();
+  const recordId = useRecordId();
   const { state, setEditor, update, notify } = usePlanner();
-  const t = state.trips.find((t) => t.id === params.id);
+  const t = state.trips.find((t) => t.id === recordId);
   if (!t)
     return (
       <Empty
@@ -141,7 +145,7 @@ export function TripDetail() {
         description="Your other journeys are waiting."
         action={
           <Button asChild>
-            <a href="/trips">Back to trips</a>
+            <a href={withBasePath("/trips")}>Back to trips</a>
           </Button>
         }
       />
@@ -162,13 +166,13 @@ export function TripDetail() {
   const unlinked = state.concerts.filter((c) => c.tripId !== t.id);
   return (
     <>
-      <a href="/trips" className="back-link">
+      <a href={withBasePath("/trips")} className="back-link">
         <ArrowLeft size={16} />
         My trips
       </a>
       <div className="trip-detail-hero">
         {t.cities.toLowerCase().includes("tokyo") && (
-          <img src="/tokyo.jpg" alt="Tokyo skyline" />
+          <img src={withBasePath("/tokyo.jpg")} alt="Tokyo skyline" />
         )}
         <div className="trip-hero-shade" />
         <div className="trip-detail-title">
@@ -283,7 +287,7 @@ export function TripDetail() {
                         .filter((c) => c.date === date)
                         .map((c) => (
                           <a
-                            href={"/concerts/" + c.id}
+                            href={withBasePath("/concerts/" + c.id)}
                             className="itinerary-item show-item"
                             key={c.id}
                           >

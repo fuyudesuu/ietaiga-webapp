@@ -14,6 +14,10 @@ Use the repository's declared pnpm version and lockfile. The Sites starter uses 
 
 Managed Sites environments use the provided Sites build and preview scripts instead of a manually started development server. Full browser review is currently blocked by the unavailable supervised preview service. Direct production requests confirm that Trips, Concerts, and Settings return their own pages successfully. WebMCP registration testing was likewise unavailable; its integration is feature-detected and optional.
 
+## GitHub Pages test build
+
+`pnpm build:pages` produces a static export in `dist/pages` for GitHub Pages; `.github/workflows/pages.yml` deploys it from `main`. Set `ENCORE_BASE_PATH` (for example `/ietaiga-webapp`) for a project site. Concerts and trips created in the browser open through the pre-rendered `/concerts/view?id=…` and `/trips/view?id=…` pages. The default `pnpm build` and Sites/Cloudflare runtime are unchanged. Details: `docs/engineering/PROGRESS.md`.
+
 ## Navigation
 
 Section and detail links use native anchors so private hosting does not depend on client-side RSC navigation. Creating a concert/trip and deleting a trip use `commitAndNavigate`, which commits the state update and local-storage effect before document navigation. Preserve native link behavior for keyboard activation, modified clicks, browser history, and opening new tabs.

@@ -1,6 +1,5 @@
 "use client";
 import { useState } from "react";
-import { useParams } from "next/navigation";
 import {
   Search,
   ArrowUpRight,
@@ -35,6 +34,8 @@ import {
   Empty,
   Choice,
 } from "./ui";
+import { useRecordId } from "@/lib/encore/navigation";
+import { withBasePath } from "@/lib/encore/paths";
 export function Concerts() {
   const { state, setEditor } = usePlanner();
   const [search, setSearch] = useState("");
@@ -101,7 +102,11 @@ export function Concerts() {
         {concerts.map((c) => {
           const a = state.applications.find((a) => a.concertId === c.id);
           return (
-            <a href={"/concerts/" + c.id} key={c.id} className="concert-row">
+            <a
+              href={withBasePath("/concerts/" + c.id)}
+              key={c.id}
+              className="concert-row"
+            >
               <DateTile date={c.date} />
               <ConcertMark concert={c} />
               <div className="row-copy">
@@ -152,9 +157,9 @@ export function Concerts() {
   );
 }
 export function ConcertDetail() {
-  const params = useParams();
+  const recordId = useRecordId();
   const { state, setEditor, update, notify } = usePlanner();
-  const c = state.concerts.find((c) => c.id === params.id);
+  const c = state.concerts.find((c) => c.id === recordId);
   if (!c)
     return (
       <Empty
@@ -162,7 +167,7 @@ export function ConcertDetail() {
         description="This concert may have been removed from your demo."
         action={
           <Button asChild>
-            <a href="/concerts">Back to concerts</a>
+            <a href={withBasePath("/concerts")}>Back to concerts</a>
           </Button>
         }
       />
@@ -170,7 +175,7 @@ export function ConcertDetail() {
   const applications = state.applications.filter((a) => a.concertId === c.id);
   return (
     <>
-      <a href="/concerts" className="back-link">
+      <a href={withBasePath("/concerts")} className="back-link">
         <ArrowLeft size={16} />
         All concerts
       </a>
@@ -272,7 +277,10 @@ export function ConcertDetail() {
               ]}
             />
             {c.tripId && (
-              <a className="text-link" href={"/trips/" + c.tripId}>
+              <a
+                className="text-link"
+                href={withBasePath("/trips/" + c.tripId)}
+              >
                 Open trip
                 <ArrowUpRight size={15} />
               </a>

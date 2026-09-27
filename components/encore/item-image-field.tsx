@@ -2,6 +2,7 @@
 import { useEffect, useRef, useState } from "react";
 import { ImagePlus } from "lucide-react";
 import { prepareItemImage, safeItemImage } from "@/lib/encore/images";
+import { withBasePath } from "@/lib/encore/paths";
 
 export function ItemImageField({
   initialValue,
@@ -25,7 +26,7 @@ export function ItemImageField({
       <input type="hidden" name="image" value={value} />
       <div className="image-field-preview">
         {value ? (
-          <img src={value} alt="Selected card cover" />
+          <img src={withBasePath(value)} alt="Selected card cover" />
         ) : (
           <ImagePlus aria-hidden="true" size={24} />
         )}

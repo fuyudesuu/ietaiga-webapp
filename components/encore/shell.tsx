@@ -27,6 +27,7 @@ import { usePlanner } from "@/lib/encore/store";
 import { Forms } from "./forms";
 import { WebTools } from "./web-tools";
 import type { CSSProperties, ReactNode } from "react";
+import { withBasePath } from "@/lib/encore/paths";
 const nav = [
   { href: "/", label: "Overview", icon: LayoutDashboard },
   { href: "/trips", label: "Trips", icon: Luggage },
@@ -45,7 +46,7 @@ export function AppShell({ children }: { children: ReactNode }) {
       </a>
       <Sidebar className="encore-sidebar">
         <SidebarHeader className="brand-block">
-          <a href="/" className="brand">
+          <a href={withBasePath("/")} className="brand">
             <span className="brand-symbol">
               <AudioLines size={23} />
             </span>
@@ -62,7 +63,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                   className="nav-link"
                 >
                   <a
-                    href={n.href}
+                    href={withBasePath(n.href)}
                     aria-current={active(n.href) ? "page" : undefined}
                   >
                     <n.icon size={19} />
@@ -75,7 +76,7 @@ export function AppShell({ children }: { children: ReactNode }) {
           <div className="saved-trips">
             <p className="nav-caption">UPCOMING TRIPS</p>
             {state.trips.slice(0, 3).map((t) => (
-              <a key={t.id} href={"/trips/" + t.id}>
+              <a key={t.id} href={withBasePath("/trips/" + t.id)}>
                 <span className="mini-trip-icon">
                   <Luggage size={15} />
                 </span>
@@ -96,13 +97,13 @@ export function AppShell({ children }: { children: ReactNode }) {
           <div className="sidebar-note">
             <Bell size={20} />
             <p>Concerts, stays, and every deadline in between.</p>
-            <a href="/settings#reminders">
+            <a href={withBasePath("/settings#reminders")}>
               Reminder preferences <ChevronRight size={14} />
             </a>
           </div>
         </SidebarContent>
         <SidebarFooter className="profile-footer">
-          <a href="/settings">
+          <a href={withBasePath("/settings")}>
             <span className="avatar">A</span>
             <span>
               Aki<small>Personal space</small>
@@ -113,7 +114,7 @@ export function AppShell({ children }: { children: ReactNode }) {
       </Sidebar>
       <div className="workspace">
         <header className="topbar">
-          <a href="/" className="mobile-brand">
+          <a href={withBasePath("/")} className="mobile-brand">
             encore.
           </a>
           <div className="breadcrumbs">
@@ -144,12 +145,12 @@ export function AppShell({ children }: { children: ReactNode }) {
               size="icon"
               aria-label="Reminder settings"
             >
-              <a href="/settings#reminders">
+              <a href={withBasePath("/settings#reminders")}>
                 <Bell size={19} />
               </a>
             </Button>
             <a
-              href="/settings"
+              href={withBasePath("/settings")}
               className="avatar small"
               aria-label="Account settings"
             >
@@ -168,7 +169,7 @@ export function AppShell({ children }: { children: ReactNode }) {
       <nav className="mobile-nav" aria-label="Main navigation">
         {nav.map((n) => (
           <a
-            href={n.href}
+            href={withBasePath(n.href)}
             key={n.href}
             className={active(n.href) ? "active" : ""}
             aria-current={active(n.href) ? "page" : undefined}

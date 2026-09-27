@@ -13,6 +13,7 @@ import { appStatus, day, due, money, DEMO_NOW } from "@/lib/encore/model";
 import { WalletCard, type WalletCardItem } from "./wallet-card";
 import { TicketDetails, TripDetails } from "./wallet-details";
 import { CARD_HEIGHT, CARD_PEEK, useWalletMotion } from "./use-wallet-motion";
+import { withBasePath } from "@/lib/encore/paths";
 
 type WalletTab = "tickets" | "trips";
 
@@ -331,7 +332,7 @@ export function MobileWallet() {
             {!selected && (
               <a
                 className="wallet-all-link"
-                href={tab === "tickets" ? "/concerts" : "/trips"}
+                href={withBasePath(tab === "tickets" ? "/concerts" : "/trips")}
               >
                 View all {tab === "tickets" ? "concerts" : "trips"}
                 <ArrowRight size={17} />
@@ -360,7 +361,10 @@ export function MobileWallet() {
           </div>
         )}
       </div>
-      <a className="wallet-reminders" href="/settings#reminders">
+      <a
+        className="wallet-reminders"
+        href={withBasePath("/settings#reminders")}
+      >
         Reminder preferences <ArrowRight size={15} />
       </a>
       <p className="wallet-footnote">

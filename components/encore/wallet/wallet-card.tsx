@@ -2,6 +2,7 @@
 import { useState, type CSSProperties, type RefCallback } from "react";
 import { ImageIcon } from "lucide-react";
 import { safeItemImage } from "@/lib/encore/images";
+import { withBasePath } from "@/lib/encore/paths";
 
 export interface WalletCardItem {
   id: string;
@@ -46,7 +47,7 @@ export function WalletCard({
       {image && failedImage !== image ? (
         <img
           className="wallet-card-image"
-          src={image}
+          src={withBasePath(image)}
           alt=""
           decoding="async"
           onError={() => setFailedImage(image)}

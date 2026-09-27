@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/select";
 import { type ReactNode } from "react";
 import { Concert, day } from "@/lib/encore/model";
+import { withBasePath } from "@/lib/encore/paths";
 export function Pill({
   children,
   tone = "neutral",
@@ -140,7 +141,7 @@ export function SectionTitle({
     <div className="section-title">
       <h2>{children}</h2>
       {href && (
-        <a className="text-link" href={href}>
+        <a className="text-link" href={withBasePath(href)}>
           {link}
           <ArrowUpRight size={15} />
         </a>

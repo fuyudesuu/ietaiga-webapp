@@ -12,6 +12,7 @@ import {
   type Currency,
   type Trip,
 } from "@/lib/encore/model";
+import { withBasePath } from "@/lib/encore/paths";
 
 export function TicketDetails({
   concert,
@@ -110,7 +111,10 @@ export function TicketDetails({
           <ChevronRight size={18} />
         </button>
       )}
-      <a className="wallet-full-link" href={`/concerts/${concert.id}`}>
+      <a
+        className="wallet-full-link"
+        href={withBasePath(`/concerts/${concert.id}`)}
+      >
         Open full concert <ArrowUpRight size={16} />
       </a>
       <p className="wallet-disclaimer">
@@ -233,7 +237,7 @@ export function TripDetails({
           </div>
         ))}
       </div>
-      <a className="wallet-full-link" href={`/trips/${trip.id}`}>
+      <a className="wallet-full-link" href={withBasePath(`/trips/${trip.id}`)}>
         Open full trip <ArrowUpRight size={16} />
       </a>
     </>

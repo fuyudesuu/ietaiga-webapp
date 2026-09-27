@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { PlannerProvider } from "@/lib/encore/store";
 import { AppShell } from "@/components/encore/shell";
+import { withBasePath } from "@/lib/encore/paths";
 
 export const viewport: Viewport = {
   width: "device-width",
@@ -14,8 +15,8 @@ export const metadata: Metadata = {
   description:
     "Your concerts, ticket deadlines, and travels, thoughtfully together. An interactive prototype with sample data.",
   icons: {
-    icon: "/favicon.svg",
-    shortcut: "/favicon.svg",
+    icon: withBasePath("/favicon.svg"),
+    shortcut: withBasePath("/favicon.svg"),
   },
 };
 
