@@ -99,7 +99,7 @@ Stage A of `REFACTOR-PLAN.md`, on `claude/optimistic-ritchie-x37nds` from `main`
   - all routes render;
   - creating a concert persists across a reload;
   - there are no hydration errors.
-- CI proof: commit `a273163` passed CI (run 8). Deliberate probe `1a30966` (`lib/encore/model.ts` importing React) failed CI at `pnpm check:boundaries` (run 9), with every earlier step passing. The probe was reverted in the following commit.
+- CI proof: commit `a273163` passed CI (run 8). Deliberate probe `1a30966` (`lib/encore/model.ts` importing React) failed CI at `pnpm check:boundaries` (run 9), with every earlier step passing. The probe was then reverted.
 - Not run: dark mode, reduced motion, a keyboard-only pass, real devices, or a storage-full scenario in a real browser (covered by unit tests only).
 
 ### Behavior note
