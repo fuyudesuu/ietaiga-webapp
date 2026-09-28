@@ -3,8 +3,7 @@
 // fail on real violations (tests/boundaries.test.mjs).
 
 // Server-only code: must never be bundled into the browser.
-const SERVER =
-  "(^|/)features/[^/]+/server/|(^|/)lib/server/|^db/|^app/chatgpt-auth\\.ts$";
+const SERVER = "(^|/)features/[^/]+/server/|(^|/)lib/server/|^db/";
 // Code that runs in the browser (or may be imported by code that does).
 const CLIENT =
   "(^|/)features/[^/]+/(ui|domain|contracts|model)/|^components/|^hooks/|^lib/encore/";
