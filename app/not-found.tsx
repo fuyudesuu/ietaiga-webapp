@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Empty } from "@/components/encore/ui";
+import { Empty } from "@/components/encore-ui/ui";
 import { recordFallbackPath, withBasePath } from "@/lib/encore/paths";
 
 // Static hosting only exports pages for seeded records. A concert or trip

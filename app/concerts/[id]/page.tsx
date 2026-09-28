@@ -1,4 +1,4 @@
-import { ConcertDetail } from "@/components/encore/concerts";
+import { ConcertDetail } from "@/features/concerts";
 import { seed } from "@/lib/encore/fixtures";
 import { RECORD_FALLBACK_ID } from "@/lib/encore/paths";
 export function generateStaticParams() {

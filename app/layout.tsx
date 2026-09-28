@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { PlannerProvider } from "@/lib/encore/store";
-import { AppShell } from "@/components/encore/shell";
+import { AppShell } from "@/components/shell/shell";
 import { withBasePath } from "@/lib/encore/paths";
 
 export const viewport: Viewport = {

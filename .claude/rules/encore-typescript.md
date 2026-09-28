@@ -4,7 +4,8 @@ paths:
   - "features/**/*.tsx"
   - "lib/encore/**/*.ts"
   - "lib/encore/**/*.tsx"
-  - "components/encore/**/*.tsx"
+  - "components/shell/**/*.tsx"
+  - "components/encore-ui/**/*.tsx"
   - "app/**/*.ts"
   - "app/**/*.tsx"
 ---

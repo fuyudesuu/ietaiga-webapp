@@ -2,8 +2,8 @@
 paths:
   - "features/**/ui/**/*.tsx"
   - "features/**/*.module.css"
-  - "components/encore/**/*.tsx"
-  - "components/encore/**/*.css"
+  - "components/shell/**/*.tsx"
+  - "components/encore-ui/**/*.tsx"
   - "app/**/*.tsx"
   - "app/**/*.css"
 ---

@@ -14,6 +14,17 @@ const eslintConfig = defineConfig([
     "next-env.d.ts",
   ]),
   {
+    rules: {
+      // Encore deliberately uses native <a> links: each navigation is a full
+      // document load, so edits are committed to storage before leaving the
+      // page (see README "Navigation" and lib/encore/navigation.ts).
+      "@next/next/no-html-link-for-pages": "off",
+      // Covers are user-selected data URLs or small bundled photos, and the
+      // GitHub Pages static export cannot use next/image optimization.
+      "@next/next/no-img-element": "off",
+    },
+  },
+  {
     files: ["components/ui/**/*.{ts,tsx}", "hooks/use-mobile.ts"],
     rules: {
       // These files are vendored verbatim from shadcn@4.17.0. Keep the

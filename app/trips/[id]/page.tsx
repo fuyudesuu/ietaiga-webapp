@@ -1,4 +1,4 @@
-import { TripDetail } from "@/components/encore/trips";
+import { TripDetail } from "@/features/trips";
 import { seed } from "@/lib/encore/fixtures";
 import { RECORD_FALLBACK_ID } from "@/lib/encore/paths";
 export function generateStaticParams() {

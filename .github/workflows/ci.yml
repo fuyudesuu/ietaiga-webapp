@@ -19,10 +19,10 @@ jobs:
           node-version: 22
       - run: pnpm install --frozen-lockfile
       - run: pnpm exec tsc --noEmit
+      - run: pnpm lint
+      - run: pnpm format:check
+      - run: pnpm check:boundaries
       - run: pnpm test
-      - run: pnpm exec prettier --check app components/encore lib/encore tests
-      # `pnpm lint` is not run yet: the imported baseline has 3 lint errors
-      # (see docs/engineering/PROGRESS.md). Add it once those are fixed.
       - run: pnpm build
       - run: pnpm build:pages
         env:
