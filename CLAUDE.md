@@ -39,8 +39,8 @@
 - Use one source for design tokens. Feature styles use CSS Modules; keep responsive rules beside their component. Avoid global override chains.
 
 ## Verification and delivery
-- Discover commands from `package.json`. Current baseline: `pnpm exec tsc --noEmit`, `pnpm lint`, `pnpm test`, `pnpm build`.
-- Keep the existing lockfile/package manager and runtime until an explicit migration decision. Do not silently replace Vinext/Sites with another deployment framework.
+- Discover commands from `package.json`. `pnpm check` runs every gate: types, lint, format, import boundaries (`pnpm check:boundaries`), tests and build. `pnpm build:pages` builds the GitHub Pages export.
+- Keep the existing lockfile/package manager and runtime (Vinext, with a Cloudflare Workers build and a GitHub Pages export) until an explicit migration decision recorded in `docs/engineering/DECISIONS.md`. Do not silently switch frameworks or hosts.
 - Record pre-existing failures before editing. New code must not worsen them. Never disable checks, delete tests or weaken policies just to get green output.
 - Test domain behavior, authorization and failure paths, not only the happy path. Cosmetic changes need focused visual verification, not artificial test cases.
 - Database authorization tests must exercise actual policies with two users and an anonymous caller. Mocks alone do not prove account isolation.

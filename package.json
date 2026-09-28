@@ -6,11 +6,10 @@
     "node": ">=22.13.0"
   },
   "scripts": {
-    "install:ci": "bash scripts/install-pnpm.sh",
-    "dev": "node scripts/run-framework.mjs dev",
-    "build": "node scripts/run-framework.mjs build",
-    "build:pages": "ENCORE_STATIC_EXPORT=1 node scripts/run-framework.mjs build && node scripts/pages-artifact.mjs",
-    "start": "node --import ./scripts/sites-env.mjs ./node_modules/wrangler/bin/wrangler.js dev --config dist/server/wrangler.json --local --persist-to .wrangler/state --ip 127.0.0.1 --inspector-port 0",
+    "dev": "vinext dev --port 5173",
+    "build": "vinext build",
+    "build:pages": "ENCORE_STATIC_EXPORT=1 vinext build && node scripts/pages-artifact.mjs",
+    "start": "CLOUDFLARE_CF_FETCH_ENABLED=false WRANGLER_SEND_METRICS=false wrangler dev --config dist/server/wrangler.json --local --persist-to .wrangler/state --ip 127.0.0.1",
     "lint": "eslint . --ignore-pattern dist --ignore-pattern .next",
     "check:boundaries": "depcruise app components lib hooks --config .dependency-cruiser.cjs",
     "format:check": "prettier --check app components/encore lib/encore tests README.md",
