@@ -31,7 +31,7 @@ import {
   Pill,
   Empty,
   Choice,
-} from "./ui";
+} from "@/components/encore-ui/ui";
 import { useRecordId } from "@/lib/encore/navigation";
 import { withBasePath } from "@/lib/encore/paths";
 export function Concerts() {

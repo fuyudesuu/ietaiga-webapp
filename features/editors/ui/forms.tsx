@@ -31,7 +31,7 @@ import {
   type Currency,
 } from "@/lib/encore/model";
 import { ItemImageField } from "./item-image-field";
-import { Choice } from "./ui";
+import { Choice } from "@/components/encore-ui/ui";
 const currencies = ["JPY", "USD", "AUD", "SGD"];
 const providers = [
   "ASOBI TICKET",

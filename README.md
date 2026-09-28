@@ -23,6 +23,26 @@ pnpm check          # types, lint, format, import boundaries, tests, build
 
 GitHub Pages deploys from `main` via `.github/workflows/pages.yml`.
 
+## Layout
+
+```
+app/                 routes (thin pages), layout and global styles (app/styles/)
+features/<name>/     one folder per product area; import it only via its index.ts
+  concerts/  trips/  overview/  settings/  wallet/
+  editors/           record editors for every feature (split per feature in stage B)
+components/
+  shell/             app shell: navigation, editor host, browser tools
+  encore-ui/         small shared product UI (headings, pills, empty states)
+  ui/                shadcn/Radix primitives in use
+lib/encore/          domain model, demo data, browser store, dates/money, paths
+tests/               node:test suites; boundaries/fixtures prove the import rules
+patches/             pnpm patch for vinext (static export base path)
+scripts/             GitHub Pages packaging
+docs/                product, design, engineering and history
+```
+
+The import rules in `.dependency-cruiser.cjs` enforce this: features use each other only through `index.ts`, shared code never imports features, pure domain code never imports React or the database, and there are no import cycles.
+
 ## Documentation
 
 - `docs/product/`: MVP scope (`MVP.md`) and product context.

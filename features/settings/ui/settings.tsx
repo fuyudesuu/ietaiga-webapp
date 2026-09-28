@@ -32,7 +32,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { usePlanner } from "@/lib/encore/store";
 import { type Preferences, type Currency } from "@/lib/encore/model";
-import { PageHeading, Choice, Pill } from "./ui";
+import { PageHeading, Choice, Pill } from "@/components/encore-ui/ui";
 export function Settings() {
   const { state, update, notify, reset } = usePlanner();
   const p = state.preferences;

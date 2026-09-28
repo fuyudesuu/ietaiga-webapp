@@ -1,4 +1,4 @@
-import { Settings } from "@/components/encore/settings";
+import { Settings } from "@/features/settings";
 export default function Page() {
   return <Settings />;
 }

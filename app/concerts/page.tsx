@@ -1,4 +1,4 @@
-import { Concerts } from "@/components/encore/concerts";
+import { Concerts } from "@/features/concerts";
 export default function Page() {
   return <Concerts />;
 }

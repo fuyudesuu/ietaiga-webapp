@@ -24,7 +24,7 @@ import {
 } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
 import { usePlanner } from "@/lib/encore/store";
-import { Forms } from "./forms";
+import { Forms } from "@/features/editors";
 import { WebTools } from "./web-tools";
 import type { CSSProperties, ReactNode } from "react";
 import { withBasePath } from "@/lib/encore/paths";

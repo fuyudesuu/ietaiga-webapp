@@ -36,7 +36,14 @@ import {
   costs,
   instant,
 } from "@/lib/encore/model";
-import { PageHeading, AddButton, Pill, ConcertMark, Empty, Choice } from "./ui";
+import {
+  PageHeading,
+  AddButton,
+  Pill,
+  ConcertMark,
+  Empty,
+  Choice,
+} from "@/components/encore-ui/ui";
 import { withBasePath } from "@/lib/encore/paths";
 export function Trips() {
   const { state, setEditor } = usePlanner();

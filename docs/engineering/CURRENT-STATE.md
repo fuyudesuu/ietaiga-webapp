@@ -1,5 +1,7 @@
 # Verified starting state
 
+> Paths below are from the original export. On 28 September 2026 `components/encore/*` moved to `features/<name>/ui/`, `components/shell/` and `components/encore-ui/`. See `README.md` (Layout) and `docs/engineering/PROGRESS.md`.
+
 Snapshot: 27 September 2026 Sydney. Verify against the checkout before acting.
 
 Mobile prototype HEAD when inspected: `56249a1ca17a2248a5bf3023cda8ad032532c8a4`.

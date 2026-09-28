@@ -117,3 +117,38 @@ The first visit no longer writes the untouched seed to localStorage. Storage is 
 
 ### Next action
 Stage B: extract the concert editor from `components/encore/forms.tsx` into `features/concerts/` with characterization tests, keeping the store behind an explicit adapter. Exit: create/edit/cancel/validation/image flows behave as before, the new module passes the boundary rules, and `pnpm check` is green.
+
+---
+
+## 28 September 2026 — Repository reorganization (added to PR #3)
+
+### Task and revision
+The owner approved a drafted reorganization: tidy the root, remove unused code, keep the Cloudflare Workers and Pages builds, and create feature folders. It was added to PR #3 as four commits after `a12fb29`. Only moves and deletions: no logic or UI changes.
+
+### Completed
+1. **Docs out of the root.** `PRODUCT.md` → `docs/product/`. `DESIGN.md` and `.impeccable/` → `docs/design/`. The old README, `WORK_LOG.md`, the handoff notes and the source-export records → `docs/history/`. The new root `README.md` describes the project as it is now.
+2. **Unused code removed.** 46 unreachable shadcn components, 16 packages (plus drizzle-kit), and the unused Sites starter files (`app/chatgpt-auth.ts`, `db/`, `drizzle/`, `examples/`). The vendored shadcn CSS moved to `app/styles/vendor/` and is excluded from formatting.
+3. **Sites tooling removed.** The Cloudflare Workers build (`pnpm build`/`start`) and the Pages build are kept. `dev` and `build` call Vinext directly. Recorded in `docs/engineering/DECISIONS.md`.
+4. **Feature folders.**
+   - `features/{concerts,trips,overview,settings,wallet,editors}/ui/`, each with a public `index.ts`;
+   - `components/shell/` for the app shell and `components/encore-ui/` for shared product UI;
+   - routes import `@/features/<name>`, and Overview uses the Wallet only via `@/features/wallet`;
+   - boundary rules treat `components/encore-ui` as shared code;
+   - `.claude/rules` path globs, the format script paths and the boundary-check paths were updated.
+
+### Verification
+- `pnpm check` exits 0 after commits 2, 3 and 4: tsc, lint with 0 problems, Prettier, boundary rules (56 modules on the final commit), 19/19 tests, and the build. Commit 1 changes only docs; the format check was run on it.
+- `pnpm install --frozen-lockfile` works from a clean `node_modules`.
+- `pnpm dev` serves `/trips/autumn` with a 200.
+- `pnpm build && pnpm start` (Wrangler, local) serves `/`, `/concerts/love` and `/trips/autumn` with a 200 and a clean log.
+- **Same user-visible output as before the reorganization:**
+  - `pnpm build:pages` output was compared with a build made just before the code moves;
+  - the CSS is byte-identical;
+  - the same 14 pages are generated;
+  - there are 0 differences in visible HTML (scripts and asset hashes excluded).
+- The headless Chromium Pages run at 390px and 1280px passes: routes, create, reload persistence, unknown id.
+- A deliberate deep import (`overview` → `features/wallet/ui/mobile-wallet`) was rejected by `no-deep-feature-imports`, then reverted.
+- Not run: dark mode, reduced motion, keyboard-only use, real devices, an actual Cloudflare deploy.
+
+### Next action
+Stage B: split `features/editors/ui/forms.tsx` so the concert editor lives in `features/concerts/`, with characterization tests. Exit: concert create/edit/cancel/validation/image flows unchanged and `pnpm check` green.

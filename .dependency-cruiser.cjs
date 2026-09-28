@@ -11,7 +11,7 @@ const CLIENT =
 const DOMAIN =
   "(^|/)features/[^/]+/domain/|^lib/encore/(model|fixtures|demo-storage)\\.ts$";
 // Shared code that features build on; it must not depend on a feature.
-const SHARED = "(^|/)lib/(?!encore/)|^components/ui/|^hooks/";
+const SHARED = "(^|/)lib/(?!encore/)|^components/(ui|encore-ui)/|^hooks/";
 
 module.exports = {
   forbidden: [
@@ -55,7 +55,7 @@ module.exports = {
       comment:
         "Shared code (lib, components/ui, hooks) must not depend on a feature.",
       from: { path: SHARED },
-      to: { path: ["(^|/)features/", "^components/encore/"] },
+      to: { path: ["(^|/)features/", "^components/shell/"] },
     },
     {
       name: "no-circular",

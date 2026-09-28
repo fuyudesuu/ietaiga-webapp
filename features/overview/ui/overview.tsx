@@ -1,5 +1,5 @@
 "use client";
-import { MobileWallet } from "./wallet/mobile-wallet";
+import { MobileWallet } from "@/features/wallet";
 import { useState } from "react";
 import {
   ArrowRight,
@@ -34,7 +34,7 @@ import {
   SectionTitle,
   DateTile,
   ConcertMark,
-} from "./ui";
+} from "@/components/encore-ui/ui";
 import { withBasePath } from "@/lib/encore/paths";
 
 export function Overview() {
