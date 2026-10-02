@@ -17,7 +17,7 @@ import type { Editor } from "@/lib/encore/model";
 import { ApplicationEditor, ConcertEditor } from "@/features/concerts";
 import { TripEditor } from "@/features/trips";
 import { HotelEditor } from "@/features/stays";
-import { LegacyEditor } from "./legacy-editors";
+import { ReminderEditor } from "@/features/reminders";
 
 /**
  * The dialog that hosts every record editor. It owns opening, closing and the
@@ -99,7 +99,7 @@ function RecordEditor({
       return <HotelEditor target={editor} session={session} />;
     case "application":
       return <ApplicationEditor target={editor} session={session} />;
-    default:
-      return <LegacyEditor editor={editor} session={session} />;
+    case "reminder":
+      return <ReminderEditor target={editor} session={session} />;
   }
 }
