@@ -25,7 +25,7 @@ Production Discord account authentication, account-owned cloud records, private 
 
 | File | Approximate lines | Action when touching it |
 |---|---:|---|
-| `components/encore/forms.tsx` | 668 | Split individual editors from shared dialog lifecycle and persistence |
+| `components/encore/forms.tsx` | 668 | Split in stage B (October 2026): each editor is in its feature, the dialog host in `features/editors/` |
 | `components/encore/trips.tsx` | 551 | Separate list/detail/itinerary/stays responsibilities incrementally |
 | `components/encore/concerts.tsx` | 501 | Separate list/detail/application views as they change |
 | `components/encore/settings.tsx` | 410 | Isolate preferences, identity and destination setup |

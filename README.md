@@ -19,6 +19,7 @@ pnpm check          # types, lint, format, import boundaries, tests, build
 | `pnpm build`            | Cloudflare Workers build (Vinext)                                                          |
 | `pnpm build:pages`      | Static GitHub Pages build in `dist/pages`; set `ENCORE_BASE_PATH` (e.g. `/ietaiga-webapp`) |
 | `pnpm test`             | Domain, storage and boundary-rule tests (`tests/*.test.mjs`)                               |
+| `pnpm test:e2e`         | Browser tests (Playwright, `tests/e2e/`) against the `pnpm build:pages` output             |
 | `pnpm check:boundaries` | Import-boundary rules (`.dependency-cruiser.cjs`)                                          |
 
 GitHub Pages deploys from `main` via `.github/workflows/pages.yml`.
@@ -28,16 +29,17 @@ GitHub Pages deploys from `main` via `.github/workflows/pages.yml`.
 ```
 app/                 routes (thin pages), layout and global styles (app/styles/)
 features/<name>/     one folder per product area; import it only via its index.ts
-  concerts/  trips/  overview/  settings/  wallet/
-  editors/           record editors for every feature (split per feature in stage B)
+  concerts/  trips/  stays/  reminders/  overview/  settings/  wallet/
+  editors/           the dialog that hosts each feature's record editor
 components/
   shell/             app shell: navigation, editor host, browser tools
-  encore-ui/         small shared product UI (headings, pills, empty states)
+  encore-ui/         shared product UI (headings, pills, empty states, editor form parts)
   ui/                shadcn/Radix primitives in use
 lib/encore/          domain model, demo data, browser store, dates/money, paths
-tests/               node:test suites; boundaries/fixtures prove the import rules
+tests/               node:test suites; boundaries/fixtures prove the import rules;
+                     e2e/ holds the Playwright browser tests
 patches/             pnpm patch for vinext (static export base path)
-scripts/             GitHub Pages packaging
+scripts/             GitHub Pages packaging and a local Pages server for browser tests
 docs/                product, design, engineering and history
 ```
 
