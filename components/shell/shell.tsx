@@ -24,7 +24,7 @@ import {
 } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
 import { usePlanner } from "@/lib/encore/store";
-import { Forms } from "@/features/editors";
+import { EditorHost } from "@/features/editors";
 import { WebTools } from "./web-tools";
 import type { CSSProperties, ReactNode } from "react";
 import { withBasePath } from "@/lib/encore/paths";
@@ -193,7 +193,7 @@ export function AppShell({ children }: { children: ReactNode }) {
           {notice}
         </div>
       )}
-      <Forms />
+      <EditorHost />
       <WebTools />
     </SidebarProvider>
   );
