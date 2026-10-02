@@ -15,6 +15,7 @@ import type { EditorSession } from "@/components/encore-ui/editor-form";
 import { usePlanner } from "@/lib/encore/store";
 import type { Editor } from "@/lib/encore/model";
 import { ConcertEditor } from "@/features/concerts";
+import { TripEditor } from "@/features/trips";
 import { LegacyEditor } from "./legacy-editors";
 
 /**
@@ -91,6 +92,8 @@ function RecordEditor({
   switch (editor.type) {
     case "concert":
       return <ConcertEditor target={editor} session={session} />;
+    case "trip":
+      return <TripEditor target={editor} session={session} />;
     default:
       return <LegacyEditor editor={editor} session={session} />;
   }

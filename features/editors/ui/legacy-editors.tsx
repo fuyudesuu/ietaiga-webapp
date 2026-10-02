@@ -1,14 +1,6 @@
 "use client";
-import { useState } from "react";
-import { commitAndNavigate } from "@/lib/encore/navigation";
-import { Textarea } from "@/components/ui/textarea";
 import { usePlanner } from "@/lib/encore/store";
-import {
-  type Editor,
-  type Application,
-  type Hotel,
-  type Trip,
-} from "@/lib/encore/model";
+import { type Editor, type Application, type Hotel } from "@/lib/encore/model";
 import {
   EditorForm,
   type EditorSession,
@@ -19,7 +11,6 @@ import {
   Field,
   SelectField,
 } from "@/components/encore-ui/form-fields";
-import { ItemImageField } from "@/components/encore-ui/item-image-field";
 import {
   fromJstInput as fromJst,
   parseMoney,
@@ -41,15 +32,10 @@ export function LegacyEditor({
   editor,
   session,
 }: {
-  editor: Exclude<NonNullable<Editor>, { type: "concert" }>;
+  editor: Exclude<NonNullable<Editor>, { type: "concert" | "trip" }>;
   session: EditorSession;
 }) {
   const { state, update } = usePlanner();
-  const [imageBusy, setImageBusy] = useState(false);
-  const t =
-    editor.type === "trip"
-      ? state.trips.find((t) => t.id === editor.id)
-      : undefined;
   const h =
     editor.type === "hotel"
       ? state.hotels.find((h) => h.id === editor.id)
@@ -60,33 +46,6 @@ export function LegacyEditor({
       : undefined;
   const tripOptions = tripChoices(state.trips);
   function save(value: FormReader) {
-    if (editor.type === "trip") {
-      const start = value("start"),
-        end = value("end");
-      if (!start || !end || end < start)
-        throw new Error("Trip end must be on or after its start date.");
-      const id = t?.id ?? uid();
-      const record: Trip = {
-        id,
-        title: value("title"),
-        cities: value("cities"),
-        start,
-        end,
-        status: value("status") as Trip["status"],
-        notes: value("notes"),
-        image: value("image"),
-      };
-      commitAndNavigate(
-        () =>
-          update((s) => ({
-            ...s,
-            trips: t
-              ? s.trips.map((v) => (v.id === id ? record : v))
-              : [...s.trips, record],
-          })),
-        t ? undefined : "/trips/" + id,
-      );
-    }
     if (editor.type === "hotel") {
       const { amount, currency } = parseMoney(
         value("amount"),
@@ -171,7 +130,7 @@ export function LegacyEditor({
       title={
         reminder
           ? "A reminder for this moment"
-          : `${editor.id ? "Edit" : "Add"} ${editor.type === "application" ? "ticket application" : editor.type === "hotel" ? "hotel stay" : editor.type}`
+          : `${editor.id ? "Edit" : "Add"} ${editor.type === "application" ? "ticket application" : "hotel stay"}`
       }
       description={
         reminder
@@ -182,53 +141,8 @@ export function LegacyEditor({
       savedMessage={
         reminder ? "Reminder preference saved in this demo." : undefined
       }
-      busy={imageBusy}
       onSave={save}
     >
-      {editor.type === "trip" && (
-        <>
-          <ItemImageField initialValue={t?.image} onBusyChange={setImageBusy} />
-          <Field
-            name="title"
-            label="Trip name"
-            value={t?.title}
-            required
-            placeholder="A weekend worth the journey"
-          />
-          <Field
-            name="cities"
-            label="Destinations"
-            value={t?.cities}
-            required
-            placeholder="Tokyo · Yokohama"
-          />
-          <div className="form-grid">
-            <Field
-              name="start"
-              label="Start date"
-              value={t?.start}
-              type="date"
-              required
-            />
-            <Field
-              name="end"
-              label="End date"
-              value={t?.end}
-              type="date"
-              required
-            />
-          </div>
-          <SelectField
-            name="status"
-            label="Trip status"
-            value={t?.status ?? "Tentative"}
-            options={["Tentative", "Confirmed", "Completed"]}
-          />
-          <Field name="notes" label="Notes">
-            <Textarea id="field-notes" name="notes" defaultValue={t?.notes} />
-          </Field>
-        </>
-      )}
       {editor.type === "hotel" && (
         <>
           <Field name="name" label="Hotel name" value={h?.name} required />
