@@ -16,6 +16,7 @@ import { usePlanner } from "@/lib/encore/store";
 import type { Editor } from "@/lib/encore/model";
 import { ConcertEditor } from "@/features/concerts";
 import { TripEditor } from "@/features/trips";
+import { HotelEditor } from "@/features/stays";
 import { LegacyEditor } from "./legacy-editors";
 
 /**
@@ -94,6 +95,8 @@ function RecordEditor({
       return <ConcertEditor target={editor} session={session} />;
     case "trip":
       return <TripEditor target={editor} session={session} />;
+    case "hotel":
+      return <HotelEditor target={editor} session={session} />;
     default:
       return <LegacyEditor editor={editor} session={session} />;
   }

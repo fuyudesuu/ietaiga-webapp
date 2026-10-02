@@ -1,6 +1,6 @@
 "use client";
 import { usePlanner } from "@/lib/encore/store";
-import { type Editor, type Application, type Hotel } from "@/lib/encore/model";
+import { type Editor, type Application } from "@/lib/encore/model";
 import {
   EditorForm,
   type EditorSession,
@@ -15,7 +15,6 @@ import {
   fromJstInput as fromJst,
   parseMoney,
   toJstInput as localJst,
-  tripChoices,
 } from "@/lib/encore/form-input";
 
 // Editors not yet moved into their feature (refactor stage B). Each moves out
@@ -32,51 +31,15 @@ export function LegacyEditor({
   editor,
   session,
 }: {
-  editor: Exclude<NonNullable<Editor>, { type: "concert" | "trip" }>;
+  editor: Exclude<NonNullable<Editor>, { type: "concert" | "trip" | "hotel" }>;
   session: EditorSession;
 }) {
   const { state, update } = usePlanner();
-  const h =
-    editor.type === "hotel"
-      ? state.hotels.find((h) => h.id === editor.id)
-      : undefined;
   const a =
     editor.type === "application" || editor.type === "reminder"
       ? state.applications.find((a) => a.id === editor.id)
       : undefined;
-  const tripOptions = tripChoices(state.trips);
   function save(value: FormReader) {
-    if (editor.type === "hotel") {
-      const { amount, currency } = parseMoney(
-        value("amount"),
-        value("currency"),
-        state.preferences.currency,
-      );
-      if (!value("checkIn") || value("checkOut") <= value("checkIn"))
-        throw new Error("Check-out must be after check-in.");
-      if (value("tripId") === "none")
-        throw new Error("Choose a trip for this stay.");
-      const id = h?.id ?? uid();
-      const record: Hotel = {
-        id,
-        tripId: value("tripId"),
-        name: value("name"),
-        city: value("city"),
-        checkIn: value("checkIn"),
-        checkOut: value("checkOut"),
-        cancellation: fromJst(value("cancellation")),
-        amount,
-        currency,
-        payment: value("payment") as Hotel["payment"],
-        reference: value("reference"),
-      };
-      update((s) => ({
-        ...s,
-        hotels: h
-          ? s.hotels.map((v) => (v.id === id ? record : v))
-          : [...s.hotels, record],
-      }));
-    }
     if (editor.type === "application") {
       const { amount, currency } = parseMoney(
         value("amount"),
@@ -130,7 +93,7 @@ export function LegacyEditor({
       title={
         reminder
           ? "A reminder for this moment"
-          : `${editor.id ? "Edit" : "Add"} ${editor.type === "application" ? "ticket application" : "hotel stay"}`
+          : `${editor.id ? "Edit" : "Add"} ticket application`
       }
       description={
         reminder
@@ -143,55 +106,6 @@ export function LegacyEditor({
       }
       onSave={save}
     >
-      {editor.type === "hotel" && (
-        <>
-          <Field name="name" label="Hotel name" value={h?.name} required />
-          <Field name="city" label="Area / city" value={h?.city} />
-          <SelectField
-            name="tripId"
-            label="Trip"
-            value={h?.tripId || editor.tripId || "none"}
-            options={tripOptions}
-          />
-          <div className="form-grid">
-            <Field
-              name="checkIn"
-              label="Check-in date"
-              value={h?.checkIn}
-              type="date"
-              required
-            />
-            <Field
-              name="checkOut"
-              label="Check-out date"
-              value={h?.checkOut}
-              type="date"
-              required
-            />
-          </div>
-          <Field
-            name="cancellation"
-            label="Free cancellation until · JST (optional)"
-            value={localJst(h?.cancellation ?? "")}
-            type="datetime-local"
-          />
-          <AmountFields
-            amount={h?.amount}
-            currency={h?.currency ?? state.preferences.currency}
-          />
-          <SelectField
-            name="payment"
-            label="Payment"
-            value={h?.payment ?? "Unpaid"}
-            options={["Unpaid", "Paid", "Refunded"]}
-          />
-          <Field
-            name="reference"
-            label="Booking reference (sample only)"
-            value={h?.reference}
-          />
-        </>
-      )}
       {editor.type === "application" && (
         <>
           <Field
