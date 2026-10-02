@@ -33,13 +33,13 @@
 - Prefer explicit types, discriminated states, named props and understandable control flow. Treat external data as unknown until validated.
 - Do not use `any`, double casts, non-null assertions or lint suppressions to conceal a modeling error. Document genuinely necessary exceptions narrowly.
 - No catch-and-ignore for saves, authentication, uploads or delivery. Distinguish expected domain failures from unexpected faults.
-- Do not grow the existing combined `forms.tsx` or `features.css` with new feature responsibilities. Extract the touched responsibility and preserve behavior.
+- Do not grow `features.css` with new feature responsibilities. Extract the touched responsibility and preserve behavior. Record editors live in their feature (`features/<name>/ui/*-editor.tsx`); `features/editors` only hosts the dialog.
 - File size is a review signal: around 250 lines, check cohesion; beyond 400, explain why splitting would harm clarity or split by responsibility. These are not minification targets or blanket limits.
 - Keep display models separate from persistence models where they differ. Never duplicate the same authoritative state across several stores.
 - Use one source for design tokens. Feature styles use CSS Modules; keep responsive rules beside their component. Avoid global override chains.
 
 ## Verification and delivery
-- Discover commands from `package.json`. `pnpm check` runs every gate: types, lint, format, import boundaries (`pnpm check:boundaries`), tests and build. `pnpm build:pages` builds the GitHub Pages export.
+- Discover commands from `package.json`. `pnpm check` runs every gate: types, lint, format, import boundaries (`pnpm check:boundaries`), tests and build. `pnpm build:pages` builds the GitHub Pages export, and `pnpm test:e2e` then runs the browser tests against it (also in CI).
 - Keep the existing lockfile/package manager and runtime (Vinext, with a Cloudflare Workers build and a GitHub Pages export) until an explicit migration decision recorded in `docs/engineering/DECISIONS.md`. Do not silently switch frameworks or hosts.
 - Record pre-existing failures before editing. New code must not worsen them. Never disable checks, delete tests or weaken policies just to get green output.
 - Test domain behavior, authorization and failure paths, not only the happy path. Cosmetic changes need focused visual verification, not artificial test cases.

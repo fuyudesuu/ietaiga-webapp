@@ -174,20 +174,6 @@
   border-color: var(--primary);
   background: var(--accent);
 }
-.editor-dialog {
-  max-height: calc(100dvh - 40px);
-  max-width: 640px !important;
-}
-.editor-form {
-  padding-right: 4px;
-}
-.form-actions {
-  background: var(--card);
-  position: sticky;
-  bottom: 0;
-  padding: 16px 0 0;
-  margin-top: 16px;
-}
 .form-error {
   background: var(--amber-bg);
   color: var(--amber-text);
@@ -786,20 +772,8 @@
   .settings-heading p {
     font-size: 0.875rem;
   }
-  .editor-dialog {
-    max-width: calc(100vw - 24px) !important;
-    width: calc(100vw - 24px);
-    padding: 22px 18px;
-    max-height: calc(100dvh - 24px);
-  }
   .form-grid {
     grid-template-columns: 1fr;
-  }
-  .editor-dialog [data-slot="dialog-title"] {
-    font-size: 1.3rem;
-  }
-  .form-actions {
-    gap: 10px;
   }
   .app-toast {
     bottom: 100px;

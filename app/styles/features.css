@@ -1345,30 +1345,6 @@
   font-size: 0.875rem;
   color: var(--muted-foreground);
 }
-.editor-dialog {
-  width: calc(100% - 32px);
-  max-width: 570px !important;
-  padding: 27px;
-  max-height: 90dvh;
-  overflow-y: auto;
-}
-.editor-dialog [data-slot="dialog-title"] {
-  font-size: 1.35rem;
-  letter-spacing: -0.4px;
-  font-weight: 550;
-  line-height: 1.4;
-}
-.editor-dialog [data-slot="dialog-description"] {
-  font-size: 0.875rem;
-  line-height: 1.6;
-  margin-top: 6px;
-}
-.editor-form {
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-  margin-top: 12px;
-}
 .form-field {
   display: flex;
   flex-direction: column;
@@ -1406,14 +1382,6 @@
   background: var(--amber-bg);
   color: var(--amber-text);
   font-size: 0.875rem;
-}
-.form-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-  margin-top: 8px;
-  border-top: 1px solid var(--border);
-  padding-top: 18px;
 }
 .app-toast {
   position: fixed;

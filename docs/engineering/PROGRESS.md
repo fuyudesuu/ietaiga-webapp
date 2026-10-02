@@ -152,3 +152,50 @@ The owner approved a drafted reorganization: tidy the root, remove unused code, 
 
 ### Next action
 Stage B: split `features/editors/ui/forms.tsx` so the concert editor lives in `features/concerts/`, with characterization tests. Exit: concert create/edit/cancel/validation/image flows unchanged and `pnpm check` green.
+
+---
+
+## 2 October 2026 — Stage B: editors split by feature, and the editor scrolling fix
+
+### Task
+The owner asked for stage B (characterize the editors, move each one into its feature, keep only the dialog in a small host) and a fix for the editor form's scrolling on phones.
+
+### Completed (one commit each)
+1. **Characterization tests first.** Playwright (`@playwright/test` 1.56.1) runs 19 browser tests against the GitHub Pages export, served by `scripts/serve-pages.mjs`. They cover each editor: initial values, optional and JST dates, amounts, validation messages in order, cancel/discard, the cover image, save in place and save-then-open-page, and the exact saved demo record. They passed on the unchanged `forms.tsx` before any move. `pnpm test:e2e` runs them; CI installs Chromium and runs them after `pnpm build:pages`.
+2. **Concert editor** → `features/concerts/ui/concert-editor.tsx`.
+   - Shared parts moved to `components/encore-ui/`: the `EditorForm` frame (heading, error, actions, save handling), the fields and the image field.
+   - The money, JST and trip-choice conversions moved to `lib/encore/form-input.ts`, with 6 unit tests.
+   - `features/editors` became `EditorHost`: open/close, the discard prompt and a typed `switch` on editor type.
+3. **Trip editor** → `features/trips/ui/trip-editor.tsx`.
+4. **Hotel stay editor** → new `features/stays/` (stays are their own feature in ARCHITECTURE.md).
+5. **Ticket application editor** → `features/concerts/ui/application-editor.tsx`.
+6. **Reminder editor** → new `features/reminders/`. `forms.tsx` no longer exists.
+7. **Scrolling fix**, after reproducing the problems in headless Chromium:
+   - At 320px and 390px the dialog scrolled sideways. The long trip name in the concert and hotel "Trip" select never truncated, which widened the content to 373px.
+   - The whole dialog scrolled, so its heading and close button scrolled away.
+   - The sticky Save bar let fields show beneath it.
+
+   Now the dialog holds still, only the fields scroll (overscroll contained), and long select values end in "…". The layout moved into CSS Modules (`editor-host.module.css`, `editor-form.module.css`), and the global `.editor-dialog`/`.editor-form`/`.form-actions` rules they replace were removed. `tests/e2e/editor-layout.spec.ts` (6 tests: 320px, 390px, desktop) fails on the old code and passes now.
+
+**Temporary adapters.** Each editor reads and saves through a `*-demo-store.ts` hook over the browser demo store: concerts (concerts and applications), trips, stays and reminders. Removal task: replace each with an owner-scoped repository in stage D (reminders in D/E).
+
+### Verification
+- `pnpm check` exits 0:
+  - tsc;
+  - lint with 0 problems;
+  - Prettier;
+  - boundary rules (72 modules, no violations);
+  - 25 unit tests (19 earlier + 6 form-input);
+  - the Workers build.
+- `ENCORE_BASE_PATH=/ietaiga-webapp pnpm build:pages`, then `pnpm test:e2e`: 25/25 pass (19 characterization + 6 layout). The 19 characterization tests passed after every move commit.
+- Screenshots were checked at 320px, 390px and 1280px, plus dark mode with the solid material at 390px. Touch swipes and wheel scrolling move the fields only; the page does not scroll behind the dialog.
+- Not run: real iOS/Android devices (including the on-screen keyboard over the dialog), keyboard-only use, reduced motion, and the GitHub CI run (pending push).
+
+### Known issues kept (behavior-preserving refactor)
+- A blank price is saved as 0, not as unknown. This breaks the "unknown amounts are null" invariant. The tests record it, so fixing it is a deliberate, visible change.
+- Select values are trusted from the form (`as` casts), and an unexpected error still shows as a form message.
+
+### Next action
+Owner's choice:
+- (a) Fix blank amounts to stay unknown. This needs `amount: number | null` in the model, a demo-storage migration and display changes.
+- (b) Stage C for the editors: move the remaining field, image-picker and form-grid styles from `features.css`/`responsive.css`/`wallet.css` into the editor CSS Modules.
