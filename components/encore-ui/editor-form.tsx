@@ -7,6 +7,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { usePlanner } from "@/lib/encore/store";
+import styles from "./editor-form.module.css";
 
 /** How a record editor reports back to the dialog that hosts it. */
 export interface EditorSession {
@@ -78,18 +79,20 @@ export function EditorForm({
         <DialogDescription>{description}</DialogDescription>
       </DialogHeader>
       <form
-        className="editor-form"
+        className={styles.form}
         onSubmit={submit}
         onChange={session.markDirty}
         onClick={session.markDirty}
       >
-        {children}
-        {error && (
-          <p className="form-error" role="alert">
-            {error}
-          </p>
-        )}
-        <div className="form-actions">
+        <div className={styles.fields}>
+          {children}
+          {error && (
+            <p className="form-error" role="alert">
+              {error}
+            </p>
+          )}
+        </div>
+        <div className={styles.actions}>
           <Button type="button" variant="outline" onClick={session.cancel}>
             Cancel
           </Button>

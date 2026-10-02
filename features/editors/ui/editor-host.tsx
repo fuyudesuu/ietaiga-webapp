@@ -18,6 +18,7 @@ import { ApplicationEditor, ConcertEditor } from "@/features/concerts";
 import { TripEditor } from "@/features/trips";
 import { HotelEditor } from "@/features/stays";
 import { ReminderEditor } from "@/features/reminders";
+import styles from "./editor-host.module.css";
 
 /**
  * The dialog that hosts every record editor. It owns opening, closing and the
@@ -51,7 +52,7 @@ export function EditorHost() {
         }}
       >
         <DialogContent
-          className="editor-dialog"
+          className={"editor-dialog " + styles.dialog}
           onOpenAutoFocus={() => setDirty(false)}
         >
           {editor && (
