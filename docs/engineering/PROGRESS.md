@@ -199,3 +199,39 @@ The owner asked for stage B (characterize the editors, move each one into its fe
 Owner's choice:
 - (a) Fix blank amounts to stay unknown. This needs `amount: number | null` in the model, a demo-storage migration and display changes.
 - (b) Stage C for the editors: move the remaining field, image-picker and form-grid styles from `features.css`/`responsive.css`/`wallet.css` into the editor CSS Modules.
+
+---
+
+## 4 October 2026 — Stage C for the editors
+
+### Completed
+- **Image picker** styles moved from `wallet.css` into `components/encore-ui/item-image-field.module.css`. Only the image field used them.
+- **Field labels and two-column rows** moved into `components/encore-ui/form-fields.module.css`. Editors now use a `FieldRow` component, which stacks to one column under 768px. Labels use the 0.875rem size that actually rendered: `responsive.css` overrode the 0.8rem in `features.css`.
+- **Global rules deleted:**
+  - the image picker rules in `wallet.css`;
+  - `.form-grid` in `features.css` and `responsive.css`;
+  - a duplicate `.form-error` rule in `responsive.css`, which had the same values.
+- **Kept global on purpose:**
+  - `.form-field`, which Settings still uses;
+  - `.form-help`, `.form-callout` and `.form-error`, shared by Trips and Settings.
+
+### Verification
+- **Screenshots:** 78 deterministic screenshots, byte-identical before and after. They cover:
+  - each editor, at the top and scrolled to the end;
+  - a validation error;
+  - Settings and a trip page;
+  - at 320px, 390px and 1280px, in light and dark mode.
+
+  Two baseline runs were identical, which confirms the screenshots are deterministic.
+- **Checks:** `pnpm check` exits 0 (74 modules, 25 unit tests). `pnpm test:e2e` passes 25/25.
+- **Not run:** real devices.
+
+### Found while surveying motion, not fixed here
+- **Toast:** `.app-toast` uses `animation: toast-in`, but no `@keyframes toast-in` exists, so the toast appears without animation.
+- **Editor dialog:** the `editor-arrive` animation in `shell.css` (blur plus `margin-top`) replaces the dialog's open and close animations. The dialog likely disappears on close without animating.
+
+### Next action
+Owner's choice:
+- an animation pass, proposed separately: fix the toast and dialog motion first;
+- keeping blank amounts as unknown;
+- the hosting/backend decision for stage D.
