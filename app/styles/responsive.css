@@ -174,10 +174,6 @@
   border-color: var(--primary);
   background: var(--accent);
 }
-.form-error {
-  background: var(--amber-bg);
-  color: var(--amber-text);
-}
 .app-toast {
   background: var(--foreground);
   color: var(--background);
@@ -771,9 +767,6 @@
   }
   .settings-heading p {
     font-size: 0.875rem;
-  }
-  .form-grid {
-    grid-template-columns: 1fr;
   }
   .app-toast {
     bottom: 100px;

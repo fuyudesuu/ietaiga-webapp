@@ -1355,11 +1355,6 @@
   font-size: 0.8rem;
   font-weight: 500;
 }
-.form-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-}
 .form-callout {
   padding: 17px;
   background: var(--amber-bg);

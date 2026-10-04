@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { ImagePlus } from "lucide-react";
 import { prepareItemImage, safeItemImage } from "@/lib/encore/images";
 import { withBasePath } from "@/lib/encore/paths";
+import styles from "./item-image-field.module.css";
 
 export function ItemImageField({
   initialValue,
@@ -22,16 +23,16 @@ export function ItemImageField({
     [],
   );
   return (
-    <div className="item-image-field">
+    <div className={styles.field}>
       <input type="hidden" name="image" value={value} />
-      <div className="image-field-preview">
+      <div className={styles.preview}>
         {value ? (
           <img src={withBasePath(value)} alt="Selected card cover" />
         ) : (
           <ImagePlus aria-hidden="true" size={24} />
         )}
       </div>
-      <div className="image-field-controls">
+      <div className={styles.controls}>
         <label htmlFor="item-photo">Card image</label>
         <p>Choose artwork or a travel photo. JPG, PNG or WebP, up to 12 MB.</p>
         <input
@@ -67,7 +68,7 @@ export function ItemImageField({
         {value && (
           <button
             type="button"
-            className="image-remove"
+            className={styles.remove}
             disabled={busy}
             onClick={() => setValue("")}
           >

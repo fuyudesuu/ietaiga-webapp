@@ -6,7 +6,11 @@ import {
   type EditorSession,
   type FormReader,
 } from "@/components/encore-ui/editor-form";
-import { Field, SelectField } from "@/components/encore-ui/form-fields";
+import {
+  Field,
+  FieldRow,
+  SelectField,
+} from "@/components/encore-ui/form-fields";
 import { ItemImageField } from "@/components/encore-ui/item-image-field";
 import type { Editor, Trip } from "@/lib/encore/model";
 import { useTripDemoStore } from "./trip-demo-store";
@@ -59,7 +63,7 @@ export function TripEditor({
         required
         placeholder="Tokyo · Yokohama"
       />
-      <div className="form-grid">
+      <FieldRow>
         <Field
           name="start"
           label="Start date"
@@ -74,7 +78,7 @@ export function TripEditor({
           type="date"
           required
         />
-      </div>
+      </FieldRow>
       <SelectField
         name="status"
         label="Trip status"

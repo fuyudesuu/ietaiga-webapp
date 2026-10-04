@@ -7,6 +7,7 @@ import {
 import {
   AmountFields,
   Field,
+  FieldRow,
   SelectField,
 } from "@/components/encore-ui/form-fields";
 import {
@@ -65,7 +66,7 @@ export function HotelEditor({
         value={existing?.tripId || target.tripId || noTrip}
         options={tripChoices(store.trips)}
       />
-      <div className="form-grid">
+      <FieldRow>
         <Field
           name="checkIn"
           label="Check-in date"
@@ -80,7 +81,7 @@ export function HotelEditor({
           type="date"
           required
         />
-      </div>
+      </FieldRow>
       <Field
         name="cancellation"
         label="Free cancellation until · JST (optional)"

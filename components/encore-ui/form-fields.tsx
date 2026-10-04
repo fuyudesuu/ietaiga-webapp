@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Choice } from "@/components/encore-ui/ui";
 import { amountInputValue, currencies } from "@/lib/encore/form-input";
 import type { Currency } from "@/lib/encore/model";
+import styles from "./form-fields.module.css";
 
 export function Field({
   label,
@@ -23,7 +24,7 @@ export function Field({
   children?: ReactNode;
 }) {
   return (
-    <label className="form-field" htmlFor={"field-" + name}>
+    <label className={styles.field} htmlFor={"field-" + name}>
       <span>
         {label}
         {required && " *"}
@@ -41,6 +42,11 @@ export function Field({
       )}
     </label>
   );
+}
+
+/** Two fields side by side; stacked on phones. */
+export function FieldRow({ children }: { children: ReactNode }) {
+  return <div className={styles.row}>{children}</div>;
 }
 
 /** A select menu that submits its value with the form. */
@@ -79,7 +85,7 @@ export function AmountFields({
   currency?: Currency;
 }) {
   return (
-    <div className="form-grid">
+    <FieldRow>
       <Field
         name="amount"
         label="Amount"
@@ -92,6 +98,6 @@ export function AmountFields({
         value={currency}
         options={currencies}
       />
-    </div>
+    </FieldRow>
   );
 }
