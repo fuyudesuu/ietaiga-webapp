@@ -23,7 +23,9 @@ const routes = [
   "/trips/autumn",
   "/trips/winter",
   "/concerts",
+  "/concerts/idol",
   "/concerts/love",
+  "/concerts/uma",
   "/concerts/wish",
   "/settings",
 ];

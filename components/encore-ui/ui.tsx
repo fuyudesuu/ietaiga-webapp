@@ -142,9 +142,11 @@ export function Choice({
 export function DateTile({
   date,
   variant = "default",
+  className,
 }: {
   date: string;
   variant?: "default" | "calendar";
+  className?: string;
 }) {
   const calendar = variant === "calendar";
   return (
@@ -152,6 +154,7 @@ export function DateTile({
       className={cn(
         "date-tile flex min-w-9 shrink-0 flex-col items-center leading-[1.3] tabular-nums",
         calendar && "w-auto min-w-0 flex-col-reverse gap-0.5",
+        className,
       )}
     >
       <span

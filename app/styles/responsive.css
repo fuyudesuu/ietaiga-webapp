@@ -1,53 +1,6 @@
 /* Feature presentation and responsive composition. */
-.concert-row {
-  color: var(--foreground);
-  min-width: 0;
-}
-.row-copy h3 {
-  font-size: 1rem;
-  font-weight: 630;
-}
-.row-copy p,
-.row-copy small {
-  font-size: 0.875rem;
-}
-.row-copy p {
-  overflow-wrap: anywhere;
-}
-.concert-list {
-  background: transparent;
-  border: 0;
-  border-top: 1px solid var(--border);
-  border-radius: 0;
-}
-.concert-list .concert-row {
-  padding: 24px 4px;
-}
-.concert-list-header {
-  font-size: 0.75rem;
-  letter-spacing: 0.04em;
-  padding-left: 4px;
-}
-.concert-detail-head h1 {
-  font-weight: 650;
-  letter-spacing: -0.035em;
-  font-size: 2.3rem;
-}
-.event-facts {
-  padding: 23px;
-  background: var(--card);
-}
 .detail-grid {
   grid-template-columns: minmax(0, 1fr) 290px;
-}
-.application-card {
-  padding: 24px;
-}
-.ticket-timeline {
-  margin: 26px 0;
-}
-.application-status-grid strong {
-  line-height: 1.6;
 }
 .budget-track > span,
 .legend-dot.paid {
@@ -171,9 +124,7 @@
 .delete-trip {
   font-size: 0.875rem !important;
 }
-.round-action,
-.hotel-card > footer,
-.application-card > footer {
+.hotel-card > footer {
   flex-wrap: wrap;
 }
 .hero-meta {
@@ -204,12 +155,6 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
     align-items: start;
   }
-  .concert-list .concert-row {
-    gap: 14px;
-  }
-  .row-copy small {
-    flex-wrap: wrap;
-  }
   .trip-card-cover {
     height: 190px;
   }
@@ -232,9 +177,6 @@
   .trip-card-cover {
     height: 100%;
     min-height: 245px;
-  }
-  .concert-row .pill {
-    font-size: 0.75rem;
   }
 }
 @media (max-width: 767px) {
@@ -321,115 +263,12 @@
     left: auto;
     right: 12px;
   }
-  .filter-bar {
-    flex-wrap: wrap;
-    gap: 12px;
-  }
-  .search-field {
-    width: 100%;
-    flex-basis: 100%;
-  }
-  .filter-bar > .choice {
-    flex: 1;
-    max-width: none;
-  }
-  .concert-list-header {
-    display: none;
-  }
-  .concert-list .concert-row {
-    display: grid;
-    grid-template-columns: 40px 38px minmax(0, 1fr);
-    gap: 10px;
-    padding: 20px 0;
-  }
-  .concert-list .concert-mark {
-    width: 38px;
-    height: 42px;
-  }
-  .concert-list .row-copy h3 {
-    font-size: 1rem;
-  }
-  .concert-list .row-copy p {
-    font-size: 0.875rem;
-  }
-  .concert-list .pill {
-    grid-column: 3;
-    justify-self: start;
-  }
-  .concert-list .row-arrow {
-    display: none;
-  }
-  .concert-list .date-tile {
-    min-width: 0;
-    width: auto;
-  }
-  .concert-list .row-copy small {
-    font-size: 0.8125rem;
-  }
-  .concert-detail-head {
-    flex-wrap: wrap;
-    gap: 14px;
-    margin-top: 22px;
-  }
-  .concert-detail-head > div:not(.concert-mark) {
-    flex: 1;
-    min-width: 0;
-  }
-  .concert-detail-head h1 {
-    font-size: 1.6rem;
-  }
-  .concert-detail-head p {
-    font-size: 0.875rem;
-  }
-  .concert-detail-head > button {
-    margin-left: 0;
-  }
-  .event-facts {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 18px;
-    padding: 20px;
-  }
-  .event-facts > span {
-    flex-wrap: wrap;
-  }
   .detail-aside {
     display: flex;
     flex-direction: column;
   }
   .detail-aside > * {
     width: 100%;
-  }
-  .application-card {
-    padding: 18px;
-  }
-  .provider-label {
-    font-size: 0.8125rem;
-    letter-spacing: 0;
-  }
-  .ticket-timeline > div {
-    width: 58px;
-  }
-  .ticket-timeline strong,
-  .ticket-timeline small {
-    font-size: 0.75rem;
-  }
-  .application-status-grid {
-    grid-template-columns: 1fr 1fr;
-    gap: 18px;
-  }
-  .payment-callout {
-    flex-wrap: wrap;
-    padding: 14px;
-  }
-  .round-action {
-    align-items: flex-start;
-  }
-  .round-action > div {
-    width: 100%;
-  }
-  .application-card > footer {
-    gap: 12px;
   }
   .trip-card {
     display: block;
@@ -542,9 +381,6 @@
     width: auto;
     max-width: none;
     font-size: 0.875rem;
-  }
-  .fiction-note {
-    font-size: 0.8125rem;
   }
 }
 @media (prefers-reduced-motion: reduce) {
