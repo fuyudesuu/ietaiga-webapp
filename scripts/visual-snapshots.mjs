@@ -1,7 +1,8 @@
 // Visual regression check for styling refactors (e.g. the move to Tailwind).
 //
 //   node scripts/visual-snapshots.mjs capture <dir>   screenshot every screen
-//   node scripts/visual-snapshots.mjs compare <a> <b> list screenshots that differ
+//   node scripts/visual-snapshots.mjs compare <a> <b> [diffs]
+//                                                     list screenshots that differ
 //                                                     (beyond anti-aliasing noise)
 //
 // Captures run against the Pages export (`pnpm build:pages`), served by
@@ -9,10 +10,10 @@
 // Motion is reduced so screenshots are deterministic: two captures of the
 // same build are byte-identical. Hover and focus states are not covered.
 import { chromium } from "@playwright/test";
-import { mkdirSync, readFileSync, readdirSync } from "node:fs";
+import { mkdirSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 
-const [command, first, second] = process.argv.slice(2);
+const [command, first, second, third] = process.argv.slice(2);
 const origin = `http://localhost:${process.env.PORT ?? 4173}`;
 const base = origin + (process.env.ENCORE_BASE_PATH ?? "");
 
@@ -153,7 +154,7 @@ async function capture(dir) {
 // smaller differences are anti-aliasing noise between runs.
 const channelTolerance = 16;
 
-async function compare(before, after) {
+async function compare(before, after, diffDir) {
   const names = readdirSync(before).filter((name) => name.endsWith(".png"));
   const browser = await chromium.launch();
   const page = await browser.newPage();
@@ -180,18 +181,49 @@ async function compare(before, after) {
             size: `${first.width}x${first.height} vs ${second.width}x${second.height}`,
           };
         let pixels = 0;
+        const box = { left: Infinity, top: Infinity, right: -1, bottom: -1 };
+        const marked = new ImageData(first.width, first.height);
         for (let i = 0; i < first.data.length; i += 4) {
-          for (let channel = 0; channel < 3; channel++) {
+          let differs = false;
+          for (let channel = 0; channel < 3; channel++)
             if (
               Math.abs(first.data[i + channel] - second.data[i + channel]) >
               tolerance
-            ) {
-              pixels++;
-              break;
-            }
-          }
+            )
+              differs = true;
+          // Diff image: changed pixels red, the rest a faded copy.
+          marked.data.set(
+            differs
+              ? [255, 0, 0, 255]
+              : [
+                  first.data[i] / 3 + 170,
+                  first.data[i + 1] / 3 + 170,
+                  first.data[i + 2] / 3 + 170,
+                  255,
+                ],
+            i,
+          );
+          if (!differs) continue;
+          pixels++;
+          const x = (i / 4) % first.width;
+          const y = Math.floor(i / 4 / first.width);
+          box.left = Math.min(box.left, x);
+          box.top = Math.min(box.top, y);
+          box.right = Math.max(box.right, x);
+          box.bottom = Math.max(box.bottom, y);
         }
-        return { pixels };
+        if (!pixels) return { pixels };
+        const canvas = new OffscreenCanvas(first.width, first.height);
+        canvas.getContext("2d").putImageData(marked, 0, 0);
+        const blob = await canvas.convertToBlob({ type: "image/png" });
+        const bytes = new Uint8Array(await blob.arrayBuffer());
+        let binary = "";
+        for (const byte of bytes) binary += String.fromCharCode(byte);
+        return {
+          pixels,
+          area: `x ${box.left}-${box.right}, y ${box.top}-${box.bottom}`,
+          diff: btoa(binary),
+        };
       },
       {
         a: a.toString("base64"),
@@ -199,22 +231,28 @@ async function compare(before, after) {
         tolerance: channelTolerance,
       },
     );
-    if (result.pixels !== 0) changed.push({ name, ...result });
+    if (result.pixels === 0) continue;
+    if (diffDir && result.diff) {
+      mkdirSync(diffDir, { recursive: true });
+      writeFileSync(join(diffDir, name), Buffer.from(result.diff, "base64"));
+    }
+    changed.push({ name, ...result });
   }
   await browser.close();
   console.log(
     `${names.length - changed.length} match, ${changed.length} different`,
   );
-  for (const { name, pixels, size } of changed)
-    console.log(`  ${name}: ${size ?? pixels + " pixels"}`);
+  for (const { name, pixels, size, area } of changed)
+    console.log(`  ${name}: ${size ?? `${pixels} pixels in ${area}`}`);
   process.exitCode = changed.length ? 1 : 0;
 }
 
 if (command === "capture" && first) await capture(first);
-else if (command === "compare" && first && second) await compare(first, second);
+else if (command === "compare" && first && second)
+  await compare(first, second, third);
 else {
   console.error(
-    "Usage: node scripts/visual-snapshots.mjs capture <dir> | compare <a> <b>",
+    "Usage: node scripts/visual-snapshots.mjs capture <dir> | compare <a> <b> [diffs]",
   );
   process.exitCode = 2;
 }

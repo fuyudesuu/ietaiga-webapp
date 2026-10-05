@@ -1,4 +1,5 @@
 "use client";
+import { cn } from "@/lib/utils";
 import { ArrowUpRight, Music2, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -60,16 +61,23 @@ export function Choice({
   options,
   label,
   id,
+  className,
 }: {
   value: string;
   onChange: (v: string) => void;
   options: (string | { value: string; label: string })[];
   label: string;
   id?: string;
+  /** Extra classes for the trigger button. */
+  className?: string;
 }) {
   return (
     <Select value={value} onValueChange={onChange}>
-      <SelectTrigger id={id} aria-label={label} className="choice">
+      <SelectTrigger
+        id={id}
+        aria-label={label}
+        className={cn("choice", className)}
+      >
         <SelectValue />
       </SelectTrigger>
       <SelectContent>
