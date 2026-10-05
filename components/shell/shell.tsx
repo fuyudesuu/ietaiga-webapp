@@ -213,7 +213,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         </header>
         <main
           id="main-content"
-          className="page-content m-auto min-h-[calc(100vh-134px)] max-w-[1440px] px-9 pt-[35px] pb-12 max-[1251px]:p-[30px_26px] max-md:min-h-[calc(100dvh-100px)] max-md:p-[28px_20px_112px] min-[1550px]:pt-[46px]"
+          className="m-auto min-h-[calc(100vh-134px)] max-w-[1440px] px-9 pt-[35px] pb-12 max-[1251px]:p-[30px_26px] max-md:min-h-[calc(100dvh-100px)] max-md:p-[28px_20px_112px] max-md:has-[#wallet-panel]:pt-6 max-md:has-[#wallet-panel]:pb-9 min-[1550px]:pt-[46px]"
         >
           {children}
         </main>

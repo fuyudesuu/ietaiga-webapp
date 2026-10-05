@@ -104,6 +104,16 @@ const states = [
     phoneOnly: true,
     open: (page) => page.getByRole("tab", { name: /Trips/ }).click(),
   },
+  {
+    name: "wallet-trip-open",
+    route: "/",
+    phoneOnly: true,
+    fullPage: true,
+    open: async (page) => {
+      await page.getByRole("tab", { name: /Trips/ }).click();
+      await page.getByRole("button", { name: /Open details$/ }).last().click();
+    },
+  },
 ];
 
 async function applyTheme(page, setup) {
