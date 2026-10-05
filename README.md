@@ -28,7 +28,7 @@ GitHub Pages deploys from `main` via `.github/workflows/pages.yml`.
 ## Layout
 
 ```
-app/                 routes (thin pages), layout and global styles (app/styles/)
+app/                 routes (thin pages), layout, and globals.css (tokens, base, shadcn skins)
 features/<name>/     one folder per product area; import it only via its index.ts
   concerts/  trips/  stays/  reminders/  overview/  settings/  wallet/
   editors/           the dialog that hosts each feature's record editor

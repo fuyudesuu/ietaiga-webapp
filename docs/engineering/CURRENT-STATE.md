@@ -35,9 +35,9 @@ Production Discord account authentication, account-owned cloud records, private 
 | `components/encore/wallet/use-wallet-motion.ts` | 75 | Preserve the motion boundary; test interruption when changing it |
 | `lib/encore/store.tsx` | 119 | Browser store; replace authoritative persistence feature by feature |
 | `lib/encore/model.ts` | 166 | Types plus domain utilities; move by responsibility during feature work |
-| `app/styles/features.css` | 1,435 | Several features share global selectors; do not keep appending here |
-| `app/styles/responsive.css` | 847 | Both visual overrides and breakpoints; reconcile when migrating a component |
-| `app/styles/wallet.css` | 565 | Wallet plus image picker; assign each to its component without redesign |
+| `app/styles/features.css` | 1,435 | Removed (October 2026): all screens use Tailwind utilities on the `@theme` scale |
+| `app/styles/responsive.css` | 847 | Removed (October 2026): responsive variants sit on each element |
+| `app/styles/wallet.css` | 565 | Removed (October 2026): the Wallet and image picker use utilities |
 
 These are baseline observations, not reasons to perform a wholesale rewrite. New file names and line counts can change; use current source as authority.
 

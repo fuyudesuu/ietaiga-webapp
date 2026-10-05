@@ -235,3 +235,56 @@ Owner's choice:
 - an animation pass, proposed separately: fix the toast and dialog motion first;
 - keeping blank amounts as unknown;
 - the hosting/backend decision for stage D.
+
+---
+
+## 5 October 2026 — All styling moved to Tailwind
+
+### Decision
+The owner chose Tailwind for all styling, to keep the UI consistent, with Motion for animation later. It is recorded in `DECISIONS.md` (2026-10-05). `CLAUDE.md`, `ARCHITECTURE.md`, `REFACTOR-PLAN.md` and the frontend rule were updated, replacing the earlier CSS Modules target.
+
+### Completed (one commit per step, on the stage C branch)
+1. **Snapshot tool.** `scripts/visual-snapshots.mjs` (`pnpm visual`) captures every route at 5 widths in light, dark and solid, plus interactive states:
+   - the editors and an error state;
+   - the Trips tabs;
+   - the saved toast;
+   - Wallet cards.
+
+   It compares two captures pixel by pixel with a small anti-aliasing tolerance and writes diff images. Two captures of the same build match.
+2. **Editors.** The four CSS Modules became utilities.
+   - Type scale tokens (`caption` … `display`) and tone colours were added to `@theme`.
+   - `tailwind-merge` was taught the type scale.
+   - The `p`, `button`/`input` and link resets moved into `@layer base`, so utilities can override them. shadcn controls keep inheriting the page font through an unlayered `:where(button, input, textarea)[data-slot]` rule.
+3. **Screens.** Shared product UI, then Settings, Overview, Concerts, Trips plus the shared atoms, the shell, the tabs and toast, and the Wallet.
+4. **Global CSS reduced.**
+   - `app/styles/` went from about 3,400 lines in 5 files to just the vendored shadcn CSS.
+   - `globals.css` keeps tokens, base rules, the shadcn control skins, the dialog glass material, and the reduced-motion rule.
+   - About 800 global selectors were deleted, including rules no markup used.
+
+### Verification
+- After every step, the visual snapshots of the new build matched the previous build, with no differing screenshots. Coverage grew from 144 to 195 screenshots.
+- Differences found along the way were fixed before committing, not accepted. Examples:
+  - `tailwind-merge` dropping a `leading-*`;
+  - unlayered resets beating utilities;
+  - shadcn group-variant heights;
+  - a rule specificity that kept a subtitle at 0.88rem on phones.
+- Wallet motion with animation on: card positions at rest, open and closed match the previous build.
+- `pnpm check` passes. All 25 browser tests pass after each screen.
+- **Not run:**
+  - real devices;
+  - hover and focus states (the snapshots do not capture them);
+  - browsers without `backdrop-filter`.
+
+### Known limits
+- Overrides of the shadcn control skins still need important utilities (`text-small!`, `px-3!`) until the skins in `globals.css` move into a cascade layer.
+- The phone "add" floating button was hidden at every width before the change and still is.
+
+### Next action
+The consistency pass. The code still uses many off-scale values:
+- 26 distinct arbitrary font sizes;
+- 36 spacing values;
+- 12 radii;
+- 7 font weights;
+- 15 letter-spacings.
+
+Rounding them to the token scale is a deliberate visual change, to be shown to the owner as before/after diffs. Then the Motion animation work.

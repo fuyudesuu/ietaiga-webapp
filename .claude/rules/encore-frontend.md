@@ -14,7 +14,7 @@ paths:
 - Use semantic buttons/links, associated labels, useful errors, keyboard navigation and visible focus. Prevent double submits. Confirm data-destructive actions with their actual consequences.
 - Keep unsaved form values on a recoverable error. Validate on the server even if the form validates in the browser.
 - Reuse existing Radix/shadcn controls. Do not rewrite vendored controls or their accessibility behavior to make a visual change.
-- Global CSS owns reset/base styles, tokens and theme definitions. Components use Tailwind utilities from the token scale, with their responsive and state variants on the element. Do not add global feature CSS or overrides at the end of `responsive.css`.
+- Global CSS owns reset/base styles, tokens and theme definitions. Components use Tailwind utilities from the token scale, with their responsive and state variants on the element. Do not add global feature CSS or override chains.
 - Give each property one clear styling owner; do not fight utilities with global selectors or `!important`. Unlayered global rules beat utilities, so delete the global rule when converting an element.
 - Keep typography/spacing/radius/z-index/motion scales in named tokens where repeated. Preserve light/dark, solid-material, small-screen and reduced-motion behavior.
 - Prefer content-driven layouts over fixed heights except deliberately bounded components such as Wallet cards. Test long Japanese titles, missing photos and increased text size.
