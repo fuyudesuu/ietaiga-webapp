@@ -1,79 +1,7 @@
 /* Feature presentation and responsive composition. */
-.detail-grid {
-  grid-template-columns: minmax(0, 1fr) 290px;
-}
 .budget-track > span,
 .legend-dot.paid {
   background: var(--primary);
-}
-.budget-panel {
-  box-shadow: none;
-}
-.trip-card:hover {
-  box-shadow: none;
-  border-color: var(--input);
-  transform: none;
-}
-.trip-grid {
-  gap: 24px;
-}
-.trip-card-cover {
-  height: 220px;
-}
-.plain-cover {
-  background: var(--secondary);
-  color: var(--secondary-foreground);
-}
-.dark .plain-cover {
-  background: var(--secondary);
-}
-.plain-cover .trip-cover-date {
-  color: var(--foreground);
-}
-.plain-cover .glass-tag {
-  background: var(--card);
-  color: var(--foreground);
-  border-color: var(--border);
-}
-.trip-cover-date {
-  font-family: var(--font-sans);
-}
-.trip-card-body {
-  padding: 24px;
-}
-.trip-card-body h2 {
-  font-size: 1.35rem;
-  letter-spacing: -0.025em;
-  font-weight: 630;
-}
-.trip-year {
-  font-size: 0.8125rem;
-  color: var(--muted-foreground);
-}
-.trip-detail-hero {
-  height: auto;
-  min-height: 260px;
-  background: #172e51;
-  border-radius: 16px;
-}
-.trip-detail-title h1 {
-  font-size: 2.25rem;
-  font-weight: 620;
-  letter-spacing: -0.025em;
-  max-width: 30ch;
-}
-.hero-edit {
-  color: #14233e;
-  background: #ffffffed;
-}
-.new-trip-card {
-  min-height: 160px;
-  border-style: dashed;
-  background: transparent;
-}
-.new-trip-card > span {
-  background: var(--secondary);
-  color: var(--primary);
 }
 .encore-tabs {
   padding: 4px;
@@ -92,19 +20,6 @@
   background: var(--card);
   color: var(--primary);
 }
-.itinerary-item {
-  border: 0;
-  border-bottom: 1px solid var(--border);
-  border-radius: 0;
-  background: transparent;
-  padding: 18px 0;
-}
-.itinerary-item h3 {
-  font-size: 1rem;
-}
-.itinerary-item .eyebrow {
-  font-size: 0.8125rem;
-}
 .app-toast {
   background: var(--foreground);
   color: var(--background);
@@ -113,26 +28,6 @@
   box-shadow: 0 8px 30px #091b3326;
   bottom: 24px;
   max-width: calc(100vw - 32px);
-}
-.hotel-name p {
-  font-size: 0.875rem;
-  color: var(--muted-foreground);
-}
-.hotel-name > button {
-  margin-left: auto;
-}
-.delete-trip {
-  font-size: 0.875rem !important;
-}
-.hotel-card > footer {
-  flex-wrap: wrap;
-}
-.hero-meta {
-  font-size: 0.875rem;
-  flex-wrap: wrap;
-}
-.hotel-card > footer button {
-  min-height: 44px;
 }
 @media (min-width: 1550px) {
   .page-content {
@@ -146,37 +41,6 @@
   .topbar {
     margin-left: 20px;
     margin-right: 20px;
-  }
-  .detail-grid {
-    grid-template-columns: minmax(0, 1fr);
-  }
-  .detail-aside {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    align-items: start;
-  }
-  .trip-card-cover {
-    height: 190px;
-  }
-  .hotel-dates {
-    flex-wrap: wrap;
-  }
-}
-@media (max-width: 1023px) {
-  .journey-photo .glass-tag {
-    left: 12px;
-    right: auto;
-  }
-  .trip-grid {
-    grid-template-columns: 1fr;
-  }
-  .trip-card {
-    display: grid;
-    grid-template-columns: 0.7fr 1fr;
-  }
-  .trip-card-cover {
-    height: 100%;
-    min-height: 245px;
   }
 }
 @media (max-width: 767px) {
@@ -253,125 +117,8 @@
   .mobile-add {
     display: none;
   }
-  .section-title h2 {
-    font-size: 1.0625rem;
-  }
-  .section-title {
-    gap: 10px;
-  }
-  .journey-photo .glass-tag {
-    left: auto;
-    right: 12px;
-  }
-  .detail-aside {
-    display: flex;
-    flex-direction: column;
-  }
-  .detail-aside > * {
-    width: 100%;
-  }
-  .trip-card {
-    display: block;
-  }
-  .trip-card-cover {
-    height: 205px;
-    min-height: 0;
-  }
-  .trip-card-body {
-    padding: 20px;
-  }
-  .trip-card-body h2 {
-    font-size: 1.3rem;
-  }
-  .trip-detail-hero {
-    height: auto;
-    min-height: 300px;
-  }
-  .trip-detail-title {
-    padding: 80px 22px 24px;
-    left: 0;
-    bottom: 0;
-    right: 0;
-  }
-  .trip-detail-title h1 {
-    font-size: 1.7rem;
-    max-width: 22ch;
-  }
-  .hero-edit {
-    top: 16px;
-    right: 16px;
-    bottom: auto;
-  }
-  .hero-meta {
-    gap: 10px;
-    flex-direction: column;
-    align-items: flex-start;
-  }
-  .trip-tabs-heading {
-    flex-wrap: wrap;
-    gap: 12px;
-  }
   .encore-tabs [data-slot="tabs-trigger"] {
     padding: 6px 10px;
-  }
-  .trip-stats {
-    flex-wrap: wrap;
-  }
-  .itinerary-day {
-    gap: 12px;
-  }
-  .itinerary-date {
-    width: 44px;
-    flex-direction: column;
-    gap: 3px;
-  }
-  .day-content {
-    padding-left: 15px;
-  }
-  .itinerary-item {
-    flex-wrap: wrap;
-    gap: 10px;
-  }
-  .itinerary-item .concert-mark {
-    width: 32px;
-    height: 36px;
-  }
-  .itinerary-item > button {
-    margin-left: 42px;
-  }
-  .hotel-card {
-    padding: 18px;
-  }
-  .hotel-name {
-    flex-wrap: wrap;
-  }
-  .hotel-name h3 {
-    font-size: 1rem;
-  }
-  .hotel-dates {
-    gap: 16px;
-  }
-  .hotel-dates > .pill {
-    margin-left: 0;
-  }
-  .hotel-card > footer {
-    gap: 8px;
-  }
-  .hotel-card > footer > strong {
-    flex-basis: 100%;
-    margin-bottom: 8px;
-  }
-  .expense-list {
-    padding: 18px;
-  }
-  .expense-row {
-    flex-wrap: wrap;
-  }
-  .expense-row > strong {
-    margin-left: auto;
-  }
-  .expense-row .pill {
-    font-size: 0.75rem;
   }
   .app-toast {
     bottom: 100px;
@@ -402,12 +149,3 @@
 }
 
 /* Preferences override all material-specific component rules. */
-.solid .journey-photo .glass-tag {
-  background: #152a48;
-  backdrop-filter: none;
-}
-@supports not (backdrop-filter: blur(1px)) {
-  .journey-photo .glass-tag {
-    background: #152a48;
-  }
-}

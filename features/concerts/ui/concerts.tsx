@@ -32,6 +32,17 @@ import {
   Empty,
   Choice,
   panelClass,
+  backLinkClass,
+  detailGridClass,
+  sectionTitleClass,
+  sectionHeadingClass,
+  countLabelClass,
+  detailAsideClass,
+  sideSectionClass,
+  sideHeadingClass,
+  secondaryTextClass,
+  textLinkClass,
+  notesCopyClass,
 } from "@/components/encore-ui/ui";
 import { useRecordId } from "@/lib/encore/navigation";
 import { withBasePath } from "@/lib/encore/paths";
@@ -194,7 +205,7 @@ export function ConcertDetail() {
   const applications = state.applications.filter((a) => a.concertId === c.id);
   return (
     <>
-      <a href={withBasePath("/concerts")} className="back-link">
+      <a href={withBasePath("/concerts")} className={backLinkClass}>
         <ArrowLeft size={16} />
         All concerts
       </a>
@@ -245,12 +256,12 @@ export function ConcertDetail() {
           </strong>
         </span>
       </div>
-      <div className="detail-grid">
+      <div className={detailGridClass}>
         <div>
-          <div className="section-title">
-            <h2>
+          <div className={sectionTitleClass}>
+            <h2 className={sectionHeadingClass}>
               Ticket applications{" "}
-              <span className="count-label">{applications.length}</span>
+              <span className={countLabelClass}>{applications.length}</span>
             </h2>
             <Button
               variant="outline"
@@ -282,10 +293,10 @@ export function ConcertDetail() {
             )}
           </div>
         </div>
-        <aside className="detail-aside">
-          <section className="panel side-section">
-            <h2>Part of the journey</h2>
-            <p className="secondary">
+        <aside className={detailAsideClass}>
+          <section className={sideSectionClass}>
+            <h2 className={sideHeadingClass}>Part of the journey</h2>
+            <p className={secondaryTextClass}>
               Keep this performance with your travel plans.
             </p>
             <Choice
@@ -311,7 +322,7 @@ export function ConcertDetail() {
             />
             {c.tripId && (
               <a
-                className="text-link"
+                className={cn(textLinkClass, "mt-0.5")}
                 href={withBasePath("/trips/" + c.tripId)}
               >
                 Open trip
@@ -319,12 +330,19 @@ export function ConcertDetail() {
               </a>
             )}
           </section>
-          <section className="panel side-section">
-            <div className="section-title">
-              <h2>Little details</h2>
+          <section className={sideSectionClass}>
+            <div className={cn(sectionTitleClass, "mb-0")}>
+              <h2
+                className={cn(
+                  sectionHeadingClass,
+                  "text-[0.91rem] font-semibold max-md:text-[1.0625rem]",
+                )}
+              >
+                Little details
+              </h2>
               <Pencil size={16} />
             </div>
-            <p className="notes-copy">
+            <p className={notesCopyClass}>
               {c.notes ||
                 "No notes yet. Add venue details, reminders, or anything useful for the day."}
             </p>

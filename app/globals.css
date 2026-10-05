@@ -2,11 +2,12 @@
 @import "tw-animate-css";
 @import "./styles/vendor/shadcn-tailwind-4.13.0.css";
 @import "./styles/shell.css";
-@import "./styles/overview.css";
 @import "./styles/features.css";
 @import "./styles/responsive.css";
 @import "./styles/wallet.css";
 @custom-variant dark (&:where(.dark, .dark *));
+/* "Reduce transparency" setting: solid surfaces instead of glass. */
+@custom-variant solid (&:where(.solid, .solid *));
 :root {
   --background: #f4f6fa;
   --foreground: #14233e;

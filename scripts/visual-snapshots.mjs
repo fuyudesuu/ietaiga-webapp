@@ -71,6 +71,18 @@ const states = [
       page.getByRole("button", { name: "1 day before" }).first().click(),
   },
   {
+    name: "trip-stays-tab",
+    route: "/trips/autumn",
+    fullPage: true,
+    open: (page) => page.getByRole("tab", { name: /Stays/ }).click(),
+  },
+  {
+    name: "trip-expenses-tab",
+    route: "/trips/autumn",
+    fullPage: true,
+    open: (page) => page.getByRole("tab", { name: "Expenses" }).click(),
+  },
+  {
     name: "wallet-card-open",
     route: "/",
     phoneOnly: true,
@@ -141,6 +153,7 @@ async function capture(dir) {
           await page.waitForTimeout(600);
           await page.screenshot({
             path: join(dir, `${theme.name}-${width}-state-${state.name}.png`),
+            fullPage: state.fullPage ?? false,
           });
           count++;
         }

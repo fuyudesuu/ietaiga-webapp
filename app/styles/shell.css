@@ -200,74 +200,8 @@
   border-radius: 16px;
   box-shadow: none;
 }
-.section-title {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 18px;
-}
-.section-title h2 {
-  font-size: 1.125rem;
-  font-weight: 650;
-  letter-spacing: -0.02em;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-.text-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  font-size: 0.875rem;
-  font-weight: 550;
-  color: var(--primary);
-}
-.text-link:hover {
-  text-decoration: underline;
-}
-.count-label {
-  display: inline-grid;
-  place-items: center;
-  min-width: 23px;
-  height: 23px;
-  padding: 0 6px;
-  background: var(--muted);
-  color: var(--muted-foreground);
-  font-size: 0.75rem;
-  border-radius: 50%;
-  font-weight: 500;
-}
-.secondary {
-  color: var(--muted-foreground);
-  font-size: 0.875rem;
-}
 .separator {
   padding: 0 4px;
-}
-.amber {
-  background: var(--amber-bg);
-  color: var(--amber-text);
-}
-.blue {
-  background: var(--blue-bg);
-  color: var(--blue-text);
-}
-.mint {
-  background: var(--mint-bg);
-  color: var(--mint-text);
-}
-.lilac {
-  background: var(--lilac-bg);
-  color: var(--lilac-text);
-}
-.pink {
-  background: var(--pink-bg);
-  color: var(--pink-text);
-}
-.peach {
-  background: var(--peach-bg);
-  color: var(--peach-text);
 }
 .glass {
   background: #152a48c9;
@@ -284,7 +218,6 @@
   background: var(--card);
   backdrop-filter: none;
 }
-.solid .glass-tag,
 .solid .glass {
   background: #152a48;
   backdrop-filter: none;

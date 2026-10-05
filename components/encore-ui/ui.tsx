@@ -24,6 +24,57 @@ export const formErrorClass =
 export const formCalloutClass =
   "rounded-md bg-amber-bg p-[17px] text-[0.8rem] text-amber-text [&_p]:mt-1 [&_p]:text-small";
 
+/** Heading row above a section, with optional actions on the right. */
+export const sectionTitleClass =
+  "flex items-center justify-between gap-3 mb-4.5 max-md:gap-2.5";
+/** The heading inside a section title row. */
+export const sectionHeadingClass =
+  "flex items-center gap-2.5 text-lead font-[650] tracking-[-0.02em] max-md:text-[1.0625rem]";
+/** A compact link with an icon. */
+export const textLinkClass =
+  "inline-flex items-center gap-[7px] text-small font-[550] text-primary hover:underline";
+/** A small round count badge next to a heading. */
+export const countLabelClass =
+  "inline-grid h-[23px] min-w-[23px] place-items-center rounded-full bg-muted px-1.5 text-caption font-medium text-muted-foreground";
+/** Quiet supporting text. */
+export const secondaryTextClass = "text-small text-muted-foreground";
+/** "← All concerts" style link above a detail page. */
+export const backLinkClass =
+  "mb-6 inline-flex items-center gap-1.5 text-[0.8rem] text-muted-foreground hover:text-primary";
+/** Notes paragraph in a side panel. */
+export const notesCopyClass = "text-small leading-[1.85] text-muted-foreground";
+/** Detail page: main column and a side column. */
+export const detailGridClass =
+  "grid grid-cols-[minmax(0,1fr)_290px] gap-7 max-[1251px]:grid-cols-[minmax(0,1fr)]";
+export const detailAsideClass =
+  "flex flex-col gap-[22px] max-[1251px]:grid max-[1251px]:grid-cols-[repeat(2,minmax(0,1fr))] max-[1251px]:items-start max-md:flex max-md:flex-col max-md:*:w-full";
+/** A small panel in the side column. */
+export const sideSectionClass = cn(
+  panelClass,
+  "flex flex-col gap-3.5 p-[23px]",
+);
+export const sideHeadingClass = "text-[0.91rem] font-semibold";
+
+/** Frosted label over a photo; solid when transparency is reduced. */
+export function GlassTag({
+  children,
+  className,
+}: {
+  children: ReactNode;
+  className?: string;
+}) {
+  return (
+    <span
+      className={cn(
+        "inline-flex items-center gap-1.25 rounded-[20px] border border-[#ffffff50] bg-[#152a353b] px-2.5 py-1.5 text-small leading-[1.3] text-white backdrop-blur-[12px] solid:bg-[#152a48] solid:backdrop-blur-none",
+        className,
+      )}
+    >
+      {children}
+    </span>
+  );
+}
+
 /** Status colours shared by pills and concert marks (tokens in globals.css). */
 export const toneClasses: Record<string, string> = {
   neutral: "",
@@ -229,10 +280,10 @@ export function SectionTitle({
   link?: string;
 }) {
   return (
-    <div className="section-title">
-      <h2>{children}</h2>
+    <div className={sectionTitleClass}>
+      <h2 className={sectionHeadingClass}>{children}</h2>
       {href && (
-        <a className="text-link" href={withBasePath(href)}>
+        <a className={textLinkClass} href={withBasePath(href)}>
           {link}
           <ArrowUpRight size={15} />
         </a>

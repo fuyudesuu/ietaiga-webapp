@@ -35,6 +35,12 @@ import {
   DateTile,
   ConcertMark,
   panelClass,
+  sectionTitleClass,
+  GlassTag,
+  sectionHeadingClass,
+  countLabelClass,
+  secondaryTextClass,
+  textLinkClass,
 } from "@/components/encore-ui/ui";
 import { cn } from "@/lib/utils";
 import { withBasePath } from "@/lib/encore/paths";
@@ -124,12 +130,12 @@ function DesktopOverview() {
       <div className="grid grid-cols-[minmax(0,1.15fr)_minmax(330px,0.85fr)] items-start gap-[30px] max-[1251px]:grid-cols-[minmax(0,1.15fr)_minmax(300px,0.85fr)] max-[1251px]:gap-6 max-lg:grid-cols-[minmax(0,1fr)] min-[1550px]:gap-11">
         <div className="flex min-w-0 flex-col gap-8">
           <section aria-labelledby="attention-title">
-            <div className="section-title">
-              <h2 id="attention-title">
+            <div className={sectionTitleClass}>
+              <h2 id="attention-title" className={sectionHeadingClass}>
                 Needs your attention{" "}
-                <span className="count-label">{attention.length}</span>
+                <span className={countLabelClass}>{attention.length}</span>
               </h2>
-              <span className="secondary">Japan time</span>
+              <span className={secondaryTextClass}>Japan time</span>
             </div>
             <div className="border-t border-border">
               {attention.map(({ application: a, concert: c, kind, date }) => (
@@ -202,7 +208,7 @@ function DesktopOverview() {
                     ) : (
                       <a
                         href={withBasePath("/concerts/" + c.id)}
-                        className="text-link"
+                        className={textLinkClass}
                       >
                         {kind === "result" ? "Check result" : "View round"}
                         <ChevronRight size={15} />
@@ -228,8 +234,10 @@ function DesktopOverview() {
           </section>
           <section aria-labelledby="concert-calendar-title">
             <Tabs value={calendarView} onValueChange={setCalendarView}>
-              <div className="section-title flex-wrap">
-                <h2 id="concert-calendar-title">Your concert calendar</h2>
+              <div className={cn(sectionTitleClass, "flex-wrap")}>
+                <h2 id="concert-calendar-title" className={sectionHeadingClass}>
+                  Your concert calendar
+                </h2>
                 <TabsList className="encore-tabs">
                   <TabsTrigger value="upcoming">Upcoming</TabsTrigger>
                   <TabsTrigger value="all">All</TabsTrigger>
@@ -299,7 +307,10 @@ function DesktopOverview() {
                 </div>
               </TabsContent>
             </Tabs>
-            <a href={withBasePath("/concerts")} className="text-link mt-5">
+            <a
+              href={withBasePath("/concerts")}
+              className={cn(textLinkClass, "mt-5")}
+            >
               See all concerts <ArrowRight size={15} />
             </a>
           </section>
@@ -326,15 +337,15 @@ function DesktopOverview() {
           {next ? (
             <section className="overflow-hidden rounded-[16px] border border-border bg-card max-lg:grid max-lg:grid-cols-[0.7fr_1fr]">
               {next.cities.toLowerCase().includes("tokyo") ? (
-                <div className="journey-photo relative h-[210px] overflow-hidden max-lg:h-full max-lg:min-h-[320px] min-[1550px]:h-[245px]">
+                <div className="relative h-[210px] overflow-hidden max-lg:h-full max-lg:min-h-[320px] min-[1550px]:h-[245px]">
                   <img
                     className="size-full object-cover object-[50%_40%] max-lg:object-[55%]"
                     src={withBasePath("/tokyo.jpg")}
                     alt="Tokyo Tower above the city at dusk"
                   />
-                  <span className="glass-tag">
+                  <GlassTag className="absolute top-[14px] right-[14px] border-[#ffffff3b] bg-[#122a48b8] px-3 py-2 text-label leading-[1.3] backdrop-blur-[16px] max-lg:right-auto max-lg:left-3 solid:bg-[#152a48] solid:backdrop-blur-none not-supports-[backdrop-filter:blur(1px)]:bg-[#152a48]">
                     {day(next.start)} — {day(next.end)}
-                  </span>
+                  </GlassTag>
                 </div>
               ) : (
                 <div className="flex items-center justify-between bg-secondary px-6 py-8 text-secondary-foreground">
@@ -385,7 +396,9 @@ function DesktopOverview() {
                     </a>
                   ))}
                   {!tripConcerts.length && (
-                    <p className="secondary">No concerts attached yet.</p>
+                    <p className={secondaryTextClass}>
+                      No concerts attached yet.
+                    </p>
                   )}
                 </div>
                 <div className="border-t border-border pt-4">
