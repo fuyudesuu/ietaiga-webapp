@@ -42,15 +42,18 @@ export const toneClasses: Record<string, string> = {
 export function Pill({
   children,
   tone = "neutral",
+  className,
 }: {
   children: ReactNode;
   tone?: string;
+  className?: string;
 }) {
   return (
     <span
       className={cn(
         "pill inline-flex max-w-full items-center gap-1.25 rounded-[6px] bg-muted px-2 py-1 text-label leading-[1.4] font-[550] text-muted-foreground",
         toneClasses[tone],
+        className,
       )}
     >
       {children}
@@ -135,13 +138,36 @@ export function Choice({
     </Select>
   );
 }
-export function DateTile({ date }: { date: string }) {
+/** Month over day; "calendar" puts a larger day above the month. */
+export function DateTile({
+  date,
+  variant = "default",
+}: {
+  date: string;
+  variant?: "default" | "calendar";
+}) {
+  const calendar = variant === "calendar";
   return (
-    <div className="date-tile flex min-w-9 shrink-0 flex-col items-center leading-[1.3] tabular-nums">
-      <span className="text-small tracking-[0.08em] text-muted-foreground uppercase">
+    <div
+      className={cn(
+        "date-tile flex min-w-9 shrink-0 flex-col items-center leading-[1.3] tabular-nums",
+        calendar && "w-auto min-w-0 flex-col-reverse gap-0.5",
+      )}
+    >
+      <span
+        className={cn(
+          "text-small tracking-[0.08em] text-muted-foreground uppercase",
+          calendar && "text-caption",
+        )}
+      >
         {date ? day(date, { month: "short" }) : "TBA"}
       </span>
-      <strong className="mt-0.5 text-[1.3rem] font-medium tabular-nums">
+      <strong
+        className={cn(
+          "mt-0.5 text-[1.3rem] font-medium tabular-nums",
+          calendar && "text-[1.7rem] font-[550] tracking-[-0.04em]",
+        )}
+      >
         {date ? day(date, { day: "2-digit" }) : "—"}
       </strong>
     </div>
@@ -150,9 +176,11 @@ export function DateTile({ date }: { date: string }) {
 export function ConcertMark({
   concert,
   large = false,
+  className,
 }: {
   concert: Concert;
   large?: boolean;
+  className?: string;
 }) {
   return (
     <div
@@ -163,6 +191,7 @@ export function ConcertMark({
           ? "h-[100px] w-[90px] rounded-[18px] max-md:h-16 max-md:w-[58px]"
           : "h-12 w-[43px] rounded-[9px]",
         toneClasses[concert.color],
+        className,
       )}
     >
       <Music2 size={large ? 36 : 22} strokeWidth={1.5} />

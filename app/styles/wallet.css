@@ -3,9 +3,6 @@
   display: none;
 }
 @media (max-width: 767px) {
-  .desktop-overview {
-    display: none;
-  }
   .mobile-wallet {
     display: block;
     max-width: 500px;

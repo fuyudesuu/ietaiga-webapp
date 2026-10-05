@@ -186,11 +186,6 @@
   padding: 35px 36px 48px;
   min-height: calc(100vh - 134px);
 }
-.heading-actions {
-  display: flex;
-  gap: 10px;
-  flex-shrink: 0;
-}
 .workspace-footer {
   display: flex;
   justify-content: space-between;

@@ -187,18 +187,6 @@
   .page-content {
     padding-top: 46px;
   }
-  .agenda-layout {
-    gap: 44px;
-  }
-  .journey-photo {
-    height: 245px;
-  }
-  .deadline-row {
-    padding: 25px 0;
-  }
-  .stage-row {
-    padding: 25px 0;
-  }
 }
 @media (max-width: 1250px) {
   .page-content {
@@ -207,33 +195,6 @@
   .topbar {
     margin-left: 20px;
     margin-right: 20px;
-  }
-  .agenda-layout {
-    grid-template-columns: minmax(0, 1.15fr) minmax(300px, 0.85fr);
-    gap: 24px;
-  }
-  .deadline-row {
-    grid-template-columns: 22px minmax(0, 1fr);
-  }
-  .deadline-action {
-    grid-column: 2;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: 3px;
-  }
-  .stage-row {
-    grid-template-columns: 38px 36px minmax(0, 1fr);
-    gap: 10px;
-  }
-  .stage-row .concert-mark {
-    width: 36px;
-    height: 38px;
-  }
-  .stage-status {
-    grid-column: 3;
-    margin-top: -3px;
-    justify-content: space-between;
   }
   .detail-grid {
     grid-template-columns: minmax(0, 1fr);
@@ -257,26 +218,6 @@
   }
 }
 @media (max-width: 1023px) {
-  .agenda-layout {
-    grid-template-columns: minmax(0, 1fr);
-  }
-  .journey-column {
-    max-width: none;
-  }
-  .journey-document {
-    display: grid;
-    grid-template-columns: 0.7fr 1fr;
-  }
-  .journey-photo {
-    height: 100%;
-    min-height: 320px;
-  }
-  .journey-photo img {
-    object-position: 55%;
-  }
-  .journey-route {
-    padding-top: 18px;
-  }
   .journey-photo .glass-tag {
     left: 12px;
     right: auto;
@@ -291,20 +232,6 @@
   .trip-card-cover {
     height: 100%;
     min-height: 245px;
-  }
-  .heading-actions {
-    flex-direction: column-reverse;
-  }
-  .stage-row {
-    grid-template-columns: 44px 42px minmax(0, 1fr) auto;
-  }
-  .stage-row .concert-mark {
-    width: 42px;
-    height: 42px;
-  }
-  .stage-status {
-    grid-column: auto;
-    margin: 0;
   }
   .concert-row .pill {
     font-size: 0.75rem;
@@ -338,15 +265,6 @@
   .page-content {
     padding: 28px 20px 112px;
     min-height: calc(100dvh - 100px);
-  }
-  .heading-actions {
-    flex-direction: row;
-  }
-  .page-heading > .heading-actions {
-    width: 100%;
-  }
-  .heading-actions > button {
-    flex: 1;
   }
   .workspace-footer {
     padding: 0 20px 110px;
@@ -399,77 +317,9 @@
   .section-title {
     gap: 10px;
   }
-  .deadline-row {
-    padding: 18px 0;
-  }
-  .deadline-title {
-    font-size: 1rem;
-  }
-  .deadline-details p {
-    font-size: 0.8125rem;
-  }
-  .deadline-action {
-    margin-top: 6px;
-  }
-  .deadline-action strong {
-    font-size: 1rem;
-  }
-  .deadline-action .text-link {
-    min-height: 38px;
-  }
-  .agenda-column {
-    gap: 30px;
-  }
-  .stage-section .section-title {
-    align-items: center;
-  }
-  .stage-section .section-title h2 {
-    width: 100%;
-  }
-  .stage-row {
-    grid-template-columns: 37px 36px minmax(0, 1fr);
-    gap: 10px;
-    padding: 18px 0;
-  }
-  .stage-row .concert-mark {
-    width: 36px;
-    height: 38px;
-  }
-  .stage-copy h3 {
-    font-size: 0.9375rem;
-  }
-  .stage-copy p {
-    font-size: 0.8125rem;
-  }
-  .stage-copy > span {
-    font-size: 0.8125rem;
-  }
-  .stage-status {
-    grid-column: 3;
-    justify-content: space-between;
-  }
-  .journey-document {
-    display: block;
-  }
-  .journey-photo {
-    height: 190px;
-    min-height: 0;
-  }
   .journey-photo .glass-tag {
     left: auto;
     right: 12px;
-  }
-  .journey-body {
-    padding: 20px;
-  }
-  .journey-title h2 {
-    font-size: 1.5rem;
-  }
-  .reminder-strip {
-    align-items: flex-start;
-  }
-  .reminder-strip p {
-    font-size: 0.8125rem;
   }
   .filter-bar {
     flex-wrap: wrap;
