@@ -58,6 +58,8 @@ import {
   sectionTitleClass,
   sideHeadingClass,
   sideSectionClass,
+  tabsListClass,
+  tabsTriggerClass,
 } from "@/components/encore-ui/ui";
 import { withBasePath } from "@/lib/encore/paths";
 import { cn } from "@/lib/utils";
@@ -267,12 +269,16 @@ export function TripDetail() {
         <div>
           <Tabs defaultValue="itinerary">
             <div className="mb-[22px] flex items-center justify-between gap-3 max-md:flex-wrap max-md:gap-3">
-              <TabsList className="encore-tabs">
-                <TabsTrigger value="itinerary">Itinerary</TabsTrigger>
-                <TabsTrigger value="stays">
+              <TabsList className={tabsListClass}>
+                <TabsTrigger className={tabsTriggerClass} value="itinerary">
+                  Itinerary
+                </TabsTrigger>
+                <TabsTrigger className={tabsTriggerClass} value="stays">
                   Stays <span className={countLabelClass}>{hotels.length}</span>
                 </TabsTrigger>
-                <TabsTrigger value="expenses">Expenses</TabsTrigger>
+                <TabsTrigger className={tabsTriggerClass} value="expenses">
+                  Expenses
+                </TabsTrigger>
               </TabsList>
               <Button
                 variant="outline"

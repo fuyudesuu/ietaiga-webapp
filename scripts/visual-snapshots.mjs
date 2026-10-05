@@ -83,6 +83,12 @@ const states = [
     open: (page) => page.getByRole("tab", { name: "Expenses" }).click(),
   },
   {
+    name: "saved-toast",
+    route: "/concerts/idol",
+    open: (page) =>
+      page.getByRole("button", { name: "Mark submitted" }).first().click(),
+  },
+  {
     name: "wallet-card-open",
     route: "/",
     phoneOnly: true,

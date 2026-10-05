@@ -55,6 +55,13 @@ export const sideSectionClass = cn(
 );
 export const sideHeadingClass = "text-[0.91rem] font-semibold";
 
+/** Segmented tabs (shadcn TabsList / TabsTrigger). The trigger needs an
+    important size: shadcn controls inherit the page font via an unlayered rule. */
+export const tabsListClass =
+  "rounded-md bg-secondary p-1 group-data-[orientation=horizontal]/tabs:h-[43px]";
+export const tabsTriggerClass =
+  "min-h-[34px] rounded-[7px] px-[13px] py-1.5 text-small! shadow-none data-[state=active]:bg-card data-[state=active]:text-primary group-data-[variant=default]/tabs-list:data-[state=active]:shadow-none dark:data-[state=active]:bg-card dark:data-[state=active]:text-primary max-md:px-2.5";
+
 /** Frosted label over a photo; solid when transparency is reduced. */
 export function GlassTag({
   children,
@@ -84,8 +91,9 @@ export const toneClasses: Record<string, string> = {
   lilac: "bg-lilac-bg text-lilac-text",
   pink: "bg-pink-bg text-pink-text",
   peach: "bg-peach-bg text-peach-text",
-  // Frosted material over photos; stays global (app/styles/shell.css).
-  glass: "glass",
+  // Frosted material over photos.
+  glass:
+    "bg-[#152a48c9] text-white backdrop-blur-[18px] solid:bg-[#152a48] solid:backdrop-blur-none",
 };
 
 // `pill`, `date-tile` and `concert-mark` stay as hooks for the screen-specific

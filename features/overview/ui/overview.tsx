@@ -41,6 +41,8 @@ import {
   countLabelClass,
   secondaryTextClass,
   textLinkClass,
+  tabsListClass,
+  tabsTriggerClass,
 } from "@/components/encore-ui/ui";
 import { cn } from "@/lib/utils";
 import { withBasePath } from "@/lib/encore/paths";
@@ -238,9 +240,13 @@ function DesktopOverview() {
                 <h2 id="concert-calendar-title" className={sectionHeadingClass}>
                   Your concert calendar
                 </h2>
-                <TabsList className="encore-tabs">
-                  <TabsTrigger value="upcoming">Upcoming</TabsTrigger>
-                  <TabsTrigger value="all">All</TabsTrigger>
+                <TabsList className={tabsListClass}>
+                  <TabsTrigger className={tabsTriggerClass} value="upcoming">
+                    Upcoming
+                  </TabsTrigger>
+                  <TabsTrigger className={tabsTriggerClass} value="all">
+                    All
+                  </TabsTrigger>
                 </TabsList>
               </div>
               <TabsContent value={calendarView}>
