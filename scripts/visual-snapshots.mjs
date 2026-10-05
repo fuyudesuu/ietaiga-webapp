@@ -111,7 +111,10 @@ const states = [
     fullPage: true,
     open: async (page) => {
       await page.getByRole("tab", { name: /Trips/ }).click();
-      await page.getByRole("button", { name: /Open details$/ }).last().click();
+      await page
+        .getByRole("button", { name: /Open details$/ })
+        .last()
+        .click();
     },
   },
 ];
