@@ -162,6 +162,9 @@
   textarea {
     font: inherit;
   }
+  a {
+    text-decoration: none;
+  }
 }
 body {
   margin: 0;
@@ -183,9 +186,6 @@ button {
 }
 button:disabled {
   cursor: default;
-}
-a {
-  text-decoration: none;
 }
 /* shadcn controls keep inheriting the page font, as before the move to
    utilities; their skins below then set sizes. */

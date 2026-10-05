@@ -32,7 +32,29 @@ import {
 } from "@/components/ui/alert-dialog";
 import { usePlanner } from "@/lib/encore/store";
 import { type Preferences, type Currency } from "@/lib/encore/model";
-import { PageHeading, Choice, Pill } from "@/components/encore-ui/ui";
+import {
+  PageHeading,
+  Choice,
+  Pill,
+  formErrorClass,
+  formHelpClass,
+  panelClass,
+} from "@/components/encore-ui/ui";
+import { cn } from "@/lib/utils";
+
+// Shared pieces of the settings sections.
+const sectionClass = cn(panelClass, "p-[26px] max-md:p-5");
+const headingIconClass = "mt-[3px] w-[19px] text-primary";
+const sectionHeadingClass = "mb-6 flex items-start gap-[13px]";
+const sectionTitleClass = "text-lead font-[620] tracking-[-0.2px]";
+const sectionHintClass =
+  "mt-1.25 text-small leading-[1.6] text-muted-foreground";
+const settingRowClass =
+  "flex items-center justify-between gap-5 border-t border-border py-4.5 last:pb-0 max-md:flex-wrap max-md:gap-3.5";
+const settingLabelClass = "text-small font-medium";
+const settingHintClass =
+  "mt-[3px] text-small leading-[1.6] text-muted-foreground";
+const settingChoiceClass = "w-[200px] shrink-0 max-lg:w-[185px] max-md:w-full";
 export function Settings() {
   const { state, update, notify, reset } = usePlanner();
   const p = state.preferences;
@@ -88,24 +110,31 @@ export function Settings() {
         title="Settings"
         subtitle="Time zones, appearance, and reminder preferences."
       />
-      <div className="settings-layout">
-        <div className="settings-main">
-          <section className="panel settings-section">
-            <div className="settings-heading">
-              <Globe2 />
+      <div className="grid grid-cols-[minmax(0,1fr)_275px] gap-7 max-[1251px]:grid-cols-[minmax(0,1fr)]">
+        <div className="flex flex-col gap-6">
+          <section className={sectionClass}>
+            <div className={sectionHeadingClass}>
+              <Globe2 className={headingIconClass} />
               <div>
-                <h2>Your defaults</h2>
-                <p>Keep local time clear, even when you are far from home.</p>
+                <h2 className={sectionTitleClass}>Your defaults</h2>
+                <p className={sectionHintClass}>
+                  Keep local time clear, even when you are far from home.
+                </p>
               </div>
             </div>
-            <div className="setting-row">
+            <div className={settingRowClass}>
               <div>
-                <label htmlFor="zone-setting">Display time zone</label>
-                <p>Original Japanese deadlines remain visible.</p>
+                <label htmlFor="zone-setting" className={settingLabelClass}>
+                  Display time zone
+                </label>
+                <p className={settingHintClass}>
+                  Original Japanese deadlines remain visible.
+                </p>
               </div>
               <Choice
                 id="zone-setting"
                 label="Display time zone"
+                className={settingChoiceClass}
                 value={p.zone}
                 onChange={(zone) => pref({ zone })}
                 options={[
@@ -116,30 +145,35 @@ export function Settings() {
                 ]}
               />
             </div>
-            <div className="setting-row">
+            <div className={settingRowClass}>
               <div>
-                <label htmlFor="currency-setting">Default currency</label>
-                <p>Each cost keeps its original currency.</p>
+                <label htmlFor="currency-setting" className={settingLabelClass}>
+                  Default currency
+                </label>
+                <p className={settingHintClass}>
+                  Each cost keeps its original currency.
+                </p>
               </div>
               <Choice
                 id="currency-setting"
                 label="Default currency"
+                className={settingChoiceClass}
                 value={p.currency}
                 onChange={(v) => pref({ currency: v as Currency })}
                 options={["JPY", "USD", "AUD", "SGD"]}
               />
             </div>
           </section>
-          <section className="panel settings-section">
-            <div className="settings-heading">
-              <Palette />
+          <section className={sectionClass}>
+            <div className={sectionHeadingClass}>
+              <Palette className={headingIconClass} />
               <div>
-                <h2>Look & feel</h2>
-                <p>A little personal touch.</p>
+                <h2 className={sectionTitleClass}>Look & feel</h2>
+                <p className={sectionHintClass}>A little personal touch.</p>
               </div>
             </div>
             <RadioGroup
-              className="theme-options"
+              className="mb-6 grid grid-cols-3 gap-3"
               value={p.theme}
               onValueChange={(v) => pref({ theme: v as Preferences["theme"] })}
               aria-label="Color theme"
@@ -151,21 +185,28 @@ export function Settings() {
               ].map((t) => (
                 <label
                   key={t.id}
-                  className={
-                    "theme-option " + (p.theme === t.id ? "selected" : "")
-                  }
+                  className={cn(
+                    "relative flex cursor-pointer flex-col items-center gap-2.5 rounded-[12px] border border-border p-5 text-muted-foreground focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-ring max-md:gap-2 max-md:px-2 max-md:py-[18px]",
+                    p.theme === t.id && "border-primary bg-accent text-primary",
+                  )}
                 >
                   <RadioGroupItem value={t.id} className="sr-only" />
                   <t.icon size={22} />
-                  <span>{t.label}</span>
-                  {p.theme === t.id && <Check size={14} />}
+                  <span className="text-small">{t.label}</span>
+                  {p.theme === t.id && (
+                    <Check size={14} className="absolute top-2.5 right-2.5" />
+                  )}
                 </label>
               ))}
             </RadioGroup>
-            <div className="setting-row">
+            <div className={settingRowClass}>
               <div>
-                <label htmlFor="solid-setting">Reduce transparency</label>
-                <p>Use solid surfaces for extra clarity.</p>
+                <label htmlFor="solid-setting" className={settingLabelClass}>
+                  Reduce transparency
+                </label>
+                <p className={settingHintClass}>
+                  Use solid surfaces for extra clarity.
+                </p>
               </div>
               <Switch
                 id="solid-setting"
@@ -174,12 +215,14 @@ export function Settings() {
               />
             </div>
           </section>
-          <section id="reminders" className="panel settings-section">
-            <div className="settings-heading">
-              <Bell />
+          <section id="reminders" className={sectionClass}>
+            <div className={sectionHeadingClass}>
+              <Bell className={headingIconClass} />
               <div>
-                <h2>Your reminders, your way.</h2>
-                <p>Choose where your important deadlines find you.</p>
+                <h2 className={sectionTitleClass}>Your reminders, your way.</h2>
+                <p className={sectionHintClass}>
+                  Choose where your important deadlines find you.
+                </p>
               </div>
             </div>
             <RadioGroup
@@ -192,7 +235,7 @@ export function Settings() {
                 setTestMessage("");
               }}
               aria-label="Reminder destination"
-              className="destination-options"
+              className="flex flex-col gap-2.5"
             >
               {[
                 {
@@ -216,28 +259,34 @@ export function Settings() {
               ].map((d) => (
                 <label
                   key={d.id}
-                  className={
-                    "destination-option " +
-                    (p.destination === d.id ? "selected" : "")
-                  }
+                  className={cn(
+                    "flex cursor-pointer items-center gap-3 rounded-[12px] border border-border p-4",
+                    p.destination === d.id && "border-primary bg-accent",
+                  )}
                 >
-                  <span className="destination-icon">
+                  <span className="text-primary">
                     <d.icon size={20} />
                   </span>
-                  <span>
-                    <strong>{d.title}</strong>
-                    <small>{d.description}</small>
+                  <span className="min-w-0 flex-1">
+                    <strong className="block text-small font-[550]">
+                      {d.title}
+                    </strong>
+                    <small className="mt-[3px] block text-small text-muted-foreground">
+                      {d.description}
+                    </small>
                   </span>
                   <RadioGroupItem value={d.id} />
                 </label>
               ))}
             </RadioGroup>
             {p.destination !== "none" && (
-              <div className="connection-area">
+              <div className="mt-[23px]">
                 {p.destination === "channel" && (
                   <>
-                    <label className="form-field">
-                      <span>Demo channel name</span>
+                    <label className="mb-4.5 flex min-w-0 flex-col gap-2">
+                      <span className="text-small font-medium">
+                        Demo channel name
+                      </span>
                       <Input
                         value={p.channel}
                         onChange={(e) =>
@@ -246,12 +295,17 @@ export function Settings() {
                         placeholder="my-concert-plans"
                       />
                     </label>
-                    <div className="setting-row">
+                    <div className={settingRowClass}>
                       <div>
-                        <label htmlFor="show-title">
+                        <label
+                          htmlFor="show-title"
+                          className={settingLabelClass}
+                        >
                           Include concert title
                         </label>
-                        <p>Channel members will be able to see it.</p>
+                        <p className={settingHintClass}>
+                          Channel members will be able to see it.
+                        </p>
                       </div>
                       <Switch
                         id="show-title"
@@ -261,30 +315,39 @@ export function Settings() {
                     </div>
                   </>
                 )}
-                <div className="message-preview">
-                  <span className="discord-avatar">e.</span>
-                  <div>
-                    <strong>
-                      encore <small>APP</small>
+                <div className="mt-5 mb-3 flex gap-3 rounded-[12px] bg-muted p-5 max-md:gap-[9px] max-md:p-3.5">
+                  <span className="grid size-[34px] shrink-0 place-items-center rounded-full bg-primary text-[1.25rem] font-semibold text-primary-foreground">
+                    e.
+                  </span>
+                  <div className="min-w-0 flex-1">
+                    <strong className="text-[0.8rem]">
+                      encore{" "}
+                      <small className="ml-[3px] rounded-[3px] bg-[#74808d] px-1 py-px text-small text-white">
+                        APP
+                      </small>
                     </strong>
-                    <span className="message-time">Today at 12:00</span>
-                    <div className="discord-message">
-                      <strong>
+                    <span className="ml-[9px] text-small text-muted-foreground">
+                      Today at 12:00
+                    </span>
+                    <div className="mt-[7px] rounded-[4px] border-l-[3px] border-primary bg-card p-3">
+                      <strong className="block text-small">
                         {p.destination === "channel" && !p.revealTitle
                           ? "A saved deadline needs attention"
                           : "THE IDOLM@STER · Payment deadline"}
                       </strong>
-                      <p>1 Oct, 18:00 JST</p>
-                      <span>Open in Encore ↗</span>
+                      <p className="my-1.5 text-small">1 Oct, 18:00 JST</p>
+                      <span className="text-small text-primary">
+                        Open in Encore ↗
+                      </span>
                     </div>
                   </div>
                 </div>
-                <p className="form-help">
+                <p className={formHelpClass}>
                   Preview only. No real Discord account, webhook, or bot is
                   connected. Booking references and private notes are never
                   included.
                 </p>
-                <div className="connection-actions">
+                <div className="mt-5 flex items-center gap-3 max-md:flex-wrap">
                   <Button
                     className="primary-button"
                     disabled={
@@ -294,7 +357,7 @@ export function Settings() {
                     onClick={test}
                   >
                     {testing ? (
-                      <LoaderCircle className="spin" size={16} />
+                      <LoaderCircle className="animate-spin" size={16} />
                     ) : (
                       <MessageCircle size={16} />
                     )}{" "}
@@ -306,15 +369,21 @@ export function Settings() {
                 </div>
                 {testMessage && (
                   <p
-                    className={blocked ? "form-error" : "test-success"}
+                    className={
+                      blocked
+                        ? formErrorClass
+                        : "py-3.5 text-[0.8rem] text-primary"
+                    }
                     role="status"
                   >
                     {testMessage}
                   </p>
                 )}
-                <details className="demo-controls">
-                  <summary>Demo failure scenario</summary>
-                  <label>
+                <details className="mt-[22px] text-small text-muted-foreground">
+                  <summary className="cursor-pointer">
+                    Demo failure scenario
+                  </summary>
+                  <label className="mt-4 flex items-center gap-3">
                     <Switch checked={blocked} onCheckedChange={setBlocked} />
                     Simulate blocked delivery on the next test
                   </label>
@@ -323,14 +392,21 @@ export function Settings() {
             )}
           </section>
           {state.deliveries.length > 0 && (
-            <section className="panel settings-section">
-              <h2>Recent activity</h2>
+            <section className={sectionClass}>
+              <h2 className="text-body font-[550] tracking-[-0.2px]">
+                Recent activity
+              </h2>
               {state.deliveries.map((d) => (
-                <div className="delivery-row" key={d.id}>
+                <div
+                  className="flex items-center gap-[13px] border-b border-border py-[17px] last:border-0 last:pb-0"
+                  key={d.id}
+                >
                   <MessageCircle size={17} />
-                  <span>
-                    <strong>{d.label}</strong>
-                    <small>
+                  <span className="flex-1">
+                    <strong className="text-[0.8rem] font-medium">
+                      {d.label}
+                    </strong>
+                    <small className="block text-small text-muted-foreground">
                       {d.destination} · {d.time}
                     </small>
                   </span>
@@ -342,20 +418,31 @@ export function Settings() {
             </section>
           )}
         </div>
-        <aside className="settings-aside">
-          <section className="panel profile-card">
-            <div className="avatar big">A</div>
-            <h2>Aki</h2>
-            <p>Personal demo space</p>
+        <aside className="flex flex-col gap-6 max-[1251px]:grid max-[1251px]:grid-cols-2 max-[1251px]:items-start max-md:flex max-md:flex-col max-md:*:w-full">
+          <section
+            className={cn(
+              panelClass,
+              "flex flex-col items-center gap-2.5 px-6 py-7",
+            )}
+          >
+            <div className="grid size-[68px] shrink-0 place-items-center rounded-full bg-secondary text-heading font-semibold text-secondary-foreground">
+              A
+            </div>
+            <h2 className="mt-1.25 text-[1.25rem] font-[550]">Aki</h2>
+            <p className="text-small text-muted-foreground">
+              Personal demo space
+            </p>
             <Pill>Sample account</Pill>
-            <div className="profile-disclaimer">
+            <div className="mt-[15px] flex items-start gap-[9px] border-t border-border pt-4.5 text-muted-foreground">
               <ShieldCheck size={18} />
-              <p>This is a design prototype. Use fictional information only.</p>
+              <p className="text-small leading-[1.8]">
+                This is a design prototype. Use fictional information only.
+              </p>
             </div>
           </section>
-          <section className="panel side-section">
-            <h2>Your sample data</h2>
-            <p className="secondary">
+          <section className={cn(panelClass, "flex flex-col gap-3.5 p-[23px]")}>
+            <h2 className="text-[0.91rem] font-semibold">Your sample data</h2>
+            <p className="text-small text-muted-foreground">
               Edits stay on this browser. You can take a copy or start fresh.
             </p>
             <Button variant="outline" onClick={exportDemo}>
@@ -391,13 +478,14 @@ export function Settings() {
               </AlertDialogContent>
             </AlertDialog>
           </section>
-          <p className="photo-credit">
+          <p className="px-5 text-small leading-[1.8] text-muted-foreground">
             Tokyo photograph by Kazuend, CC0.
             <br />
             <a
               href="https://commons.wikimedia.org/wiki/File:Shiba-koen,_aerial_view_on_Tokyo_Tower_at_dusk_(Unsplash).jpg"
               target="_blank"
               rel="noreferrer"
+              className="underline"
             >
               Photo source ↗
             </a>

@@ -12,6 +12,18 @@ import {
 import { type ReactNode } from "react";
 import { Concert, day } from "@/lib/encore/model";
 import { withBasePath } from "@/lib/encore/paths";
+/** Card surface used by most sections. */
+export const panelClass =
+  "rounded-[16px] border border-border bg-card shadow-none";
+/** Supporting text under a form or setting. */
+export const formHelpClass = "text-small leading-[1.8] text-muted-foreground";
+/** An inline error or warning message. */
+export const formErrorClass =
+  "rounded-sm bg-amber-bg px-3.5 py-3 text-small text-amber-text";
+/** A highlighted note at the top of a form. */
+export const formCalloutClass =
+  "rounded-md bg-amber-bg p-[17px] text-[0.8rem] text-amber-text [&_p]:mt-1 [&_p]:text-small";
+
 /** Status colours shared by pills and concert marks (tokens in globals.css). */
 export const toneClasses: Record<string, string> = {
   neutral: "",

@@ -152,25 +152,6 @@
 .itinerary-item .eyebrow {
   font-size: 0.8125rem;
 }
-.settings-layout {
-  grid-template-columns: minmax(0, 1fr) 275px;
-}
-.settings-section {
-  padding: 26px;
-}
-.settings-heading h2 {
-  font-size: 1.125rem;
-  font-weight: 620;
-}
-.settings-heading p,
-.setting-row p {
-  line-height: 1.6;
-}
-.theme-option.selected,
-.destination-option.selected {
-  border-color: var(--primary);
-  background: var(--accent);
-}
 .app-toast {
   background: var(--foreground);
   color: var(--background);
@@ -194,9 +175,6 @@
 .hotel-card > footer,
 .application-card > footer {
   flex-wrap: wrap;
-}
-.form-field > span {
-  font-size: 0.875rem;
 }
 .hero-meta {
   font-size: 0.875rem;
@@ -265,14 +243,6 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
     align-items: start;
   }
-  .settings-layout {
-    grid-template-columns: minmax(0, 1fr);
-  }
-  .settings-aside {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    align-items: start;
-  }
   .concert-list .concert-row {
     gap: 14px;
   }
@@ -338,9 +308,6 @@
   }
   .concert-row .pill {
     font-size: 0.75rem;
-  }
-  .setting-row > .choice {
-    width: 185px;
   }
 }
 @media (max-width: 767px) {
@@ -576,13 +543,11 @@
   .event-facts > span {
     flex-wrap: wrap;
   }
-  .detail-aside,
-  .settings-aside {
+  .detail-aside {
     display: flex;
     flex-direction: column;
   }
-  .detail-aside > *,
-  .settings-aside > * {
+  .detail-aside > * {
     width: 100%;
   }
   .application-card {
@@ -719,33 +684,6 @@
   .expense-row .pill {
     font-size: 0.75rem;
   }
-  .settings-section {
-    padding: 20px;
-  }
-  .setting-row {
-    flex-wrap: wrap;
-    gap: 14px;
-  }
-  .setting-row > .choice {
-    width: 100%;
-  }
-  .theme-option {
-    padding: 18px 8px;
-    gap: 8px;
-  }
-  .destination-options {
-    grid-template-columns: 1fr;
-  }
-  .message-preview {
-    padding: 14px;
-    gap: 9px;
-  }
-  .connection-actions {
-    flex-wrap: wrap;
-  }
-  .settings-heading p {
-    font-size: 0.875rem;
-  }
   .app-toast {
     bottom: 100px;
     left: 16px;
@@ -757,9 +695,6 @@
   }
   .fiction-note {
     font-size: 0.8125rem;
-  }
-  .photo-credit {
-    margin-bottom: 0;
   }
 }
 @media (prefers-reduced-motion: reduce) {

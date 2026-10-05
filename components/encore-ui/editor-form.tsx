@@ -7,6 +7,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { usePlanner } from "@/lib/encore/store";
+import { formErrorClass } from "@/components/encore-ui/ui";
 
 /** How a record editor reports back to the dialog that hosts it. */
 export interface EditorSession {
@@ -91,7 +92,7 @@ export function EditorForm({
         <div className="-mx-1 flex min-h-0 flex-[1_1_auto] flex-col gap-4.5 overflow-y-auto overscroll-contain p-1">
           {children}
           {error && (
-            <p className="form-error" role="alert">
+            <p className={formErrorClass} role="alert">
               {error}
             </p>
           )}

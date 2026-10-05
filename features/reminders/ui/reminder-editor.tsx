@@ -5,6 +5,7 @@ import {
   type FormReader,
 } from "@/components/encore-ui/editor-form";
 import { SelectField } from "@/components/encore-ui/form-fields";
+import { formCalloutClass, formHelpClass } from "@/components/encore-ui/ui";
 import type { Editor, Preferences } from "@/lib/encore/model";
 import { useReminderDemoStore } from "./reminder-demo-store";
 
@@ -38,7 +39,7 @@ export function ReminderEditor({
       savedMessage="Reminder preference saved in this demo."
       onSave={save}
     >
-      <div className="form-callout">
+      <div className={formCalloutClass}>
         <strong>{application?.round}</strong>
         <p>{concert?.title}</p>
       </div>
@@ -60,7 +61,7 @@ export function ReminderEditor({
           ? "A simulated connection is ready."
           : "Set up a simulated connection in Settings."}
       </p>
-      <p className="form-help">
+      <p className={formHelpClass}>
         This stores a timing preference for design review. No notification is
         scheduled or sent.
       </p>

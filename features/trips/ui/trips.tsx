@@ -40,6 +40,8 @@ import {
   PageHeading,
   AddButton,
   Pill,
+  formCalloutClass,
+  formHelpClass,
   ConcertMark,
   Empty,
   Choice,
@@ -375,7 +377,7 @@ export function TripDetail() {
                     <strong>{money(v.total, c as Currency)}</strong>
                   </div>
                 ))}
-                <p className="form-help">
+                <p className={formHelpClass}>
                   Only winning ticket applications and hotel stays are included.
                   Refunded costs are excluded from totals.
                 </p>
@@ -437,7 +439,7 @@ export function TripDetail() {
           {concerts.some(
             (c) => c.date && (c.date < t.start || c.date > t.end),
           ) && (
-            <div className="form-callout">
+            <div className={formCalloutClass}>
               <strong>Check your trip dates</strong>
               <p>A linked concert falls outside this trip.</p>
             </div>
