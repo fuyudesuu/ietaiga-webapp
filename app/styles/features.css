@@ -12,42 +12,6 @@
 .concert-row:hover .row-copy h3 {
   color: var(--primary);
 }
-.date-tile {
-  display: flex;
-  align-items: center;
-  flex-direction: column;
-  min-width: 36px;
-  flex-shrink: 0;
-  line-height: 1.3;
-}
-.date-tile span {
-  font-size: 0.875rem;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--muted-foreground);
-}
-.date-tile strong {
-  font-size: 1.3rem;
-  font-weight: 500;
-  margin-top: 2px;
-  font-variant-numeric: tabular-nums;
-}
-.concert-mark {
-  width: 43px;
-  height: 48px;
-  border-radius: 9px;
-  display: grid;
-  place-items: center;
-  flex-shrink: 0;
-}
-.concert-mark svg {
-  stroke-width: 1.5;
-}
-.concert-mark.large {
-  width: 90px;
-  height: 100px;
-  border-radius: 18px;
-}
 .row-copy {
   min-width: 0;
   flex: 1;
@@ -338,10 +302,6 @@
   padding-left: 40px;
   font-size: 0.875rem;
 }
-.choice {
-  width: 100%;
-  min-width: 130px;
-}
 .filter-bar > .choice {
   width: 180px;
 }
@@ -375,23 +335,6 @@
   line-height: 1.7;
   color: var(--muted-foreground);
   margin-top: 18px;
-}
-.empty-state {
-  text-align: center;
-  padding: 50px 24px;
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  align-items: center;
-  color: var(--muted-foreground);
-}
-.empty-state h3 {
-  font-size: 1.1rem;
-  color: var(--foreground);
-}
-.empty-state p {
-  font-size: 0.875rem;
-  max-width: 360px;
 }
 .back-link {
   display: inline-flex;
