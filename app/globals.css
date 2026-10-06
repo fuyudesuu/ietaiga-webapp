@@ -175,6 +175,13 @@
   a {
     text-decoration: none;
   }
+  /* A bare `border` utility draws in the border token, not the text color. */
+  *,
+  ::before,
+  ::after,
+  ::backdrop {
+    border-color: var(--border);
+  }
 }
 body {
   margin: 0;
@@ -240,7 +247,7 @@ summary:focus-visible {
   min-width: 40px;
 }
 .primary-button {
-  min-height: 42px;
+  min-height: 44px;
   padding: 0 18px;
   background: var(--primary);
   color: var(--primary-foreground);
@@ -254,7 +261,7 @@ summary:focus-visible {
 }
 [data-slot="select-trigger"] {
   background: var(--card);
-  min-height: 42px;
+  min-height: 44px;
   border-radius: 9px;
   font-size: 0.875rem;
 }
@@ -269,6 +276,19 @@ summary:focus-visible {
 }
 [data-slot="textarea"] {
   min-height: 100px;
+}
+/* Safari draws date and time inputs as native pills with their own width
+   and height; keep them the same box as the text inputs. */
+[data-slot="input"]:is([type="date"], [type="datetime-local"], [type="time"]) {
+  -webkit-appearance: none;
+  appearance: none;
+  display: block;
+  min-width: 0;
+  text-align: left;
+}
+[data-slot="input"]::-webkit-date-and-time-value {
+  min-height: 1.5em;
+  text-align: left;
 }
 [data-slot="switch"] {
   width: 36px !important;
@@ -338,6 +358,18 @@ h3 {
   to {
     filter: blur(0);
     margin-top: 0;
+  }
+}
+/* Page changes are full document loads: cross-fade them instead of
+   flashing an empty page (browsers without view transitions just load). */
+@media (prefers-reduced-motion: no-preference) {
+  @view-transition {
+    navigation: auto;
+  }
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation-duration: 0.2s;
+    animation-timing-function: ease-out;
   }
 }
 @media (prefers-reduced-motion: reduce) {

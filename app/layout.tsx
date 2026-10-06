@@ -3,6 +3,8 @@ import "./globals.css";
 import { PlannerProvider } from "@/lib/encore/store";
 import { AppShell } from "@/components/shell/shell";
 import { withBasePath } from "@/lib/encore/paths";
+import { seed } from "@/lib/encore/fixtures";
+import { themeBootScript } from "@/lib/encore/theme-boot";
 
 export const viewport: Viewport = {
   width: "device-width",
@@ -26,7 +28,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    // The boot script sets the theme classes on <html> before hydration.
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: themeBootScript(seed.preferences),
+          }}
+        />
+      </head>
       <body className="antialiased">
         <PlannerProvider>
           <AppShell>{children}</AppShell>

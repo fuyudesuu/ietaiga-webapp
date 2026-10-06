@@ -89,7 +89,7 @@ export function EditorForm({
         onClick={session.markDirty}
       >
         {/* Only the fields scroll; the padding leaves room for focus rings. */}
-        <div className="-mx-1 flex min-h-0 flex-[1_1_auto] flex-col gap-4.5 overflow-y-auto overscroll-contain p-1">
+        <div className="-mx-1 flex min-h-0 flex-[1_1_auto] flex-col gap-4.5 overflow-x-hidden overflow-y-auto overscroll-contain p-1">
           {children}
           {error && (
             <p className={formErrorClass} role="alert">

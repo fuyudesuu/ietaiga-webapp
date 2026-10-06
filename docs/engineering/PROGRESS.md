@@ -288,3 +288,24 @@ The consistency pass. The code still uses many off-scale values:
 - 15 letter-spacings.
 
 Rounding them to the token scale is a deliberate visual change, to be shown to the owner as before/after diffs. Then the Motion animation work.
+
+## 6 October 2026 — Phone form fixes, outline borders, dark-mode flash, page fade
+
+### Task and revision
+Owner report from a phone: the editor form moved sideways when swiped and its fields looked uneven, the "Mark submitted" row looked off, and dark mode flashed white between pages.
+
+### Completed
+- **Default border colour.** There was no base `border-color`, so every bare `border` (outline buttons such as "Mark submitted", "Edit concert", "Cancel", the sidebar edge) drew in the text colour. A base-layer rule now uses the `--border` token.
+- **Even fields.** Selects and the primary button are 44px, like text inputs and outline buttons. Date and time inputs drop Safari's native pill look (`appearance: none`, `min-width: 0`, left-aligned), and the editor's fields area clips sideways overflow, so a wide native control cannot pan the form.
+- **"Mark submitted" row.** It now matches the other round actions: a bold "Submit your application" title over "Closes <deadline>".
+- **No white flash.** `lib/encore/theme-boot.ts` is an inline `<head>` script that applies the saved theme and "Reduce transparency" classes before the first paint.
+- **Page fade.** Navigation is full page loads, so pages cross-fade with a cross-document view transition (0.2s; off with reduced motion; browsers without support just load).
+
+### Verification
+- `pnpm check` passes. 26 browser tests pass, including the new `theme.spec.ts` (a saved dark theme paints dark with the app's scripts blocked).
+- Visual compare against the previous build: the only differences are the border colour, the 2px taller selects and primary button, and the new row text.
+- In Chromium, a link click starts a view transition, and nothing overflows the screen at 320 and 390px.
+- **Not run:** iPhone Safari (no WebKit here). The sideways-swipe fix follows Safari's known date-input behaviour but is unconfirmed on a device.
+
+### Next action
+Owner to retest on the phone. Then the consistency pass.
