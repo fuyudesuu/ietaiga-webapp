@@ -14,20 +14,21 @@ pnpm dev            # local dev server
 pnpm check          # types, lint, format, import boundaries, tests, build
 ```
 
-| Command                 | Purpose                                                                                    |
-| ----------------------- | ------------------------------------------------------------------------------------------ |
-| `pnpm build`            | Cloudflare Workers build (Vinext)                                                          |
-| `pnpm build:pages`      | Static GitHub Pages build in `dist/pages`; set `ENCORE_BASE_PATH` (e.g. `/ietaiga-webapp`) |
-| `pnpm test`             | Domain, storage and boundary-rule tests (`tests/*.test.mjs`)                               |
-| `pnpm test:e2e`         | Browser tests (Playwright, `tests/e2e/`) against the `pnpm build:pages` output             |
-| `pnpm check:boundaries` | Import-boundary rules (`.dependency-cruiser.cjs`)                                          |
+| Command                 | Purpose                                                                                                             |
+| ----------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| `pnpm build`            | Cloudflare Workers build (Vinext)                                                                                   |
+| `pnpm build:pages`      | Static GitHub Pages build in `dist/pages`; set `ENCORE_BASE_PATH` (e.g. `/ietaiga-webapp`)                          |
+| `pnpm test`             | Domain, storage and boundary-rule tests (`tests/*.test.mjs`)                                                        |
+| `pnpm test:e2e`         | Browser tests (Playwright, `tests/e2e/`) against the `pnpm build:pages` output                                      |
+| `pnpm visual`           | Screenshot every screen (`capture <dir>`) or compare two captures (`compare <a> <b>`); needs the Pages build served |
+| `pnpm check:boundaries` | Import-boundary rules (`.dependency-cruiser.cjs`)                                                                   |
 
 GitHub Pages deploys from `main` via `.github/workflows/pages.yml`.
 
 ## Layout
 
 ```
-app/                 routes (thin pages), layout and global styles (app/styles/)
+app/                 routes (thin pages), layout, and globals.css (tokens, base, shadcn skins)
 features/<name>/     one folder per product area; import it only via its index.ts
   concerts/  trips/  stays/  reminders/  overview/  settings/  wallet/
   editors/           the dialog that hosts each feature's record editor

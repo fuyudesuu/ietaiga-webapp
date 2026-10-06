@@ -14,6 +14,27 @@ import {
 } from "@/lib/encore/model";
 import { withBasePath } from "@/lib/encore/paths";
 
+const detailHeadingClass =
+  "flex flex-wrap items-center justify-between gap-x-2 gap-y-1";
+const detailTitleClass = "text-lead font-[650] tracking-[-0.02em]";
+const textButtonClass =
+  "inline-flex min-h-11 items-center gap-1.5 text-left text-label font-[550] text-primary";
+export const walletPrimaryClass =
+  "flex min-h-12 w-full items-center justify-center rounded-md bg-primary px-4 py-3 text-small font-semibold text-primary-foreground";
+const linkedRowClass =
+  "flex w-full items-center gap-3 border-b border-border py-4 text-left";
+const linkedRowNoteClass = "my-[3px] block text-caption text-muted-foreground";
+const linkedRowTitleClass = "block text-[0.9375rem] font-[570] wrap-anywhere";
+const fullLinkClass =
+  "flex min-h-[52px] items-center gap-2 text-small font-[550] text-primary";
+const emptyCopyClass = "py-4 text-small text-muted-foreground";
+const factLabelClass = "mb-1 text-caption text-muted-foreground";
+const innerTabClass =
+  "min-h-11 border-b-2 border-transparent text-small text-muted-foreground aria-pressed:border-primary aria-pressed:text-primary";
+const totalLabelClass = "text-caption text-muted-foreground";
+const totalAmountClass =
+  "mt-1.25 block text-body font-semibold text-foreground";
+
 export function TicketDetails({
   concert,
   openTrip,
@@ -28,45 +49,54 @@ export function TicketDetails({
   const trip = state.trips.find((t) => t.id === concert.tripId);
   return (
     <>
-      <div className="wallet-detail-heading">
-        <h2>Concert details</h2>
+      <div className={detailHeadingClass}>
+        <h2 className={detailTitleClass}>Concert details</h2>
         <button
-          className="wallet-text-button"
+          className={textButtonClass}
           onClick={() => setEditor({ type: "concert", id: concert.id })}
         >
           <ImagePlus size={16} />
           Edit / image
         </button>
       </div>
-      <dl className="wallet-facts">
+      <dl className="mt-2.5 mb-5 grid grid-cols-2 gap-4 text-small">
         <div>
-          <dt>When</dt>
-          <dd>
+          <dt className={factLabelClass}>When</dt>
+          <dd className="m-0 wrap-anywhere">
             {day(concert.date)} ·{" "}
             {concert.time ? `${concert.time} JST` : "Time TBA"}
           </dd>
         </div>
         <div>
-          <dt>Venue</dt>
-          <dd>{concert.venue}</dd>
+          <dt className={factLabelClass}>Venue</dt>
+          <dd className="m-0 wrap-anywhere">{concert.venue}</dd>
         </div>
       </dl>
       {applications.length ? (
         applications.map((application) => (
-          <section className="wallet-round" key={application.id}>
-            <div>
-              <h3>{application.provider}</h3>
-              <span>{appStatus(application)}</span>
+          <section
+            className="border-t border-border py-4.5"
+            key={application.id}
+          >
+            <div className="flex flex-wrap justify-between gap-2">
+              <h3 className="text-[0.9375rem] font-[650]">
+                {application.provider}
+              </h3>
+              <span className="text-caption text-muted-foreground">
+                {appStatus(application)}
+              </span>
             </div>
-            <p>{application.round}</p>
+            <p className="mt-1.25 text-label text-muted-foreground">
+              {application.round}
+            </p>
             {application.result === "Won" &&
             application.payment === "Unpaid" ? (
               <>
-                <p className="wallet-payment-time">
+                <p className="my-3 text-label text-amber-text">
                   Payment due {instant(application.paymentDeadline)}
                 </p>
                 <button
-                  className="wallet-primary"
+                  className={walletPrimaryClass}
                   onClick={() => {
                     setApplication(application.id, { payment: "Paid" });
                     notify("Payment recorded. Your trip totals are updated.");
@@ -78,7 +108,7 @@ export function TicketDetails({
               </>
             ) : (
               <button
-                className="wallet-text-button"
+                className={textButtonClass}
                 onClick={() =>
                   setEditor({
                     type: "application",
@@ -94,7 +124,7 @@ export function TicketDetails({
         ))
       ) : (
         <button
-          className="wallet-primary"
+          className={walletPrimaryClass}
           onClick={() =>
             setEditor({ type: "application", concertId: concert.id })
           }
@@ -103,21 +133,21 @@ export function TicketDetails({
         </button>
       )}
       {trip && (
-        <button className="wallet-linked-row" onClick={() => openTrip(trip.id)}>
-          <span>
-            <small>Part of your trip</small>
-            <strong>{trip.cities}</strong>
+        <button className={linkedRowClass} onClick={() => openTrip(trip.id)}>
+          <span className="min-w-0 flex-1">
+            <small className={linkedRowNoteClass}>Part of your trip</small>
+            <strong className={linkedRowTitleClass}>{trip.cities}</strong>
           </span>
-          <ChevronRight size={18} />
+          <ChevronRight size={18} className="text-muted-foreground" />
         </button>
       )}
       <a
-        className="wallet-full-link"
+        className={fullLinkClass}
         href={withBasePath(`/concerts/${concert.id}`)}
       >
         Open full concert <ArrowUpRight size={16} />
       </a>
-      <p className="wallet-disclaimer">
+      <p className="text-caption leading-[1.6] text-muted-foreground">
         Planning record only. Use the ticket provider’s app for admission.
       </p>
     </>
@@ -141,25 +171,31 @@ export function TripDetails({
     .sort((a, b) => a.checkIn.localeCompare(b.checkIn));
   return (
     <>
-      <div className="wallet-detail-heading">
-        <h2>Your journey</h2>
+      <div className={detailHeadingClass}>
+        <h2 className={detailTitleClass}>Your journey</h2>
         <button
-          className="wallet-text-button"
+          className={textButtonClass}
           onClick={() => setEditor({ type: "trip", id: trip.id })}
         >
           <ImagePlus size={16} />
           Edit / image
         </button>
       </div>
-      <p className="wallet-trip-title">{trip.title}</p>
-      <div className="wallet-inner-tabs" role="group" aria-label="Trip details">
+      <p className="mb-3.5 text-small text-muted-foreground">{trip.title}</p>
+      <div
+        className="flex gap-6 border-b border-border"
+        role="group"
+        aria-label="Trip details"
+      >
         <button
+          className={innerTabClass}
           aria-pressed={view === "concerts"}
           onClick={() => setView("concerts")}
         >
           Concerts · {concerts.length}
         </button>
         <button
+          className={innerTabClass}
           aria-pressed={view === "stays"}
           onClick={() => setView("stays")}
         >
@@ -171,25 +207,25 @@ export function TripDetails({
           {concerts.map((c) => (
             <button
               key={c.id}
-              className="wallet-linked-row"
+              className={linkedRowClass}
               onClick={() => openTicket(c.id)}
             >
-              <span>
-                <small>
+              <span className="min-w-0 flex-1">
+                <small className={linkedRowNoteClass}>
                   {day(c.date)} · {c.city}
                 </small>
-                <strong>{c.title}</strong>
+                <strong className={linkedRowTitleClass}>{c.title}</strong>
               </span>
-              <ChevronRight size={18} />
+              <ChevronRight size={18} className="text-muted-foreground" />
             </button>
           ))}
           {!concerts.length && (
-            <p className="wallet-empty-copy">
+            <p className={emptyCopyClass}>
               No concerts attached to this trip yet.
             </p>
           )}
           <button
-            className="wallet-text-button"
+            className={textButtonClass}
             onClick={() => setEditor({ type: "concert", tripId: trip.id })}
           >
             Add concert to trip
@@ -200,44 +236,52 @@ export function TripDetails({
           {stays.map((h) => (
             <button
               key={h.id}
-              className="wallet-linked-row"
+              className={linkedRowClass}
               onClick={() => setEditor({ type: "hotel", id: h.id })}
             >
               <Hotel size={18} />
-              <span>
-                <strong>{h.name}</strong>
-                <small>
+              <span className="min-w-0 flex-1">
+                <strong className={linkedRowTitleClass}>{h.name}</strong>
+                <small className={linkedRowNoteClass}>
                   {day(h.checkIn)} – {day(h.checkOut)} · {h.payment}
                 </small>
               </span>
-              <ChevronRight size={18} />
+              <ChevronRight size={18} className="text-muted-foreground" />
             </button>
           ))}
           {!stays.length && (
-            <p className="wallet-empty-copy">No stays booked yet.</p>
+            <p className={emptyCopyClass}>No stays booked yet.</p>
           )}
           <button
-            className="wallet-text-button"
+            className={textButtonClass}
             onClick={() => setEditor({ type: "hotel", tripId: trip.id })}
           >
             Add hotel stay
           </button>
         </div>
       )}
-      <div className="wallet-totals">
+      <div>
         {Object.entries(costs(state, trip.id)).map(([currency, value]) => (
-          <div key={currency}>
-            <span>
+          <div
+            key={currency}
+            className="flex justify-between gap-3.5 border-y border-border py-4.5"
+          >
+            <span className={totalLabelClass}>
               Planned{" "}
-              <strong>{money(value.total, currency as Currency)}</strong>
+              <strong className={totalAmountClass}>
+                {money(value.total, currency as Currency)}
+              </strong>
             </span>
-            <span>
-              Paid <strong>{money(value.paid, currency as Currency)}</strong>
+            <span className={totalLabelClass}>
+              Paid{" "}
+              <strong className={totalAmountClass}>
+                {money(value.paid, currency as Currency)}
+              </strong>
             </span>
           </div>
         ))}
       </div>
-      <a className="wallet-full-link" href={withBasePath(`/trips/${trip.id}`)}>
+      <a className={fullLinkClass} href={withBasePath(`/trips/${trip.id}`)}>
         Open full trip <ArrowUpRight size={16} />
       </a>
     </>

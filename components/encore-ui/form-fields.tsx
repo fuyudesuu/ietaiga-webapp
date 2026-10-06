@@ -23,8 +23,8 @@ export function Field({
   children?: ReactNode;
 }) {
   return (
-    <label className="form-field" htmlFor={"field-" + name}>
-      <span>
+    <label className="flex min-w-0 flex-col gap-2" htmlFor={"field-" + name}>
+      <span className="text-small font-medium">
         {label}
         {required && " *"}
       </span>
@@ -40,6 +40,13 @@ export function Field({
         />
       )}
     </label>
+  );
+}
+
+/** Two fields side by side; stacked on phones. */
+export function FieldRow({ children }: { children: ReactNode }) {
+  return (
+    <div className="grid grid-cols-2 gap-4 max-md:grid-cols-1">{children}</div>
   );
 }
 
@@ -65,10 +72,20 @@ export function SelectField({
         value={selected}
         onChange={setSelected}
         options={options}
+        className={truncateLongValue}
       />
     </Field>
   );
 }
+
+// A long option (e.g. a trip name) ends in "…" instead of widening the form.
+const truncateLongValue = [
+  "*:data-[slot=select-value]:block",
+  "*:data-[slot=select-value]:min-w-0",
+  "*:data-[slot=select-value]:overflow-hidden",
+  "*:data-[slot=select-value]:text-ellipsis",
+  "*:data-[slot=select-value]:whitespace-nowrap",
+].join(" ");
 
 /** "amount" and "currency" inputs, read back with `parseMoney`. */
 export function AmountFields({
@@ -79,7 +96,7 @@ export function AmountFields({
   currency?: Currency;
 }) {
   return (
-    <div className="form-grid">
+    <FieldRow>
       <Field
         name="amount"
         label="Amount"
@@ -92,6 +109,6 @@ export function AmountFields({
         value={currency}
         options={currencies}
       />
-    </div>
+    </FieldRow>
   );
 }

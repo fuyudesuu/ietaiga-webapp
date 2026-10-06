@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import {
   Search,
   ArrowUpRight,
@@ -31,9 +31,22 @@ import {
   Pill,
   Empty,
   Choice,
+  panelClass,
+  backLinkClass,
+  detailGridClass,
+  sectionTitleClass,
+  sectionHeadingClass,
+  countLabelClass,
+  detailAsideClass,
+  sideSectionClass,
+  sideHeadingClass,
+  secondaryTextClass,
+  textLinkClass,
+  notesCopyClass,
 } from "@/components/encore-ui/ui";
 import { useRecordId } from "@/lib/encore/navigation";
 import { withBasePath } from "@/lib/encore/paths";
+import { cn } from "@/lib/utils";
 export function Concerts() {
   const { state, setEditor } = usePlanner();
   const [search, setSearch] = useState("");
@@ -70,10 +83,14 @@ export function Concerts() {
           </AddButton>
         }
       />
-      <div className="filter-bar">
-        <div className="search-field">
-          <Search size={18} />
+      <div className="mb-[27px] flex justify-between gap-3.5 max-md:flex-wrap max-md:gap-3">
+        <div className="relative max-w-[440px] flex-1 max-md:w-full max-md:basis-full">
+          <Search
+            size={18}
+            className="absolute top-[13px] left-[13px] text-muted-foreground"
+          />
           <Input
+            className="pl-10 text-small!"
             aria-label="Search concerts"
             placeholder="Search concerts, artists, or cities"
             value={search}
@@ -81,6 +98,7 @@ export function Concerts() {
           />
         </div>
         <Choice
+          className="w-[180px] max-md:max-w-none max-md:flex-1"
           label="Filter concerts"
           value={filter}
           onChange={setFilter}
@@ -92,30 +110,41 @@ export function Concerts() {
           ]}
         />
       </div>
-      <div className="concert-list-header">
+      <div className="mt-0 mr-[55px] mb-2.5 ml-[23px] flex justify-between pl-1 text-caption tracking-[0.04em] text-muted-foreground max-md:hidden">
         <span>PERFORMANCE</span>
         <span>TICKET STATUS</span>
       </div>
-      <div className="panel concert-list">
+      <div className="overflow-hidden border-t border-border">
         {concerts.map((c) => {
           const a = state.applications.find((a) => a.concertId === c.id);
           return (
             <a
               href={withBasePath("/concerts/" + c.id)}
               key={c.id}
-              className="concert-row"
+              className="group flex min-h-[93px] min-w-0 items-center gap-5 border-b border-border px-1 py-6 text-foreground last:border-0 max-[1251px]:gap-3.5 max-md:grid max-md:grid-cols-[40px_38px_minmax(0,1fr)] max-md:gap-2.5 max-md:px-0 max-md:py-5"
             >
-              <DateTile date={c.date} />
-              <ConcertMark concert={c} />
-              <div className="row-copy">
-                <h3>{c.title}</h3>
-                <p>{c.subtitle}</p>
-                <small>
+              <DateTile
+                date={c.date}
+                className="max-md:w-auto max-md:min-w-0"
+              />
+              <ConcertMark
+                concert={c}
+                className="h-[60px] w-[53px] max-md:h-[42px] max-md:w-[38px]"
+              />
+              <div className="min-w-0 flex-1">
+                <h3 className="text-body font-[630] tracking-[-0.1px] group-hover:text-primary">
+                  {c.title}
+                </h3>
+                <p className="mt-[3px] text-small wrap-anywhere text-muted-foreground">
+                  {c.subtitle}
+                </p>
+                <small className="mt-1.25 flex items-center gap-1.25 text-small text-muted-foreground max-[1251px]:flex-wrap max-md:text-label">
                   <MapPin size={13} />
                   {c.venue} · {c.city}
                 </small>
               </div>
               <Pill
+                className="max-lg:text-caption max-md:col-[3] max-md:justify-self-start"
                 tone={
                   a?.payment === "Paid"
                     ? "mint"
@@ -126,7 +155,10 @@ export function Concerts() {
               >
                 {a ? appStatus(a) : "On the wishlist"}
               </Pill>
-              <ArrowUpRight size={18} className="row-arrow" />
+              <ArrowUpRight
+                size={18}
+                className="shrink-0 text-muted-foreground max-md:hidden"
+              />
             </a>
           );
         })}
@@ -148,7 +180,7 @@ export function Concerts() {
           />
         )}
       </div>
-      <p className="fiction-note">
+      <p className={fictionNoteClass}>
         All performances, dates, and ticket outcomes in this demo are fictional.
       </p>
     </>
@@ -173,49 +205,63 @@ export function ConcertDetail() {
   const applications = state.applications.filter((a) => a.concertId === c.id);
   return (
     <>
-      <a href={withBasePath("/concerts")} className="back-link">
+      <a href={withBasePath("/concerts")} className={backLinkClass}>
         <ArrowLeft size={16} />
         All concerts
       </a>
-      <div className="concert-detail-head">
+      <div className="mb-7 flex items-center gap-[23px] max-md:mt-[22px] max-md:flex-wrap max-md:gap-3.5">
         <ConcertMark concert={c} large />
-        <div>
-          <h1>{c.title}</h1>
-          <p>{c.subtitle}</p>
+        <div className="max-md:min-w-0 max-md:flex-1">
+          <h1 className="text-[2.3rem] leading-[1.25] font-[650] tracking-[-0.035em] wrap-anywhere max-md:text-[1.6rem]">
+            {c.title}
+          </h1>
+          <p className="mt-1.25 text-[0.88rem] text-muted-foreground">
+            {c.subtitle}
+          </p>
         </div>
         <Button
           variant="outline"
+          className="ml-auto max-md:ml-0"
           onClick={() => setEditor({ type: "concert", id: c.id })}
         >
           <Pencil size={15} />
           Edit concert
         </Button>
       </div>
-      <div className="event-facts panel">
-        <span>
-          <CalendarDays />
-          <strong>
+      <div
+        className={cn(
+          panelClass,
+          "mb-[30px] flex items-center gap-[35px] p-[23px] max-md:grid max-md:grid-cols-1 max-md:gap-4.5 max-md:p-5",
+        )}
+      >
+        <span className={factClass}>
+          <CalendarDays className={factIconClass} />
+          <strong className={factTextClass}>
             {day(c.date, { day: "numeric", month: "long", year: "numeric" })}
           </strong>
         </span>
-        <span>
-          <Clock3 />
-          <strong>{c.time ? c.time + " JST" : "Time not announced"}</strong>
+        <span className={factClass}>
+          <Clock3 className={factIconClass} />
+          <strong className={factTextClass}>
+            {c.time ? c.time + " JST" : "Time not announced"}
+          </strong>
         </span>
-        <span>
-          <MapPin />
-          <strong>
+        <span className={factClass}>
+          <MapPin className={factIconClass} />
+          <strong className={factTextClass}>
             {c.venue}
-            <small>{c.city}</small>
+            <small className="block text-small font-normal text-muted-foreground">
+              {c.city}
+            </small>
           </strong>
         </span>
       </div>
-      <div className="detail-grid">
+      <div className={detailGridClass}>
         <div>
-          <div className="section-title">
-            <h2>
+          <div className={sectionTitleClass}>
+            <h2 className={sectionHeadingClass}>
               Ticket applications{" "}
-              <span className="count-label">{applications.length}</span>
+              <span className={countLabelClass}>{applications.length}</span>
             </h2>
             <Button
               variant="outline"
@@ -226,7 +272,7 @@ export function ConcertDetail() {
               + Add round
             </Button>
           </div>
-          <div className="application-list">
+          <div className="flex flex-col gap-5">
             {applications.map((a) => (
               <ApplicationCard key={a.id} application={a} />
             ))}
@@ -247,10 +293,10 @@ export function ConcertDetail() {
             )}
           </div>
         </div>
-        <aside className="detail-aside">
-          <section className="panel side-section">
-            <h2>Part of the journey</h2>
-            <p className="secondary">
+        <aside className={detailAsideClass}>
+          <section className={sideSectionClass}>
+            <h2 className={sideHeadingClass}>Part of the journey</h2>
+            <p className={secondaryTextClass}>
               Keep this performance with your travel plans.
             </p>
             <Choice
@@ -276,7 +322,7 @@ export function ConcertDetail() {
             />
             {c.tripId && (
               <a
-                className="text-link"
+                className={cn(textLinkClass, "mt-0.5")}
                 href={withBasePath("/trips/" + c.tripId)}
               >
                 Open trip
@@ -284,12 +330,19 @@ export function ConcertDetail() {
               </a>
             )}
           </section>
-          <section className="panel side-section">
-            <div className="section-title">
-              <h2>Little details</h2>
+          <section className={sideSectionClass}>
+            <div className={cn(sectionTitleClass, "mb-0")}>
+              <h2
+                className={cn(
+                  sectionHeadingClass,
+                  "text-[0.91rem] font-semibold max-md:text-[1.0625rem]",
+                )}
+              >
+                Little details
+              </h2>
               <Pencil size={16} />
             </div>
-            <p className="notes-copy">
+            <p className={notesCopyClass}>
               {c.notes ||
                 "No notes yet. Add venue details, reminders, or anything useful for the day."}
             </p>
@@ -300,7 +353,7 @@ export function ConcertDetail() {
               Edit notes
             </Button>
           </section>
-          <p className="fiction-note">
+          <p className={fictionNoteClass}>
             Sample performance. Dates and ticketing arrangements are fictional.
           </p>
         </aside>
@@ -308,6 +361,71 @@ export function ConcertDetail() {
     </>
   );
 }
+const fictionNoteClass =
+  "mt-4.5 text-small leading-[1.7] text-muted-foreground max-md:text-label";
+const factClass = "flex items-center gap-2.5 max-md:flex-wrap";
+const factIconClass = "w-[18px] text-muted-foreground";
+const factTextClass = "text-small font-medium";
+const roundActionClass =
+  "mt-5 flex flex-wrap items-center justify-between gap-3 border-t border-border py-4 max-md:items-start";
+// Quiet footer actions: muted text that stays muted on hover.
+const footerButtonClass =
+  "px-2 py-0 text-muted-foreground hover:text-muted-foreground has-[>svg]:px-2";
+const timelineLineClass = "mt-3 flex-1 border-t border-border";
+
+function TimelineStep({
+  state,
+  number,
+  label,
+  children,
+}: {
+  state: "todo" | "current" | "done";
+  number: number;
+  label: string;
+  children: ReactNode;
+}) {
+  return (
+    <div className="flex w-[66px] shrink-0 flex-col items-center gap-1.25 max-md:w-[58px]">
+      <span
+        className={cn(
+          "mb-[3px] grid size-[25px] place-items-center rounded-full border border-border bg-muted text-small text-muted-foreground",
+          state === "done" &&
+            "border-transparent bg-primary text-primary-foreground",
+          state === "current" &&
+            "border-[#dabb7888] bg-amber-bg text-amber-text",
+        )}
+      >
+        {state === "done" ? <Check size={13} /> : number}
+      </span>
+      <strong className="text-small font-medium max-md:text-caption">
+        {label}
+      </strong>
+      <small className="text-small text-muted-foreground max-md:text-caption">
+        {children}
+      </small>
+    </div>
+  );
+}
+
+function StatusCell({
+  label,
+  children,
+}: {
+  label: string;
+  children: ReactNode;
+}) {
+  return (
+    <div>
+      <span className="mb-1.25 block text-small text-muted-foreground">
+        {label}
+      </span>
+      <strong className="text-small leading-[1.6] font-medium">
+        {children}
+      </strong>
+    </div>
+  );
+}
+
 function ApplicationCard({ application: a }: { application: Application }) {
   const { state, setApplication, setEditor, notify, update } = usePlanner();
   function change(changes: Partial<Application>, message: string) {
@@ -315,13 +433,14 @@ function ApplicationCard({ application: a }: { application: Application }) {
     notify(message);
   }
   return (
-    <article className="panel application-card">
-      <header>
-        <span className="provider-label">
+    <article className={cn(panelClass, "p-6 max-md:p-[18px]")}>
+      <header className="mb-[13px] flex items-center gap-[9px]">
+        <span className="flex items-center gap-[7px] text-small tracking-[0.05em] text-muted-foreground max-md:text-label max-md:tracking-normal">
           <Ticket size={15} />
           {a.provider}
         </span>
         <Pill
+          className="ml-auto"
           tone={
             a.result === "Won"
               ? "mint"
@@ -335,6 +454,7 @@ function ApplicationCard({ application: a }: { application: Application }) {
         <Button
           variant="ghost"
           size="icon"
+          className="-ml-[3px]"
           aria-label={"Edit " + a.round}
           onClick={() =>
             setEditor({ type: "application", id: a.id, concertId: a.concertId })
@@ -343,67 +463,67 @@ function ApplicationCard({ application: a }: { application: Application }) {
           <Pencil size={16} />
         </Button>
       </header>
-      <h3>{a.round}</h3>
-      <div className="ticket-timeline">
-        <div className={a.submitted ? "done" : ""}>
-          <span>{a.submitted ? <Check size={13} /> : 1}</span>
-          <strong>Apply</strong>
-          <small>{a.deadline ? day(a.deadline) : "TBA"}</small>
-        </div>
-        <i />
-        <div className={a.result !== "Pending" ? "done" : ""}>
-          <span>{a.result !== "Pending" ? <Check size={13} /> : 2}</span>
-          <strong>Result</strong>
-          <small>{a.resultDate ? day(a.resultDate) : "TBA"}</small>
-        </div>
-        <i />
-        <div
-          className={
-            a.payment === "Paid" ? "done" : a.result === "Won" ? "current" : ""
-          }
+      <h3 className="text-[1.08rem] font-[550] tracking-[-0.3px]">{a.round}</h3>
+      <div className="my-[26px] flex items-start gap-0">
+        <TimelineStep
+          state={a.submitted ? "done" : "todo"}
+          number={1}
+          label="Apply"
         >
-          <span>{a.payment === "Paid" ? <Check size={13} /> : 3}</span>
-          <strong>Payment</strong>
-          <small>
-            {a.payment === "Paid"
-              ? "Paid"
-              : a.paymentDeadline
-                ? day(a.paymentDeadline)
-                : "TBA"}
-          </small>
-        </div>
+          {a.deadline ? day(a.deadline) : "TBA"}
+        </TimelineStep>
+        <i className={timelineLineClass} />
+        <TimelineStep
+          state={a.result !== "Pending" ? "done" : "todo"}
+          number={2}
+          label="Result"
+        >
+          {a.resultDate ? day(a.resultDate) : "TBA"}
+        </TimelineStep>
+        <i className={timelineLineClass} />
+        <TimelineStep
+          state={
+            a.payment === "Paid"
+              ? "done"
+              : a.result === "Won"
+                ? "current"
+                : "todo"
+          }
+          number={3}
+          label="Payment"
+        >
+          {a.payment === "Paid"
+            ? "Paid"
+            : a.paymentDeadline
+              ? day(a.paymentDeadline)
+              : "TBA"}
+        </TimelineStep>
       </div>
-      <div className="application-status-grid">
-        <div>
-          <span>Submission</span>
-          <strong>{a.submitted ? "Submitted" : "Not submitted"}</strong>
-        </div>
-        <div>
-          <span>Result</span>
-          <strong>{a.result}</strong>
-        </div>
-        <div>
-          <span>Payment</span>
-          <strong>{a.payment}</strong>
-        </div>
-        <div>
-          <span>Collection</span>
-          <strong>{a.collection}</strong>
-        </div>
+      <div className="mt-2.5 grid grid-cols-4 gap-2.5 border-t border-border pt-4.5 max-md:grid-cols-2 max-md:gap-4.5">
+        <StatusCell label="Submission">
+          {a.submitted ? "Submitted" : "Not submitted"}
+        </StatusCell>
+        <StatusCell label="Result">{a.result}</StatusCell>
+        <StatusCell label="Payment">{a.payment}</StatusCell>
+        <StatusCell label="Collection">{a.collection}</StatusCell>
       </div>
       {a.result === "Won" && a.payment === "Unpaid" && (
-        <div className="payment-callout">
+        <div className="mt-[21px] flex items-center justify-between gap-3 rounded-md bg-amber-bg p-4 text-amber-text max-md:flex-wrap max-md:p-3.5">
           <div>
-            <strong>{money(a.amount, a.currency)} to secure your seat</strong>
-            <p>Pay by {instant(a.paymentDeadline)}</p>
+            <strong className="text-small">
+              {money(a.amount, a.currency)} to secure your seat
+            </strong>
+            <p className="mt-1 text-small">
+              Pay by {instant(a.paymentDeadline)}
+            </p>
             {a.paymentDeadline && state.preferences.zone !== "Asia/Tokyo" && (
-              <small>
+              <small className="text-small">
                 Your time: {instant(a.paymentDeadline, state.preferences.zone)}
               </small>
             )}
           </div>
           <Button
-            className="primary-button"
+            className="primary-button px-3!"
             onClick={() =>
               change(
                 { payment: "Paid" },
@@ -417,8 +537,10 @@ function ApplicationCard({ application: a }: { application: Application }) {
         </div>
       )}
       {!a.submitted && (
-        <div className="round-action">
-          <p>Applications close {instant(a.deadline)}</p>
+        <div className={roundActionClass}>
+          <p className="text-small text-muted-foreground">
+            Applications close {instant(a.deadline)}
+          </p>
           <Button
             variant="outline"
             onClick={() =>
@@ -430,12 +552,15 @@ function ApplicationCard({ application: a }: { application: Application }) {
         </div>
       )}
       {a.submitted && a.result === "Pending" && (
-        <div className="round-action">
-          <div>
-            <strong>Record your lottery result</strong>
-            <p>Announcement: {instant(a.resultDate)}</p>
+        <div className={roundActionClass}>
+          <div className="max-md:w-full">
+            <strong className="text-small">Record your lottery result</strong>
+            <p className="text-small text-muted-foreground">
+              Announcement: {instant(a.resultDate)}
+            </p>
           </div>
           <Choice
+            className="w-[150px]"
             label={"Result for " + a.round}
             value={a.result}
             onChange={(v) =>
@@ -452,8 +577,8 @@ function ApplicationCard({ application: a }: { application: Application }) {
         </div>
       )}
       {a.result === "Won" && a.payment === "Paid" && (
-        <div className="round-action">
-          <span className="secured">
+        <div className={roundActionClass}>
+          <span className="flex items-center gap-1.25 text-[0.8rem] text-primary">
             <Check size={17} />
             Your seat is secured · {money(a.amount, a.currency)}
           </span>
@@ -468,9 +593,10 @@ function ApplicationCard({ application: a }: { application: Application }) {
           </Button>
         </div>
       )}
-      <footer>
+      <footer className="mt-3.5 flex flex-wrap items-center justify-between border-t border-border pt-2 max-md:gap-3">
         <Button
           variant="ghost"
+          className={footerButtonClass}
           onClick={() => setEditor({ type: "reminder", id: a.id })}
         >
           <Bell size={15} />
@@ -478,6 +604,7 @@ function ApplicationCard({ application: a }: { application: Application }) {
         </Button>
         <Button
           variant="ghost"
+          className={footerButtonClass}
           onClick={() => {
             const copy = {
               ...a,

@@ -7,6 +7,7 @@ import {
 import {
   AmountFields,
   Field,
+  FieldRow,
   SelectField,
 } from "@/components/encore-ui/form-fields";
 import { fromJstInput, parseMoney, toJstInput } from "@/lib/encore/form-input";
@@ -103,7 +104,7 @@ export function ApplicationEditor({
         value={toJstInput(existing?.paymentDeadline ?? "")}
         type="datetime-local"
       />
-      <div className="form-grid">
+      <FieldRow>
         <SelectField
           name="submitted"
           label="Application submitted?"
@@ -116,12 +117,12 @@ export function ApplicationEditor({
           value={existing?.result ?? "Pending"}
           options={results}
         />
-      </div>
+      </FieldRow>
       <AmountFields
         amount={existing?.amount}
         currency={existing?.currency ?? store.defaultCurrency}
       />
-      <div className="form-grid">
+      <FieldRow>
         <SelectField
           name="payment"
           label="Payment"
@@ -134,7 +135,7 @@ export function ApplicationEditor({
           value={existing?.collection ?? "Not ready"}
           options={collections}
         />
-      </div>
+      </FieldRow>
     </EditorForm>
   );
 }

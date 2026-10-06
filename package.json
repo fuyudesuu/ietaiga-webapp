@@ -15,6 +15,7 @@
     "format:check": "prettier --check app components/shell components/encore-ui features lib/encore tests scripts playwright.config.ts README.md",
     "test": "node --test tests/*.test.mjs",
     "test:e2e": "playwright test",
+    "visual": "node scripts/visual-snapshots.mjs",
     "format": "prettier --write app components/shell components/encore-ui features lib/encore tests scripts playwright.config.ts README.md",
     "check": "tsc --noEmit && pnpm lint && pnpm format:check && pnpm check:boundaries && pnpm test && pnpm build"
   },

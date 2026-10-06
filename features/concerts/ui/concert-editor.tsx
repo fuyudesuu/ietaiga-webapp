@@ -6,7 +6,11 @@ import {
   type EditorSession,
   type FormReader,
 } from "@/components/encore-ui/editor-form";
-import { Field, SelectField } from "@/components/encore-ui/form-fields";
+import {
+  Field,
+  FieldRow,
+  SelectField,
+} from "@/components/encore-ui/form-fields";
 import { ItemImageField } from "@/components/encore-ui/item-image-field";
 import { noTrip, tripChoices } from "@/lib/encore/form-input";
 import type { Concert, Editor } from "@/lib/encore/model";
@@ -56,7 +60,7 @@ export function ConcertEditor({
         value={existing?.subtitle}
         placeholder="Tour name, subtitle, or Japanese title"
       />
-      <div className="form-grid">
+      <FieldRow>
         <Field
           name="date"
           label="Concert date (optional)"
@@ -69,11 +73,11 @@ export function ConcertEditor({
           type="time"
           value={existing?.time}
         />
-      </div>
-      <div className="form-grid">
+      </FieldRow>
+      <FieldRow>
         <Field name="venue" label="Venue" value={existing?.venue} />
         <Field name="city" label="City" value={existing?.city} />
-      </div>
+      </FieldRow>
       <SelectField
         name="tripId"
         label="Attach to a trip"

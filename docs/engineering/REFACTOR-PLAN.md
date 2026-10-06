@@ -20,7 +20,7 @@ Repeat for trip, hotel, application and reminder editors in separate coherent ch
 
 ## C. Migrate the touched CSS by component
 
-Start with the extracted form and image picker. Trace all effective styles from globals/features/responsive/wallet files. Introduce co-located CSS Modules; include the component's mobile and theme behavior. Keep shared tokens/global UI primitives where they belong.
+Start with the extracted form and image picker. Trace all effective styles from globals/features/responsive/wallet files. Convert them to Tailwind utilities on the token scale (DECISIONS.md, 2026-10-05; the first editor pass used CSS Modules); include the component's mobile and theme behavior. Keep shared tokens/global UI primitives where they belong.
 
 **Exit:** migrated selectors have clear ownership and no remaining conflicting overrides; dialog sizing/scrolling, 320px layout, keyboard focus, light/dark and solid material remain usable. Delete only selectors whose consumers migrated. If rendering cannot be inspected, report this stage as visually unverified.
 

@@ -71,11 +71,16 @@ Interfaces/ports are useful for real external boundaries such as a Discord sende
 
 ## CSS ownership
 
-Global CSS retains tokens, base/reset rules, font/theme setup and intentional app-wide utilities. Keep shared UI control variants in their existing Tailwind/shadcn system. Custom feature presentation uses co-located CSS Modules.
+Components are styled with Tailwind utilities that use the token scale in the `@theme` block of `app/globals.css`: colours, type, spacing, radii, shadows and motion. Keep responsive (`max-md:`), state and dark/solid variants on the element they affect. Repeated combinations become shared components in `components/encore-ui/`, not new global classes.
 
-Example target: `features/concerts/ui/concert-form.tsx` with `concert-form.module.css`. Keep component media queries, state selectors and reduced-motion rules together. Only semantic reusable primitives belong in shared styles.
+Global CSS retains only:
+- tokens and base/reset rules;
+- the shadcn control skins;
+- the glass material and its fallbacks;
+- keyframes;
+- styles that utilities express poorly, such as pseudo-elements and third-party markup.
 
-When migrating a component: inspect all current matching rules, including responsive and theme overrides; move the resulting behavior into the module; change its class references; delete only migrated global selectors after checking other consumers. Do not leave both styling systems controlling the same property indefinitely. Do not globally replace every matching class string without identifying owners.
+When migrating a component: inspect all current matching rules, including responsive and theme overrides; move the resulting behavior into utilities; delete only migrated global selectors after checking other consumers; and compare `scripts/visual-snapshots.mjs` captures before and after. Do not leave both styling systems controlling the same property indefinitely. Do not globally replace every matching class string without identifying owners.
 
 Preserve narrow-screen overflow behavior, dark/solid modes, focus rings, photo scrims and touch targets. Snapshotting HTML alone does not validate the visual cascade.
 

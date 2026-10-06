@@ -33,10 +33,10 @@
 - Prefer explicit types, discriminated states, named props and understandable control flow. Treat external data as unknown until validated.
 - Do not use `any`, double casts, non-null assertions or lint suppressions to conceal a modeling error. Document genuinely necessary exceptions narrowly.
 - No catch-and-ignore for saves, authentication, uploads or delivery. Distinguish expected domain failures from unexpected faults.
-- Do not grow `features.css` with new feature responsibilities. Extract the touched responsibility and preserve behavior. Record editors live in their feature (`features/<name>/ui/*-editor.tsx`); `features/editors` only hosts the dialog.
+- Do not add global feature CSS; `app/globals.css` holds only tokens, base rules, shadcn control skins, materials and motion. Extract the touched responsibility and preserve behavior. Record editors live in their feature (`features/<name>/ui/*-editor.tsx`); `features/editors` only hosts the dialog.
 - File size is a review signal: around 250 lines, check cohesion; beyond 400, explain why splitting would harm clarity or split by responsibility. These are not minification targets or blanket limits.
 - Keep display models separate from persistence models where they differ. Never duplicate the same authoritative state across several stores.
-- Use one source for design tokens. Feature styles use CSS Modules; keep responsive rules beside their component. Avoid global override chains.
+- Use one source for design tokens: the `@theme` scale in `app/globals.css`. Style components with Tailwind utilities from that scale, with responsive variants beside each element. Avoid global override chains and new global feature CSS (see DECISIONS.md, 2026-10-05).
 
 ## Verification and delivery
 - Discover commands from `package.json`. `pnpm check` runs every gate: types, lint, format, import boundaries (`pnpm check:boundaries`), tests and build. `pnpm build:pages` builds the GitHub Pages export, and `pnpm test:e2e` then runs the browser tests against it (also in CI).
