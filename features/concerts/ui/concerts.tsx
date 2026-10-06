@@ -538,9 +538,12 @@ function ApplicationCard({ application: a }: { application: Application }) {
       )}
       {!a.submitted && (
         <div className={roundActionClass}>
-          <p className="text-small text-muted-foreground">
-            Applications close {instant(a.deadline)}
-          </p>
+          <div className="max-md:w-full">
+            <strong className="text-small">Submit your application</strong>
+            <p className="text-small text-muted-foreground">
+              Closes {instant(a.deadline)}
+            </p>
+          </div>
           <Button
             variant="outline"
             onClick={() =>
