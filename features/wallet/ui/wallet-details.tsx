@@ -16,24 +16,23 @@ import { withBasePath } from "@/lib/encore/paths";
 
 const detailHeadingClass =
   "flex flex-wrap items-center justify-between gap-x-2 gap-y-1";
-const detailTitleClass = "text-lead font-[650] tracking-[-0.02em]";
+const detailTitleClass = "text-lead font-semibold tracking-tight";
 const textButtonClass =
-  "inline-flex min-h-11 items-center gap-1.5 text-left text-label font-[550] text-primary";
+  "inline-flex min-h-11 items-center gap-1.5 text-left text-label font-semibold text-primary";
 export const walletPrimaryClass =
   "flex min-h-12 w-full items-center justify-center rounded-md bg-primary px-4 py-3 text-small font-semibold text-primary-foreground";
 const linkedRowClass =
   "flex w-full items-center gap-3 border-b border-border py-4 text-left";
-const linkedRowNoteClass = "my-[3px] block text-caption text-muted-foreground";
-const linkedRowTitleClass = "block text-[0.9375rem] font-[570] wrap-anywhere";
+const linkedRowNoteClass = "my-0.5 block text-caption text-muted-foreground";
+const linkedRowTitleClass = "block text-body font-semibold wrap-anywhere";
 const fullLinkClass =
-  "flex min-h-[52px] items-center gap-2 text-small font-[550] text-primary";
+  "flex min-h-[52px] items-center gap-2 text-small font-semibold text-primary";
 const emptyCopyClass = "py-4 text-small text-muted-foreground";
 const factLabelClass = "mb-1 text-caption text-muted-foreground";
 const innerTabClass =
   "min-h-11 border-b-2 border-transparent text-small text-muted-foreground aria-pressed:border-primary aria-pressed:text-primary";
 const totalLabelClass = "text-caption text-muted-foreground";
-const totalAmountClass =
-  "mt-1.25 block text-body font-semibold text-foreground";
+const totalAmountClass = "mt-1 block text-body font-semibold text-foreground";
 
 export function TicketDetails({
   concert,
@@ -74,19 +73,16 @@ export function TicketDetails({
       </dl>
       {applications.length ? (
         applications.map((application) => (
-          <section
-            className="border-t border-border py-4.5"
-            key={application.id}
-          >
+          <section className="border-t border-border py-4" key={application.id}>
             <div className="flex flex-wrap justify-between gap-2">
-              <h3 className="text-[0.9375rem] font-[650]">
+              <h3 className="text-body font-semibold">
                 {application.provider}
               </h3>
               <span className="text-caption text-muted-foreground">
                 {appStatus(application)}
               </span>
             </div>
-            <p className="mt-1.25 text-label text-muted-foreground">
+            <p className="mt-1 text-label text-muted-foreground">
               {application.round}
             </p>
             {application.result === "Won" &&
@@ -147,7 +143,7 @@ export function TicketDetails({
       >
         Open full concert <ArrowUpRight size={16} />
       </a>
-      <p className="text-caption leading-[1.6] text-muted-foreground">
+      <p className="text-caption leading-relaxed text-muted-foreground">
         Planning record only. Use the ticket provider’s app for admission.
       </p>
     </>
@@ -181,7 +177,7 @@ export function TripDetails({
           Edit / image
         </button>
       </div>
-      <p className="mb-3.5 text-small text-muted-foreground">{trip.title}</p>
+      <p className="mb-3 text-small text-muted-foreground">{trip.title}</p>
       <div
         className="flex gap-6 border-b border-border"
         role="group"
@@ -264,7 +260,7 @@ export function TripDetails({
         {Object.entries(costs(state, trip.id)).map(([currency, value]) => (
           <div
             key={currency}
-            className="flex justify-between gap-3.5 border-y border-border py-4.5"
+            className="flex justify-between gap-3 border-y border-border py-4"
           >
             <span className={totalLabelClass}>
               Planned{" "}

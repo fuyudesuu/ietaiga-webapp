@@ -83,7 +83,7 @@ export function Concerts() {
           </AddButton>
         }
       />
-      <div className="mb-[27px] flex justify-between gap-3.5 max-md:flex-wrap max-md:gap-3">
+      <div className="mb-6 flex justify-between gap-3 max-md:flex-wrap max-md:gap-3">
         <div className="relative max-w-[440px] flex-1 max-md:w-full max-md:basis-full">
           <Search
             size={18}
@@ -110,7 +110,7 @@ export function Concerts() {
           ]}
         />
       </div>
-      <div className="mt-0 mr-[55px] mb-2.5 ml-[23px] flex justify-between pl-1 text-caption tracking-[0.04em] text-muted-foreground max-md:hidden">
+      <div className="mt-0 mr-[55px] mb-2.5 ml-6 flex justify-between pl-1 text-caption tracking-wide text-muted-foreground max-md:hidden">
         <span>PERFORMANCE</span>
         <span>TICKET STATUS</span>
       </div>
@@ -121,7 +121,7 @@ export function Concerts() {
             <a
               href={withBasePath("/concerts/" + c.id)}
               key={c.id}
-              className="group flex min-h-[93px] min-w-0 items-center gap-5 border-b border-border px-1 py-6 text-foreground last:border-0 max-[1251px]:gap-3.5 max-md:grid max-md:grid-cols-[40px_38px_minmax(0,1fr)] max-md:gap-2.5 max-md:px-0 max-md:py-5"
+              className="group flex min-h-[93px] min-w-0 items-center gap-5 border-b border-border px-1 py-6 text-foreground last:border-0 max-[1251px]:gap-3 max-md:grid max-md:grid-cols-[40px_38px_minmax(0,1fr)] max-md:gap-2.5 max-md:px-0 max-md:py-5"
             >
               <DateTile
                 date={c.date}
@@ -132,13 +132,13 @@ export function Concerts() {
                 className="h-[60px] w-[53px] max-md:h-[42px] max-md:w-[38px]"
               />
               <div className="min-w-0 flex-1">
-                <h3 className="text-body font-[630] tracking-[-0.1px] group-hover:text-primary">
+                <h3 className="text-body font-semibold tracking-normal group-hover:text-primary">
                   {c.title}
                 </h3>
-                <p className="mt-[3px] text-small wrap-anywhere text-muted-foreground">
+                <p className="mt-0.5 text-small wrap-anywhere text-muted-foreground">
                   {c.subtitle}
                 </p>
-                <small className="mt-1.25 flex items-center gap-1.25 text-small text-muted-foreground max-[1251px]:flex-wrap max-md:text-label">
+                <small className="mt-1 flex items-center gap-1 text-small text-muted-foreground max-[1251px]:flex-wrap max-md:text-label">
                   <MapPin size={13} />
                   {c.venue} · {c.city}
                 </small>
@@ -209,15 +209,13 @@ export function ConcertDetail() {
         <ArrowLeft size={16} />
         All concerts
       </a>
-      <div className="mb-7 flex items-center gap-[23px] max-md:mt-[22px] max-md:flex-wrap max-md:gap-3.5">
+      <div className="mb-6 flex items-center gap-6 max-md:mt-5 max-md:flex-wrap max-md:gap-3">
         <ConcertMark concert={c} large />
         <div className="max-md:min-w-0 max-md:flex-1">
-          <h1 className="text-[2.3rem] leading-[1.25] font-[650] tracking-[-0.035em] wrap-anywhere max-md:text-[1.6rem]">
+          <h1 className="text-display leading-tight font-semibold tracking-tighter wrap-anywhere max-md:text-heading">
             {c.title}
           </h1>
-          <p className="mt-1.25 text-[0.88rem] text-muted-foreground">
-            {c.subtitle}
-          </p>
+          <p className="mt-1 text-small text-muted-foreground">{c.subtitle}</p>
         </div>
         <Button
           variant="outline"
@@ -231,7 +229,7 @@ export function ConcertDetail() {
       <div
         className={cn(
           panelClass,
-          "mb-[30px] flex items-center gap-[35px] p-[23px] max-md:grid max-md:grid-cols-1 max-md:gap-4.5 max-md:p-5",
+          "mb-8 flex items-center gap-8 p-6 max-md:grid max-md:grid-cols-1 max-md:gap-4 max-md:p-5",
         )}
       >
         <span className={factClass}>
@@ -335,7 +333,7 @@ export function ConcertDetail() {
               <h2
                 className={cn(
                   sectionHeadingClass,
-                  "text-[0.91rem] font-semibold max-md:text-[1.0625rem]",
+                  "text-small font-semibold max-md:text-lead",
                 )}
               >
                 Little details
@@ -362,7 +360,7 @@ export function ConcertDetail() {
   );
 }
 const fictionNoteClass =
-  "mt-4.5 text-small leading-[1.7] text-muted-foreground max-md:text-label";
+  "mt-4 text-small leading-relaxed text-muted-foreground max-md:text-label";
 const factClass = "flex items-center gap-2.5 max-md:flex-wrap";
 const factIconClass = "w-[18px] text-muted-foreground";
 const factTextClass = "text-small font-medium";
@@ -385,10 +383,10 @@ function TimelineStep({
   children: ReactNode;
 }) {
   return (
-    <div className="flex w-[66px] shrink-0 flex-col items-center gap-1.25 max-md:w-[58px]">
+    <div className="flex w-[66px] shrink-0 flex-col items-center gap-1 max-md:w-[58px]">
       <span
         className={cn(
-          "mb-[3px] grid size-[25px] place-items-center rounded-full border border-border bg-muted text-small text-muted-foreground",
+          "mb-0.5 grid size-[25px] place-items-center rounded-full border border-border bg-muted text-small text-muted-foreground",
           state === "done" &&
             "border-transparent bg-primary text-primary-foreground",
           state === "current" &&
@@ -416,10 +414,10 @@ function StatusCell({
 }) {
   return (
     <div>
-      <span className="mb-1.25 block text-small text-muted-foreground">
+      <span className="mb-1 block text-small text-muted-foreground">
         {label}
       </span>
-      <strong className="text-small leading-[1.6] font-medium">
+      <strong className="text-small leading-relaxed font-medium">
         {children}
       </strong>
     </div>
@@ -433,9 +431,9 @@ function ApplicationCard({ application: a }: { application: Application }) {
     notify(message);
   }
   return (
-    <article className={cn(panelClass, "p-6 max-md:p-[18px]")}>
-      <header className="mb-[13px] flex items-center gap-[9px]">
-        <span className="flex items-center gap-[7px] text-small tracking-[0.05em] text-muted-foreground max-md:text-label max-md:tracking-normal">
+    <article className={cn(panelClass, "p-6 max-md:p-4")}>
+      <header className="mb-3 flex items-center gap-2">
+        <span className="flex items-center gap-1.5 text-small tracking-wide text-muted-foreground max-md:text-label max-md:tracking-normal">
           <Ticket size={15} />
           {a.provider}
         </span>
@@ -454,7 +452,7 @@ function ApplicationCard({ application: a }: { application: Application }) {
         <Button
           variant="ghost"
           size="icon"
-          className="-ml-[3px]"
+          className="-ml-0.5"
           aria-label={"Edit " + a.round}
           onClick={() =>
             setEditor({ type: "application", id: a.id, concertId: a.concertId })
@@ -463,8 +461,8 @@ function ApplicationCard({ application: a }: { application: Application }) {
           <Pencil size={16} />
         </Button>
       </header>
-      <h3 className="text-[1.08rem] font-[550] tracking-[-0.3px]">{a.round}</h3>
-      <div className="my-[26px] flex items-start gap-0">
+      <h3 className="text-lead font-semibold tracking-tight">{a.round}</h3>
+      <div className="my-6 flex items-start gap-0">
         <TimelineStep
           state={a.submitted ? "done" : "todo"}
           number={1}
@@ -499,7 +497,7 @@ function ApplicationCard({ application: a }: { application: Application }) {
               : "TBA"}
         </TimelineStep>
       </div>
-      <div className="mt-2.5 grid grid-cols-4 gap-2.5 border-t border-border pt-4.5 max-md:grid-cols-2 max-md:gap-4.5">
+      <div className="mt-2.5 grid grid-cols-4 gap-2.5 border-t border-border pt-4 max-md:grid-cols-2 max-md:gap-4">
         <StatusCell label="Submission">
           {a.submitted ? "Submitted" : "Not submitted"}
         </StatusCell>
@@ -508,7 +506,7 @@ function ApplicationCard({ application: a }: { application: Application }) {
         <StatusCell label="Collection">{a.collection}</StatusCell>
       </div>
       {a.result === "Won" && a.payment === "Unpaid" && (
-        <div className="mt-[21px] flex items-center justify-between gap-3 rounded-md bg-amber-bg p-4 text-amber-text max-md:flex-wrap max-md:p-3.5">
+        <div className="mt-5 flex items-center justify-between gap-3 rounded-md bg-amber-bg p-4 text-amber-text max-md:flex-wrap max-md:p-3">
           <div>
             <strong className="text-small">
               {money(a.amount, a.currency)} to secure your seat
@@ -581,7 +579,7 @@ function ApplicationCard({ application: a }: { application: Application }) {
       )}
       {a.result === "Won" && a.payment === "Paid" && (
         <div className={roundActionClass}>
-          <span className="flex items-center gap-1.25 text-[0.8rem] text-primary">
+          <span className="flex items-center gap-1 text-label text-primary">
             <Check size={17} />
             Your seat is secured · {money(a.amount, a.currency)}
           </span>
@@ -596,7 +594,7 @@ function ApplicationCard({ application: a }: { application: Application }) {
           </Button>
         </div>
       )}
-      <footer className="mt-3.5 flex flex-wrap items-center justify-between border-t border-border pt-2 max-md:gap-3">
+      <footer className="mt-3 flex flex-wrap items-center justify-between border-t border-border pt-2 max-md:gap-3">
         <Button
           variant="ghost"
           className={footerButtonClass}

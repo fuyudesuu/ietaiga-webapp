@@ -43,17 +43,17 @@ import {
 import { cn } from "@/lib/utils";
 
 // Shared pieces of the settings sections.
-const sectionClass = cn(panelClass, "p-[26px] max-md:p-5");
-const headingIconClass = "mt-[3px] w-[19px] text-primary";
-const sectionHeadingClass = "mb-6 flex items-start gap-[13px]";
-const sectionTitleClass = "text-lead font-[620] tracking-[-0.2px]";
+const sectionClass = cn(panelClass, "p-6 max-md:p-5");
+const headingIconClass = "mt-0.5 w-[19px] text-primary";
+const sectionHeadingClass = "mb-6 flex items-start gap-3";
+const sectionTitleClass = "text-lead font-semibold tracking-tight";
 const sectionHintClass =
-  "mt-1.25 text-small leading-[1.6] text-muted-foreground";
+  "mt-1 text-small leading-relaxed text-muted-foreground";
 const settingRowClass =
-  "flex items-center justify-between gap-5 border-t border-border py-4.5 last:pb-0 max-md:flex-wrap max-md:gap-3.5";
+  "flex items-center justify-between gap-5 border-t border-border py-4 last:pb-0 max-md:flex-wrap max-md:gap-3";
 const settingLabelClass = "text-small font-medium";
 const settingHintClass =
-  "mt-[3px] text-small leading-[1.6] text-muted-foreground";
+  "mt-0.5 text-small leading-relaxed text-muted-foreground";
 const settingChoiceClass = "w-[200px] shrink-0 max-lg:w-[185px] max-md:w-full";
 export function Settings() {
   const { state, update, notify, reset } = usePlanner();
@@ -110,7 +110,7 @@ export function Settings() {
         title="Settings"
         subtitle="Time zones, appearance, and reminder preferences."
       />
-      <div className="grid grid-cols-[minmax(0,1fr)_275px] gap-7 max-[1251px]:grid-cols-[minmax(0,1fr)]">
+      <div className="grid grid-cols-[minmax(0,1fr)_275px] gap-6 max-[1251px]:grid-cols-[minmax(0,1fr)]">
         <div className="flex flex-col gap-6">
           <section className={sectionClass}>
             <div className={sectionHeadingClass}>
@@ -186,7 +186,7 @@ export function Settings() {
                 <label
                   key={t.id}
                   className={cn(
-                    "relative flex cursor-pointer flex-col items-center gap-2.5 rounded-[12px] border border-border p-5 text-muted-foreground focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-ring max-md:gap-2 max-md:px-2 max-md:py-[18px]",
+                    "relative flex cursor-pointer flex-col items-center gap-2.5 rounded-lg border border-border p-5 text-muted-foreground focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-ring max-md:gap-2 max-md:px-2 max-md:py-4",
                     p.theme === t.id && "border-primary bg-accent text-primary",
                   )}
                 >
@@ -260,7 +260,7 @@ export function Settings() {
                 <label
                   key={d.id}
                   className={cn(
-                    "flex cursor-pointer items-center gap-3 rounded-[12px] border border-border p-4",
+                    "flex cursor-pointer items-center gap-3 rounded-lg border border-border p-4",
                     p.destination === d.id && "border-primary bg-accent",
                   )}
                 >
@@ -268,10 +268,10 @@ export function Settings() {
                     <d.icon size={20} />
                   </span>
                   <span className="min-w-0 flex-1">
-                    <strong className="block text-small font-[550]">
+                    <strong className="block text-small font-semibold">
                       {d.title}
                     </strong>
-                    <small className="mt-[3px] block text-small text-muted-foreground">
+                    <small className="mt-0.5 block text-small text-muted-foreground">
                       {d.description}
                     </small>
                   </span>
@@ -280,10 +280,10 @@ export function Settings() {
               ))}
             </RadioGroup>
             {p.destination !== "none" && (
-              <div className="mt-[23px]">
+              <div className="mt-6">
                 {p.destination === "channel" && (
                   <>
-                    <label className="mb-4.5 flex min-w-0 flex-col gap-2">
+                    <label className="mb-4 flex min-w-0 flex-col gap-2">
                       <span className="text-small font-medium">
                         Demo channel name
                       </span>
@@ -315,21 +315,21 @@ export function Settings() {
                     </div>
                   </>
                 )}
-                <div className="mt-5 mb-3 flex gap-3 rounded-[12px] bg-muted p-5 max-md:gap-[9px] max-md:p-3.5">
-                  <span className="grid size-[34px] shrink-0 place-items-center rounded-full bg-primary text-[1.25rem] font-semibold text-primary-foreground">
+                <div className="mt-5 mb-3 flex gap-3 rounded-lg bg-muted p-5 max-md:gap-2 max-md:p-3">
+                  <span className="grid size-[34px] shrink-0 place-items-center rounded-full bg-primary text-title font-semibold text-primary-foreground">
                     e.
                   </span>
                   <div className="min-w-0 flex-1">
-                    <strong className="text-[0.8rem]">
+                    <strong className="text-label">
                       encore{" "}
-                      <small className="ml-[3px] rounded-[3px] bg-[#74808d] px-1 py-px text-small text-white">
+                      <small className="ml-0.5 rounded-xs bg-[#74808d] px-1 py-px text-small text-white">
                         APP
                       </small>
                     </strong>
-                    <span className="ml-[9px] text-small text-muted-foreground">
+                    <span className="ml-2 text-small text-muted-foreground">
                       Today at 12:00
                     </span>
-                    <div className="mt-[7px] rounded-[4px] border-l-[3px] border-primary bg-card p-3">
+                    <div className="mt-1.5 rounded-xs border-l-[3px] border-primary bg-card p-3">
                       <strong className="block text-small">
                         {p.destination === "channel" && !p.revealTitle
                           ? "A saved deadline needs attention"
@@ -370,16 +370,14 @@ export function Settings() {
                 {testMessage && (
                   <p
                     className={
-                      blocked
-                        ? formErrorClass
-                        : "py-3.5 text-[0.8rem] text-primary"
+                      blocked ? formErrorClass : "py-3 text-label text-primary"
                     }
                     role="status"
                   >
                     {testMessage}
                   </p>
                 )}
-                <details className="mt-[22px] text-small text-muted-foreground">
+                <details className="mt-5 text-small text-muted-foreground">
                   <summary className="cursor-pointer">
                     Demo failure scenario
                   </summary>
@@ -393,17 +391,17 @@ export function Settings() {
           </section>
           {state.deliveries.length > 0 && (
             <section className={sectionClass}>
-              <h2 className="text-body font-[550] tracking-[-0.2px]">
+              <h2 className="text-body font-semibold tracking-tight">
                 Recent activity
               </h2>
               {state.deliveries.map((d) => (
                 <div
-                  className="flex items-center gap-[13px] border-b border-border py-[17px] last:border-0 last:pb-0"
+                  className="flex items-center gap-3 border-b border-border py-4 last:border-0 last:pb-0"
                   key={d.id}
                 >
                   <MessageCircle size={17} />
                   <span className="flex-1">
-                    <strong className="text-[0.8rem] font-medium">
+                    <strong className="text-label font-medium">
                       {d.label}
                     </strong>
                     <small className="block text-small text-muted-foreground">
@@ -422,26 +420,26 @@ export function Settings() {
           <section
             className={cn(
               panelClass,
-              "flex flex-col items-center gap-2.5 px-6 py-7",
+              "flex flex-col items-center gap-2.5 px-6 py-6",
             )}
           >
             <div className="grid size-[68px] shrink-0 place-items-center rounded-full bg-secondary text-heading font-semibold text-secondary-foreground">
               A
             </div>
-            <h2 className="mt-1.25 text-[1.25rem] font-[550]">Aki</h2>
+            <h2 className="mt-1 text-title font-semibold">Aki</h2>
             <p className="text-small text-muted-foreground">
               Personal demo space
             </p>
             <Pill>Sample account</Pill>
-            <div className="mt-[15px] flex items-start gap-[9px] border-t border-border pt-4.5 text-muted-foreground">
+            <div className="mt-4 flex items-start gap-2 border-t border-border pt-4 text-muted-foreground">
               <ShieldCheck size={18} />
-              <p className="text-small leading-[1.8]">
+              <p className="text-small leading-relaxed">
                 This is a design prototype. Use fictional information only.
               </p>
             </div>
           </section>
-          <section className={cn(panelClass, "flex flex-col gap-3.5 p-[23px]")}>
-            <h2 className="text-[0.91rem] font-semibold">Your sample data</h2>
+          <section className={cn(panelClass, "flex flex-col gap-3 p-6")}>
+            <h2 className="text-small font-semibold">Your sample data</h2>
             <p className="text-small text-muted-foreground">
               Edits stay on this browser. You can take a copy or start fresh.
             </p>
@@ -478,7 +476,7 @@ export function Settings() {
               </AlertDialogContent>
             </AlertDialog>
           </section>
-          <p className="px-5 text-small leading-[1.8] text-muted-foreground">
+          <p className="px-5 text-small leading-relaxed text-muted-foreground">
             Tokyo photograph by Kazuend, CC0.
             <br />
             <a

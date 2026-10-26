@@ -48,8 +48,8 @@ import { cn } from "@/lib/utils";
 import { withBasePath } from "@/lib/encore/paths";
 
 const clearStateClass =
-  "flex items-center gap-4 px-5 py-[30px] text-muted-foreground";
-const moneyClass = "ml-1.5 text-[0.9375rem] font-semibold text-foreground";
+  "flex items-center gap-4 px-5 py-8 text-muted-foreground";
+const moneyClass = "ml-1.5 text-body font-semibold text-foreground";
 
 export function Overview() {
   return (
@@ -129,7 +129,7 @@ function DesktopOverview() {
           </div>
         }
       />
-      <div className="grid grid-cols-[minmax(0,1.15fr)_minmax(330px,0.85fr)] items-start gap-[30px] max-[1251px]:grid-cols-[minmax(0,1.15fr)_minmax(300px,0.85fr)] max-[1251px]:gap-6 max-lg:grid-cols-[minmax(0,1fr)] min-[1550px]:gap-11">
+      <div className="grid grid-cols-[minmax(0,1.15fr)_minmax(330px,0.85fr)] items-start gap-8 max-[1251px]:grid-cols-[minmax(0,1.15fr)_minmax(300px,0.85fr)] max-[1251px]:gap-6 max-lg:grid-cols-[minmax(0,1fr)] min-[1550px]:gap-10">
         <div className="flex min-w-0 flex-col gap-8">
           <section aria-labelledby="attention-title">
             <div className={sectionTitleClass}>
@@ -142,7 +142,7 @@ function DesktopOverview() {
             <div className="border-t border-border">
               {attention.map(({ application: a, concert: c, kind, date }) => (
                 <article
-                  className="grid grid-cols-[24px_minmax(0,1fr)_auto] items-center gap-3 border-b border-border py-[21px] max-[1251px]:grid-cols-[22px_minmax(0,1fr)] min-[1550px]:py-[25px]"
+                  className="grid grid-cols-[24px_minmax(0,1fr)_auto] items-center gap-3 border-b border-border py-5 max-[1251px]:grid-cols-[22px_minmax(0,1fr)] min-[1550px]:py-6"
                   key={a.id}
                 >
                   <div
@@ -161,7 +161,7 @@ function DesktopOverview() {
                   </div>
                   <div>
                     <a
-                      className="text-body leading-[1.4] font-[630] text-foreground hover:text-primary"
+                      className="text-body leading-snug font-semibold text-foreground hover:text-primary"
                       href={withBasePath("/concerts/" + c.id)}
                     >
                       {kind === "payment"
@@ -170,12 +170,12 @@ function DesktopOverview() {
                           ? "Check your lottery result"
                           : "Application closes"}
                     </a>
-                    <p className="mt-1.25 text-small text-muted-foreground">
+                    <p className="mt-1 text-small text-muted-foreground">
                       {c.title} <span>· {a.provider}</span>
                     </p>
                     <p
                       className={cn(
-                        "mt-1.25 text-small leading-normal text-muted-foreground",
+                        "mt-1 text-small leading-normal text-muted-foreground",
                         kind === "payment" && "text-amber-text",
                       )}
                     >
@@ -188,7 +188,7 @@ function DesktopOverview() {
                       )}
                     </p>
                   </div>
-                  <div className="flex flex-col items-end gap-[9px] max-[1251px]:col-[2] max-[1251px]:mt-[3px] max-[1251px]:flex-row max-[1251px]:items-center max-[1251px]:justify-between">
+                  <div className="flex flex-col items-end gap-2 max-[1251px]:col-[2] max-[1251px]:mt-0.5 max-[1251px]:flex-row max-[1251px]:items-center max-[1251px]:justify-between">
                     {kind === "payment" && (
                       <strong className="text-body">
                         {money(a.amount, a.currency)}
@@ -226,7 +226,7 @@ function DesktopOverview() {
                     <strong className="text-foreground">
                       You’re up to date
                     </strong>
-                    <p className="mt-1.25 text-small">
+                    <p className="mt-1 text-small">
                       No ticket actions need attention.
                     </p>
                   </div>
@@ -261,17 +261,17 @@ function DesktopOverview() {
                         state.applications.find((a) => a.concertId === c.id);
                       return (
                         <a
-                          className="group grid grid-cols-[43px_42px_minmax(0,1fr)_auto] items-center gap-[13px] border-b border-border py-[21px] text-foreground max-[1251px]:grid-cols-[38px_36px_minmax(0,1fr)] max-[1251px]:gap-2.5 max-lg:grid-cols-[44px_42px_minmax(0,1fr)_auto] min-[1550px]:py-[25px]"
+                          className="group grid grid-cols-[43px_42px_minmax(0,1fr)_auto] items-center gap-3 border-b border-border py-5 text-foreground max-[1251px]:grid-cols-[38px_36px_minmax(0,1fr)] max-[1251px]:gap-2.5 max-lg:grid-cols-[44px_42px_minmax(0,1fr)_auto] min-[1550px]:py-6"
                           href={withBasePath("/concerts/" + c.id)}
                           key={c.id}
                         >
                           <DateTile date={c.date} variant="calendar" />
                           <ConcertMark
                             concert={c}
-                            className="size-[42px] rounded-[11px] max-[1251px]:h-[38px] max-[1251px]:w-9 max-lg:size-[42px]"
+                            className="size-[42px] rounded-md max-[1251px]:h-[38px] max-[1251px]:w-9 max-lg:size-[42px]"
                           />
                           <div className="min-w-0">
-                            <h3 className="text-body leading-[1.4] font-[630] group-hover:text-primary">
+                            <h3 className="text-body leading-snug font-semibold group-hover:text-primary">
                               {c.title}
                             </h3>
                             <p className="mt-1 block text-small text-muted-foreground">
@@ -281,7 +281,7 @@ function DesktopOverview() {
                               {c.venue}
                             </span>
                           </div>
-                          <div className="flex items-center gap-2 max-[1251px]:col-[3] max-[1251px]:-mt-[3px] max-[1251px]:justify-between max-lg:col-auto max-lg:m-0">
+                          <div className="flex items-center gap-2 max-[1251px]:col-[3] max-[1251px]:-mt-0.5 max-[1251px]:justify-between max-lg:col-auto max-lg:m-0">
                             <Pill
                               className="bg-transparent p-0"
                               tone={
@@ -305,7 +305,7 @@ function DesktopOverview() {
                   {!upcoming.length && (
                     <div className={clearStateClass}>
                       <CalendarDays />
-                      <p className="mt-1.25 text-small">
+                      <p className="mt-1 text-small">
                         No upcoming performances. Add a concert to begin.
                       </p>
                     </div>
@@ -321,12 +321,12 @@ function DesktopOverview() {
             </a>
           </section>
           <a
-            className="flex items-center gap-3.5 border-t border-border py-4.5 text-muted-foreground"
+            className="flex items-center gap-3 border-t border-border py-4 text-muted-foreground"
             href={withBasePath("/settings#reminders")}
           >
             <Bell size={20} className="text-primary" />
             <div>
-              <strong className="text-[0.9375rem] font-[550] text-foreground">
+              <strong className="text-body font-semibold text-foreground">
                 Keep your deadlines close
               </strong>
               <p className="mt-1 text-small">
@@ -341,7 +341,7 @@ function DesktopOverview() {
             Next journey
           </SectionTitle>
           {next ? (
-            <section className="overflow-hidden rounded-[16px] border border-border bg-card max-lg:grid max-lg:grid-cols-[0.7fr_1fr]">
+            <section className="overflow-hidden rounded-lg border border-border bg-card max-lg:grid max-lg:grid-cols-[0.7fr_1fr]">
               {next.cities.toLowerCase().includes("tokyo") ? (
                 <div className="relative h-[210px] overflow-hidden max-lg:h-full max-lg:min-h-[320px] min-[1550px]:h-[245px]">
                   <img
@@ -349,7 +349,7 @@ function DesktopOverview() {
                     src={withBasePath("/tokyo.jpg")}
                     alt="Tokyo Tower above the city at dusk"
                   />
-                  <GlassTag className="absolute top-[14px] right-[14px] border-[#ffffff3b] bg-[#122a48b8] px-3 py-2 text-label leading-[1.3] backdrop-blur-[16px] max-lg:right-auto max-lg:left-3 solid:bg-[#152a48] solid:backdrop-blur-none not-supports-[backdrop-filter:blur(1px)]:bg-[#152a48]">
+                  <GlassTag className="absolute top-[14px] right-[14px] border-[#ffffff3b] bg-[#122a48b8] px-3 py-2 text-label leading-snug backdrop-blur-[16px] max-lg:right-auto max-lg:left-3 solid:bg-[#152a48] solid:backdrop-blur-none not-supports-[backdrop-filter:blur(1px)]:bg-[#152a48]">
                     {day(next.start)} — {day(next.end)}
                   </GlassTag>
                 </div>
@@ -361,12 +361,12 @@ function DesktopOverview() {
                   </span>
                 </div>
               )}
-              <div className="p-[22px]">
+              <div className="p-5">
                 <a
                   href={withBasePath("/trips/" + next.id)}
                   className="flex items-center justify-between gap-3 text-foreground hover:text-primary"
                 >
-                  <h2 className="text-[1.55rem] leading-[1.25] font-[650] tracking-[-0.03em]">
+                  <h2 className="text-title leading-tight font-semibold tracking-tighter">
                     {next.cities}
                   </h2>
                   <ArrowUpRight size={20} />
@@ -377,7 +377,7 @@ function DesktopOverview() {
                   ) + 1}{" "}
                   days · {tripConcerts.length} concerts · {stays.length} stays
                 </p>
-                <div className="pt-[21px] pb-4 max-lg:pt-4.5">
+                <div className="pt-5 pb-4 max-lg:pt-4">
                   {tripConcerts.map((c, i) => (
                     <a
                       href={withBasePath("/concerts/" + c.id)}
@@ -391,7 +391,7 @@ function DesktopOverview() {
                         <strong className="text-small font-semibold group-hover:text-primary">
                           {day(c.date)} · {c.city}
                         </strong>
-                        <p className="mt-[3px] text-small text-muted-foreground">
+                        <p className="mt-0.5 text-small text-muted-foreground">
                           {c.title}
                         </p>
                       </div>
@@ -408,10 +408,10 @@ function DesktopOverview() {
                   )}
                 </div>
                 <div className="border-t border-border pt-4">
-                  <h3 className="mb-2 text-[0.9375rem] font-semibold">Stays</h3>
+                  <h3 className="mb-2 text-body font-semibold">Stays</h3>
                   {stays.map((h) => (
                     <button
-                      className="group flex min-h-[58px] w-full items-center gap-2.5 border-b border-border py-[13px] text-left text-muted-foreground"
+                      className="group flex min-h-[58px] w-full items-center gap-2.5 border-b border-border py-3 text-left text-muted-foreground"
                       key={h.id}
                       onClick={() => setEditor({ type: "hotel", id: h.id })}
                     >
@@ -452,7 +452,7 @@ function DesktopOverview() {
                     </Button>
                   )}
                 </div>
-                <div className="py-4.5">
+                <div className="py-4">
                   {Object.entries(summary).map(([currency, v]) => (
                     <div
                       key={currency}

@@ -67,18 +67,18 @@ const hasPhoto = (trip: Trip) => trip.cities.toLowerCase().includes("tokyo");
 const tripYearClass = "text-label text-muted-foreground";
 const mutedIconClass = "text-muted-foreground";
 const dayIntroClass =
-  "flex items-center gap-2.5 pt-3 pb-[17px] text-muted-foreground";
+  "flex items-center gap-2.5 pt-3 pb-4 text-muted-foreground";
 const itineraryItemClass =
-  "mb-3 flex items-center gap-3.5 border-b border-border py-4.5 max-md:flex-wrap max-md:gap-2.5";
-const itineraryTitleClass = "text-body font-[550]";
-const itineraryTextClass = "mt-[3px] text-small text-muted-foreground";
+  "mb-3 flex items-center gap-3 border-b border-border py-4 max-md:flex-wrap max-md:gap-2.5";
+const itineraryTitleClass = "text-body font-semibold";
+const itineraryTextClass = "mt-0.5 text-small text-muted-foreground";
 const expenseRowClass =
-  "flex items-center gap-3 border-b border-border py-4.5 text-small max-md:flex-wrap";
+  "flex items-center gap-3 border-b border-border py-4 text-small max-md:flex-wrap";
 const expenseNoteClass = "block text-small text-muted-foreground";
 const expenseAmountClass = "font-medium max-md:ml-auto";
 const tripStatClass = "flex items-center gap-2.5 text-small";
-const stayDateLabelClass = "text-small tracking-[0.06em] text-muted-foreground";
-const stayDateClass = "text-[1.08rem] font-medium";
+const stayDateLabelClass = "text-small tracking-wide text-muted-foreground";
+const stayDateClass = "text-lead font-medium";
 
 export function Trips() {
   const { state, setEditor } = usePlanner();
@@ -138,19 +138,19 @@ export function Trips() {
               )}
               <span
                 className={cn(
-                  "absolute bottom-5 left-[23px] z-1 font-sans text-small tracking-[0.1em] uppercase",
+                  "absolute bottom-5 left-[23px] z-1 font-sans text-small tracking-wide uppercase",
                   hasPhoto(t) ? "text-white" : "text-foreground",
                 )}
               >
                 {day(t.start, { month: "long" })}
-                <strong className="block text-[2.2rem] leading-[1.2] font-[450] tracking-[-1px]">
+                <strong className="block text-display leading-tight font-normal tracking-tighter">
                   {day(t.start, { day: "2-digit" })}—
                   {day(t.end, { day: "2-digit" })}
                 </strong>
               </span>
             </div>
             <div className="p-6 max-md:p-5">
-              <div className={cn(sectionTitleClass, "mb-[13px]")}>
+              <div className={cn(sectionTitleClass, "mb-3")}>
                 <span className={tripYearClass}>
                   {day(t.start, { year: "numeric" })} · JAPAN
                 </span>
@@ -158,13 +158,13 @@ export function Trips() {
                   {t.status}
                 </Pill>
               </div>
-              <h2 className="text-[1.35rem] font-[630] tracking-[-0.025em] max-md:text-[1.3rem]">
+              <h2 className="text-title font-semibold tracking-tight max-md:text-title">
                 {t.title}
               </h2>
-              <p className="mt-2 min-h-11 text-[0.8rem] leading-[1.8] text-muted-foreground">
+              <p className="mt-2 min-h-11 text-label leading-relaxed text-muted-foreground">
                 {t.notes}
               </p>
-              <div className="mt-[22px] flex items-center gap-[22px] border-t border-border pt-[17px] text-small text-muted-foreground">
+              <div className="mt-5 flex items-center gap-5 border-t border-border pt-4 text-small text-muted-foreground">
                 <span className="flex items-center gap-1.5">
                   <Ticket size={16} />
                   {state.concerts.filter((c) => c.tripId === t.id).length}{" "}
@@ -180,16 +180,16 @@ export function Trips() {
           </a>
         ))}
         <button
-          className="flex min-h-40 flex-col items-center justify-center gap-2 rounded-[16px] border border-dashed border-input bg-transparent text-muted-foreground"
+          className="flex min-h-40 flex-col items-center justify-center gap-2 rounded-lg border border-dashed border-input bg-transparent text-muted-foreground"
           onClick={() => setEditor({ type: "trip" })}
         >
           <span className="grid size-[38px] place-items-center rounded-full border border-border bg-secondary text-primary">
             <Plus size={23} />
           </span>
-          <h3 className="text-[0.95rem] font-medium text-foreground">
+          <h3 className="text-body font-medium text-foreground">
             Where to next?
           </h3>
-          <p className="text-[0.8rem]">Start a new journey.</p>
+          <p className="text-label">Start a new journey.</p>
         </button>
       </div>
     </>
@@ -231,7 +231,7 @@ export function TripDetail() {
         <ArrowLeft size={16} />
         My trips
       </a>
-      <div className="relative mb-[30px] h-auto min-h-[260px] overflow-hidden rounded-[16px] bg-[#172e51] text-white max-md:min-h-[300px]">
+      <div className="relative mb-8 h-auto min-h-[260px] overflow-hidden rounded-lg bg-[#172e51] text-white max-md:min-h-[300px]">
         {hasPhoto(t) && (
           <img
             className="absolute inset-0 size-full object-cover object-[center_24%]"
@@ -240,12 +240,12 @@ export function TripDetail() {
           />
         )}
         <div className="absolute inset-0 bg-[linear-gradient(180deg,#081b3015_15%,#09182250_50%,#091520df_100%)]" />
-        <div className="relative max-w-[680px] px-[30px] pt-[70px] pb-7 max-md:px-[22px] max-md:pt-20 max-md:pb-6">
+        <div className="relative max-w-[680px] px-8 pt-[70px] pb-6 max-md:px-5 max-md:pt-20 max-md:pb-6">
           <Pill tone="glass">{t.status}</Pill>
-          <h1 className="mt-[15px] mb-4.5 max-w-[30ch] text-[2.25rem] leading-[1.18] font-[620] tracking-[-0.025em] max-md:max-w-[22ch] max-md:text-[1.7rem]">
+          <h1 className="mt-4 mb-4 max-w-[30ch] text-display leading-tight font-semibold tracking-tight max-md:max-w-[22ch] max-md:text-heading">
             {t.title}
           </h1>
-          <div className="flex flex-wrap gap-[17px] text-small max-md:flex-col max-md:items-start max-md:gap-2.5">
+          <div className="flex flex-wrap gap-4 text-small max-md:flex-col max-md:items-start max-md:gap-2.5">
             <span className="flex items-center gap-1.5">
               <MapPin size={16} />
               {t.cities}
@@ -268,7 +268,7 @@ export function TripDetail() {
       <div className={detailGridClass}>
         <div>
           <Tabs defaultValue="itinerary">
-            <div className="mb-[22px] flex items-center justify-between gap-3 max-md:flex-wrap max-md:gap-3">
+            <div className="mb-5 flex items-center justify-between gap-3 max-md:flex-wrap max-md:gap-3">
               <TabsList className={tabsListClass}>
                 <TabsTrigger className={tabsTriggerClass} value="itinerary">
                   Itinerary
@@ -291,19 +291,19 @@ export function TripDetail() {
             <TabsContent value="itinerary">
               <div className="pt-3">
                 {dates.map((date) => (
-                  <section className="flex gap-[22px] max-md:gap-3" key={date}>
-                    <div className="flex w-[60px] shrink-0 items-start gap-[7px] pt-2.5 max-md:w-11 max-md:flex-col max-md:gap-[3px]">
-                      <strong className="text-[1.55rem] leading-[1.2] font-medium">
+                  <section className="flex gap-5 max-md:gap-3" key={date}>
+                    <div className="flex w-[60px] shrink-0 items-start gap-1.5 pt-2.5 max-md:w-11 max-md:flex-col max-md:gap-0.5">
+                      <strong className="text-title leading-tight font-medium">
                         {day(date, { day: "2-digit" })}
                       </strong>
-                      <span className="text-small leading-[1.4] text-muted-foreground uppercase">
+                      <span className="text-small leading-snug text-muted-foreground uppercase">
                         {day(date, { month: "short" })}
                         <small className="block text-small normal-case">
                           {day(date, { weekday: "short" })}
                         </small>
                       </span>
                     </div>
-                    <div className="relative min-w-0 flex-1 border-l border-border pb-[25px] pl-[21px] before:absolute before:top-[17px] before:-left-1 before:size-[7px] before:rounded-full before:border before:border-input before:bg-background max-md:pl-[15px]">
+                    <div className="relative min-w-0 flex-1 border-l border-border pb-6 pl-5 before:absolute before:top-[17px] before:-left-1 before:size-[7px] before:rounded-full before:border before:border-input before:bg-background max-md:pl-4">
                       {date === t.start && (
                         <div className={dayIntroClass}>
                           <Luggage size={18} />
@@ -327,7 +327,7 @@ export function TripDetail() {
                             </div>
                             <Button
                               variant="ghost"
-                              className="px-[5px] py-0 max-md:ml-[42px]"
+                              className="px-1 py-0 max-md:ml-10"
                               onClick={() =>
                                 setEditor({ type: "hotel", id: h.id })
                               }
@@ -406,7 +406,7 @@ export function TripDetail() {
               </div>
             </TabsContent>
             <TabsContent value="stays">
-              <div className="flex flex-col gap-4.5">
+              <div className="flex flex-col gap-4">
                 {hotels.map((h) => (
                   <HotelCard key={h.id} hotel={h} />
                 ))}
@@ -421,7 +421,7 @@ export function TripDetail() {
               </div>
             </TabsContent>
             <TabsContent value="expenses">
-              <section className={cn(panelClass, "p-6 max-md:p-[18px]")}>
+              <section className={cn(panelClass, "p-6 max-md:p-4")}>
                 <div className={sectionTitleClass}>
                   <h2 className={sectionHeadingClass}>
                     Every cost, in its own currency.
@@ -474,7 +474,7 @@ export function TripDetail() {
                 ))}
                 {Object.entries(summary).map(([c, v]) => (
                   <div
-                    className="flex justify-between pt-[22px] pb-3 text-[0.93rem]"
+                    className="flex justify-between pt-5 pb-3 text-small"
                     key={c}
                   >
                     <span>Total · {c}</span>
@@ -492,7 +492,7 @@ export function TripDetail() {
         <aside className={detailAsideClass}>
           <section className={sideSectionClass}>
             <h2 className={sideHeadingClass}>Your trip, at a glance</h2>
-            <div className="mt-1.5 mb-2.5 flex flex-col gap-[13px] max-md:flex-wrap">
+            <div className="mt-1.5 mb-2.5 flex flex-col gap-3 max-md:flex-wrap">
               <span className={tripStatClass}>
                 <Ticket size={17} className={mutedIconClass} />
                 {concerts.length} concerts
@@ -598,14 +598,14 @@ function HotelCard({ hotel: h }: { hotel: Hotel }) {
   const { setEditor, update, notify } = usePlanner();
   const [show, setShow] = useState(false);
   return (
-    <article className={cn(panelClass, "p-[22px] max-md:p-[18px]")}>
+    <article className={cn(panelClass, "p-5 max-md:p-4")}>
       <div className={sectionTitleClass}>
         <div className="flex items-center gap-3 max-md:flex-wrap">
           <span className="bg-blue-bg text-blue-text">
             <HotelIcon size={23} />
           </span>
           <div>
-            <h3 className="text-[0.99rem] font-[550] max-md:text-body">
+            <h3 className="text-body font-semibold max-md:text-body">
               {h.name}
             </h3>
             <p className={secondaryTextClass}>{h.city}</p>
@@ -620,7 +620,7 @@ function HotelCard({ hotel: h }: { hotel: Hotel }) {
           <Pencil size={16} />
         </Button>
       </div>
-      <div className="mt-[23px] flex items-center gap-[25px] max-[1251px]:flex-wrap max-md:gap-4">
+      <div className="mt-6 flex items-center gap-6 max-[1251px]:flex-wrap max-md:gap-4">
         <div className="flex flex-col gap-1">
           <span className={stayDateLabelClass}>CHECK IN</span>
           <strong className={stayDateClass}>{day(h.checkIn)}</strong>
@@ -642,8 +642,8 @@ function HotelCard({ hotel: h }: { hotel: Hotel }) {
           ? "Free cancellation until " + instant(h.cancellation)
           : "Cancellation terms not recorded"}
       </p>
-      <footer className="flex flex-wrap items-center gap-2 border-t border-border pt-[15px]">
-        <strong className="mr-auto text-[0.97rem] font-medium max-md:mb-2 max-md:basis-full">
+      <footer className="flex flex-wrap items-center gap-2 border-t border-border pt-4">
+        <strong className="mr-auto text-body font-medium max-md:mb-2 max-md:basis-full">
           {money(h.amount, h.currency)}
         </strong>
         <Button

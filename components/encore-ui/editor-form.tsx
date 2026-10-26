@@ -75,10 +75,10 @@ export function EditorForm({
   return (
     <>
       <DialogHeader>
-        <DialogTitle className="text-title font-[550] leading-[1.4] tracking-[-0.4px] max-md:text-[1.3rem]">
+        <DialogTitle className="text-title font-semibold leading-snug tracking-tight max-md:text-title">
           {title}
         </DialogTitle>
-        <DialogDescription className="mt-1.5 text-small leading-[1.6]">
+        <DialogDescription className="mt-1.5 text-small leading-relaxed">
           {description}
         </DialogDescription>
       </DialogHeader>
@@ -89,7 +89,7 @@ export function EditorForm({
         onClick={session.markDirty}
       >
         {/* Only the fields scroll; the padding leaves room for focus rings. */}
-        <div className="-mx-1 flex min-h-0 flex-[1_1_auto] flex-col gap-4.5 overflow-x-hidden overflow-y-auto overscroll-contain p-1">
+        <div className="-mx-1 flex min-h-0 flex-[1_1_auto] flex-col gap-4 overflow-x-hidden overflow-y-auto overscroll-contain p-1">
           {children}
           {error && (
             <p className={formErrorClass} role="alert">
