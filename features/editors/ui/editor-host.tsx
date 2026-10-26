@@ -88,8 +88,8 @@ export function EditorHost() {
 // `.editor-dialog` in app/styles/shell.css.
 const dialogLayout = [
   "editor-dialog flex flex-col gap-0 overflow-hidden",
-  "w-[calc(100vw-24px)] max-w-[calc(100vw-24px)] sm:max-w-[calc(100vw-24px)] max-h-[calc(100dvh-24px)] p-[22px_18px_18px]",
-  "md:w-[calc(100%-32px)] md:max-w-[640px] md:max-h-[calc(100dvh-40px)] md:p-[27px_27px_22px]",
+  "w-[calc(100vw-24px)] max-w-[calc(100vw-24px)] sm:max-w-[calc(100vw-24px)] max-h-[calc(100dvh-24px)] px-4 pt-5 pb-4",
+  "md:w-[calc(100%-32px)] md:max-w-[640px] md:max-h-[calc(100dvh-40px)] md:px-6 md:pt-6 md:pb-5",
 ].join(" ");
 
 function RecordEditor({

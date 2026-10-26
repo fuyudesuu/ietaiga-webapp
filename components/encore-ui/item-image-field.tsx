@@ -4,7 +4,7 @@ import { ImagePlus } from "lucide-react";
 import { prepareItemImage, safeItemImage } from "@/lib/encore/images";
 import { withBasePath } from "@/lib/encore/paths";
 
-const hintText = "mt-1.25 mb-2 text-label text-muted-foreground";
+const hintText = "mt-1 mb-2 text-label text-muted-foreground";
 
 export function ItemImageField({
   initialValue,
@@ -24,9 +24,9 @@ export function ItemImageField({
     [],
   );
   return (
-    <div className="flex items-start gap-4 border-b border-border pt-1 pb-4.5">
+    <div className="flex items-start gap-4 border-b border-border pt-1 pb-4">
       <input type="hidden" name="image" value={value} />
-      <div className="grid h-[100px] w-[82px] shrink-0 place-items-center overflow-hidden rounded-[12px] bg-secondary text-muted-foreground">
+      <div className="grid h-[100px] w-[82px] shrink-0 place-items-center overflow-hidden rounded-lg bg-secondary text-muted-foreground">
         {value ? (
           <img
             className="size-full object-cover"

@@ -39,7 +39,7 @@
 - Use one source for design tokens: the `@theme` scale in `app/globals.css`. Style components with Tailwind utilities from that scale, with responsive variants beside each element. Avoid global override chains and new global feature CSS (see DECISIONS.md, 2026-10-05).
 
 ## Verification and delivery
-- Discover commands from `package.json`. `pnpm check` runs every gate: types, lint, format, import boundaries (`pnpm check:boundaries`), tests and build. `pnpm build:pages` builds the GitHub Pages export, and `pnpm test:e2e` then runs the browser tests against it (also in CI).
+- Discover commands from `package.json`. `pnpm check` runs every gate: types, lint, format, the token scale (`pnpm check:scale`), import boundaries (`pnpm check:boundaries`), tests and build. `pnpm build:pages` builds the GitHub Pages export, and `pnpm test:e2e` then runs the browser tests against it (also in CI).
 - Keep the existing lockfile/package manager and runtime (Vinext, with a Cloudflare Workers build and a GitHub Pages export) until an explicit migration decision recorded in `docs/engineering/DECISIONS.md`. Do not silently switch frameworks or hosts.
 - Record pre-existing failures before editing. New code must not worsen them. Never disable checks, delete tests or weaken policies just to get green output.
 - Test domain behavior, authorization and failure paths, not only the happy path. Cosmetic changes need focused visual verification, not artificial test cases.

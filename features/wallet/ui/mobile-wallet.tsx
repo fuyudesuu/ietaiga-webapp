@@ -145,11 +145,11 @@ export function MobileWallet() {
       className="hidden max-md:mx-auto max-md:block max-md:max-w-[500px]"
       aria-labelledby="wallet-title"
     >
-      <div className="mb-[23px] flex items-center justify-between gap-3">
+      <div className="mb-6 flex items-center justify-between gap-3">
         <div>
           <h1
             id="wallet-title"
-            className="text-[2.125rem] leading-[1.15] font-bold tracking-[-0.035em] max-[360px]:text-[1.875rem]"
+            className="text-display leading-tight font-bold tracking-tighter max-[360px]:text-heading"
           >
             Your wallet
           </h1>
@@ -169,29 +169,29 @@ export function MobileWallet() {
       </div>
       {payment && paymentConcert ? (
         <button
-          className="flex w-full items-center gap-3 border-y border-border py-[15px] text-left"
+          className="flex w-full items-center gap-3 border-y border-border py-4 text-left"
           onClick={() => open("tickets", payment.concertId)}
         >
           <Clock3 size={20} className="text-amber-text" />
           <span className="min-w-0 flex-1">
-            <strong className="block text-[0.9375rem] font-[620]">
+            <strong className="block text-body font-semibold">
               Payment due · {money(payment.amount, payment.currency)}
             </strong>
-            <small className="mt-[3px] block text-caption wrap-anywhere text-muted-foreground">
+            <small className="mt-0.5 block text-caption wrap-anywhere text-muted-foreground">
               {paymentConcert.title} · {due(payment.paymentDeadline)}
             </small>
           </span>
           <ArrowRight size={18} />
         </button>
       ) : (
-        <div className="flex items-center gap-2.5 border-y border-border py-3.5 text-small text-muted-foreground">
+        <div className="flex items-center gap-2.5 border-y border-border py-3 text-small text-muted-foreground">
           <CheckCircle2 size={18} />
           <span>No unpaid winning tickets.</span>
         </div>
       )}
-      <div className="mt-[26px] scroll-mt-[86px]" ref={heading}>
+      <div className="mt-6 scroll-mt-[86px]" ref={heading}>
         <div
-          className="flex gap-1 rounded-[13px] bg-secondary p-1"
+          className="flex gap-1 rounded-lg bg-secondary p-1"
           role="tablist"
           aria-label="Wallet contents"
         >
@@ -203,7 +203,7 @@ export function MobileWallet() {
               aria-selected={tab === value}
               aria-controls="wallet-panel"
               tabIndex={tab === value ? 0 : -1}
-              className="flex min-h-11 flex-1 items-center justify-center gap-2 rounded-md text-[0.9375rem] font-semibold text-muted-foreground aria-selected:bg-card aria-selected:text-foreground aria-selected:shadow-[0_2px_5px_#14233e0d]"
+              className="flex min-h-11 flex-1 items-center justify-center gap-2 rounded-md text-body font-semibold text-muted-foreground aria-selected:bg-card aria-selected:text-foreground aria-selected:shadow-[0_2px_5px_#14233e0d]"
               onClick={() => {
                 setSelected(null);
                 setTab(value);
@@ -301,7 +301,7 @@ export function MobileWallet() {
                 onPointerUp={(event) => finishDrag(event)}
                 onPointerCancel={(event) => finishDrag(event, true)}
               >
-                <span className="h-1 w-8 rounded-[2px] bg-input" />
+                <span className="h-1 w-8 rounded-xs bg-input" />
               </button>
             )}
             <div
@@ -332,7 +332,7 @@ export function MobileWallet() {
             {selected && (
               <div
                 id="wallet-item-details"
-                className="relative mt-[22px] animate-wallet-detail-in motion-reduce:animate-none"
+                className="relative mt-5 animate-wallet-detail-in motion-reduce:animate-none"
                 key={`${tab}-${selected}`}
               >
                 {concert && (
@@ -351,7 +351,7 @@ export function MobileWallet() {
             )}
             {!selected && (
               <a
-                className="flex min-h-[52px] items-center justify-between gap-2 pt-2 text-small font-[550] text-primary"
+                className="flex min-h-[52px] items-center justify-between gap-2 pt-2 text-small font-semibold text-primary"
                 href={withBasePath(tab === "tickets" ? "/concerts" : "/trips")}
               >
                 View all {tab === "tickets" ? "concerts" : "trips"}
@@ -361,7 +361,7 @@ export function MobileWallet() {
           </>
         ) : (
           <div className="py-6">
-            <h2 className="text-heading tracking-[-0.025em]">
+            <h2 className="text-heading tracking-tight">
               {tab === "tickets" ? "Your next stage awaits" : "Where to next?"}
             </h2>
             <p className="mt-3 mb-6 text-muted-foreground">
@@ -382,12 +382,12 @@ export function MobileWallet() {
         )}
       </div>
       <a
-        className="mt-[22px] flex min-h-12 items-center justify-between border-t border-border text-label text-muted-foreground"
+        className="mt-5 flex min-h-12 items-center justify-between border-t border-border text-label text-muted-foreground"
         href={withBasePath("/settings#reminders")}
       >
         Reminder preferences <ArrowRight size={15} />
       </a>
-      <p className="mt-3 text-caption leading-[1.6] text-muted-foreground">
+      <p className="mt-3 text-caption leading-relaxed text-muted-foreground">
         Fictional sample plans · Japan time
         <br />
         Concert cover is illustrative; add your own artwork.

@@ -309,3 +309,15 @@ Owner report from a phone: the editor form moved sideways when swiped and its fi
 
 ### Next action
 Owner to retest on the phone. Then the consistency pass.
+
+## 26 October 2026 — Consistency pass: one token scale
+
+### Completed
+- Every component type size, weight, letter-spacing, line height, radius and spacing value now comes from the scale in DECISIONS.md (2026-10-26). 356 values were rounded across 13 files, and the shadcn skins in `globals.css` use the radius and type tokens.
+- `pnpm check:scale` (in `pnpm check`) fails on new off-scale values.
+
+### Verification
+- `pnpm check` passes. All 26 browser tests pass.
+- All 195 snapshots differ from the previous build, as intended. Reviewed side by side at 390 and 1280px (Overview, concert, trip, Wallet, editors): sizes and spacing move by a few pixels, with no wrapping or overflow regressions.
+- A first attempt mapped weight 550 to medium, which renders regular with Arial; it now maps to semibold.
+- **Not run:** real devices.
