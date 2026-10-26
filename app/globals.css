@@ -350,7 +350,13 @@ h3 {
   backdrop-filter: blur(32px) saturate(1.2);
   border: 0;
   box-shadow: 0 24px 90px #091a3a33;
+}
+[data-slot="dialog-content"].editor-dialog[data-state="open"] {
   animation: editor-arrive 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+/* Radix keeps the dialog mounted until this exit animation ends. */
+[data-slot="dialog-content"].editor-dialog[data-state="closed"] {
+  animation: editor-leave 0.16s ease-in forwards;
 }
 .solid [data-slot="dialog-content"] {
   background: var(--card);
@@ -366,6 +372,14 @@ h3 {
     margin-top: 0;
   }
 }
+@keyframes editor-leave {
+  to {
+    opacity: 0;
+    filter: blur(2px);
+    margin-top: 8px;
+  }
+}
+
 /* Page changes are full document loads: cross-fade them instead of
    flashing an empty page (browsers without view transitions just load). */
 @media (prefers-reduced-motion: no-preference) {

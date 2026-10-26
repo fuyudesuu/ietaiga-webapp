@@ -2,6 +2,20 @@
 
 Short records of decisions that change hosting, runtime, authentication, persistence, caching or delivery guarantees. Newest first.
 
+## 2026-10-26 — Motion only for the Wallet springs; CSS for the rest
+
+**Context.** The 2026-10-05 decision planned Motion (motion.dev) for animation. Three animations were missing or rough: the editor dialog vanished on close, the "saved" toast had no animation, and the Wallet used a hand-built spring curve that restarted from zero velocity when interrupted.
+
+**Decision.**
+
+- The Wallet cards use Motion springs (`motion` 14.3). The library is imported lazily through `features/wallet/ui/wallet-motion-library.ts`, which re-exports only `animate` and `motionValue`. The chunk is 22KB gzip and loads only with the Wallet; until it arrives, cards move without animating.
+- The dialog close and the toast use CSS keyframes and `tw-animate-css`, which are already installed. No library is needed for an enter/exit fade.
+- Reduced motion turns all of them off.
+
+**Alternatives.** `motion/react` with `AnimatePresence` for the toast: rejected. It would put the React bundle on every page for one fade.
+
+**Impact.** One new dependency. Rollback: revert the hook to the previous commit and remove the package.
+
 ## 2026-10-26 — The token scale, enforced by a check
 
 **Context.** After the move to Tailwind, the components still used 26 arbitrary font sizes, 36 arbitrary spacing values, 12 radii, 7 font weights, 10 line heights and 15 letter-spacings. The owner asked for the consistency pass.

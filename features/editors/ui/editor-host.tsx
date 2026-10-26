@@ -85,7 +85,7 @@ export function EditorHost() {
 
 // The dialog never scrolls as a whole: the heading and actions stay in view
 // and only the editor's fields scroll. The glass material comes from
-// `.editor-dialog` in app/styles/shell.css.
+// `.editor-dialog` in app/globals.css.
 const dialogLayout = [
   "editor-dialog flex flex-col gap-0 overflow-hidden",
   "w-[calc(100vw-24px)] max-w-[calc(100vw-24px)] sm:max-w-[calc(100vw-24px)] max-h-[calc(100dvh-24px)] px-4 pt-5 pb-4",

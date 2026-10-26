@@ -10,7 +10,6 @@ import {
   ChevronRight,
   Globe2,
   Plus,
-  Check,
 } from "lucide-react";
 import {
   SidebarProvider,
@@ -24,6 +23,7 @@ import {
 } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
 import { usePlanner } from "@/lib/encore/store";
+import { Toast } from "./toast";
 import { EditorHost } from "@/features/editors";
 import { WebTools } from "./web-tools";
 import type { CSSProperties, ReactNode } from "react";
@@ -246,15 +246,7 @@ export function AppShell({ children }: { children: ReactNode }) {
       >
         <Plus />
       </Button>
-      {notice && (
-        <div
-          role="status"
-          className="fixed bottom-6 left-[calc(50%+100px)] z-100 flex max-w-[calc(100vw-32px)] -translate-x-1/2 items-center gap-2.5 rounded-lg border-0 bg-foreground px-5 py-3 text-small text-background shadow-[0_8px_30px_#091b3326] max-md:right-4 max-md:bottom-[100px] max-md:left-4 max-md:w-auto max-md:max-w-none max-md:translate-x-0"
-        >
-          <Check size={17} />
-          {notice}
-        </div>
-      )}
+      <Toast message={notice} />
       <EditorHost />
       <WebTools />
     </SidebarProvider>

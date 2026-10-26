@@ -321,3 +321,19 @@ Owner to retest on the phone. Then the consistency pass.
 - All 195 snapshots differ from the previous build, as intended. Reviewed side by side at 390 and 1280px (Overview, concert, trip, Wallet, editors): sizes and spacing move by a few pixels, with no wrapping or overflow regressions.
 - A first attempt mapped weight 550 to medium, which renders regular with Arial; it now maps to semibold.
 - **Not run:** real devices.
+
+## 26 October 2026 — Animation polish
+
+### Completed
+- **Editor dialog:** it now fades and settles out on close (0.16s). Its opening animation had been overriding the closing one.
+- **"Saved" toast:** it slides in and fades out, in `components/shell/toast.tsx`.
+- **Wallet cards:** Motion springs (DECISIONS.md, 2026-10-26), lazy-loaded at 22KB gzip. They keep their velocity when a tap interrupts them.
+
+### Verification
+- `pnpm check` passes. All 26 browser tests pass. All 195 snapshots match the consistency-pass build, so resting states are unchanged.
+- Wallet, in Chromium: card positions mid-animation are within a few pixels of the old curve, and end positions are identical. A tap during the animation produces no frame jump. With reduced motion, cards move without animating.
+- The dialog opacity falls to 0 before unmount, and the toast fades in and out without a flicker.
+- **Not run:** real devices (iPhone Safari in particular).
+
+### Next action
+The owner reviews the visual changes and retests on the phone. Then stage D, which needs decisions on hosting (Workers), the database (Supabase) and a Discord app.
