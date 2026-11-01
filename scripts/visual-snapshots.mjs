@@ -136,7 +136,9 @@ async function settle(page) {
 
 async function capture(dir) {
   mkdirSync(dir, { recursive: true });
-  const browser = await chromium.launch({ executablePath: process.env.CHROMIUM_PATH });
+  const browser = await chromium.launch({
+    executablePath: process.env.CHROMIUM_PATH,
+  });
   let count = 0;
   for (const theme of themes) {
     for (const [width, height] of viewports) {
@@ -190,7 +192,9 @@ const channelTolerance = 16;
 
 async function compare(before, after, diffDir) {
   const names = readdirSync(before).filter((name) => name.endsWith(".png"));
-  const browser = await chromium.launch({ executablePath: process.env.CHROMIUM_PATH });
+  const browser = await chromium.launch({
+    executablePath: process.env.CHROMIUM_PATH,
+  });
   const page = await browser.newPage();
   const changed = [];
   for (const name of names) {
