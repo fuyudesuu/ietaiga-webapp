@@ -88,6 +88,9 @@ export type Editor =
   | { type: "reminder"; id: string }
   | null;
 export const DEMO_NOW = "2026-10-01T03:00:00Z";
+/** "1 concert", "3 concerts". */
+export const countOf = (count: number, noun: string) =>
+  `${count} ${noun}${count === 1 ? "" : "s"}`;
 export const money = (amount: number, currency: Currency) =>
   new Intl.NumberFormat("en", {
     style: "currency",
@@ -141,6 +144,33 @@ export const appStatus = (a: Application) =>
       : a.submitted
         ? "Awaiting result"
         : "Application open";
+/** The round a concert's ticket shows: a won round first, else its first. */
+export function ticketApplication(
+  state: PlannerState,
+  concertId: string,
+): Application | undefined {
+  const rounds = state.applications.filter(
+    (application) => application.concertId === concertId,
+  );
+  return (
+    rounds.find((application) => application.result === "Won") ?? rounds[0]
+  );
+}
+/** The won, unpaid round with the earliest payment deadline. */
+export function nextPaymentDue(state: PlannerState): Application | undefined {
+  return state.applications
+    .filter(
+      (application) =>
+        application.result === "Won" &&
+        application.payment === "Unpaid" &&
+        state.concerts.some((concert) => concert.id === application.concertId),
+    )
+    .sort((first, second) =>
+      (first.paymentDeadline || "9999").localeCompare(
+        second.paymentDeadline || "9999",
+      ),
+    )[0];
+}
 export function costs(state: PlannerState, tripId?: string) {
   const ids = state.concerts
     .filter((c) => !tripId || c.tripId === tripId)

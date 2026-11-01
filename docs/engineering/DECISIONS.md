@@ -2,6 +2,25 @@
 
 Short records of decisions that change hosting, runtime, authentication, persistence, caching or delivery guarantees. Newest first.
 
+## 2026-11-01 — Phone navigation: a plan list on Overview, card stacks per page
+
+**Context.** On phones, the Overview was the Wallet: a Tickets/Trips switch above one card stack showing up to three items. The owner asked for:
+- each card type on its own page;
+- one Overview page that lists every concert and trip, with a filter.
+
+**Decision.**
+- **Phone Overview ("Your plans"):** a dated list of every concert and trip, grouped by month, with an All / Concerts / Trips filter and the next payment due at the top.
+- **Concerts and Trips on phones:** each shows the card stack for its kind (`WalletDeck`), with every item. The desktop list and grid are unchanged.
+- **Links:** a row or a linked item opens the card on its page, at `/concerts?open=<id>` or `/trips?open=<id>`.
+- **Shared rules:** ticket and payment selection are pure model functions (`ticketApplication`, `nextPaymentDue`) used by both screens.
+
+**Alternatives.** Keeping the Tickets/Trips switch on the Overview: rejected by the owner.
+
+**Impact.**
+- The Wallet design is kept, but split across pages.
+- Search and the status filter remain desktop-only for now.
+- Rollback: revert the change; no data is affected.
+
 ## 2026-10-26 — Motion only for the Wallet springs; CSS for the rest
 
 **Context.** The 2026-10-05 decision planned Motion (motion.dev) for animation. Three animations were missing or rough: the editor dialog vanished on close, the "saved" toast had no animation, and the Wallet used a hand-built spring curve that restarted from zero velocity when interrupted.

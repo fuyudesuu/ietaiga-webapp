@@ -9,6 +9,7 @@
 // scripts/serve-pages.mjs on PORT (default 4173) under ENCORE_BASE_PATH.
 // Motion is reduced so screenshots are deterministic: two captures of the
 // same build are byte-identical. Hover and focus states are not covered.
+// CHROMIUM_PATH points at a local Chromium when Playwright's own is missing.
 import { chromium } from "@playwright/test";
 import { mkdirSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
@@ -90,7 +91,7 @@ const states = [
   },
   {
     name: "wallet-card-open",
-    route: "/",
+    route: "/concerts",
     phoneOnly: true,
     open: (page) =>
       page
@@ -99,23 +100,22 @@ const states = [
         .click(),
   },
   {
-    name: "wallet-trips-tab",
+    name: "overview-trips-filter",
     route: "/",
     phoneOnly: true,
-    open: (page) => page.getByRole("tab", { name: /Trips/ }).click(),
+    open: (page) =>
+      page.getByRole("button", { name: /^Trips/, pressed: false }).click(),
   },
   {
     name: "wallet-trip-open",
-    route: "/",
+    route: "/trips",
     phoneOnly: true,
     fullPage: true,
-    open: async (page) => {
-      await page.getByRole("tab", { name: /Trips/ }).click();
-      await page
+    open: (page) =>
+      page
         .getByRole("button", { name: /Open details$/ })
         .last()
-        .click();
-    },
+        .click(),
   },
 ];
 
@@ -136,7 +136,9 @@ async function settle(page) {
 
 async function capture(dir) {
   mkdirSync(dir, { recursive: true });
-  const browser = await chromium.launch();
+  const browser = await chromium.launch({
+    executablePath: process.env.CHROMIUM_PATH,
+  });
   let count = 0;
   for (const theme of themes) {
     for (const [width, height] of viewports) {
@@ -190,7 +192,9 @@ const channelTolerance = 16;
 
 async function compare(before, after, diffDir) {
   const names = readdirSync(before).filter((name) => name.endsWith(".png"));
-  const browser = await chromium.launch();
+  const browser = await chromium.launch({
+    executablePath: process.env.CHROMIUM_PATH,
+  });
   const page = await browser.newPage();
   const changed = [];
   for (const name of names) {

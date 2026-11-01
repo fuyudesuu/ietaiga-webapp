@@ -337,3 +337,72 @@ Owner to retest on the phone. Then the consistency pass.
 
 ### Next action
 The owner reviews the visual changes and retests on the phone. Then stage D, which needs decisions on hosting (Workers), the database (Supabase) and a Discord app.
+
+## 1 November 2026 — Shell alignment
+
+### Completed
+- **One page column.** The top bar, the page and the footer share one column: the same 1440px limit and the same 32/24/20px gutter. Previously the bar overhung the content by 8px on desktop, 4px on phones and 140px at 1920px.
+- **Top bar.**
+  - Its inner padding matches the cards' (24px), so the breadcrumb text lines up with the card text below it.
+  - The sticky offset equals its top margin, so it doesn't shift when scrolling.
+- **Sidebar.**
+  - The logo shares the top bar's top and height.
+  - Nav icons sit on the same 24px line as the rest of the sidebar.
+  - The profile row stays on one line.
+  - The reminder promo was removed: it was clipped at common window heights and duplicated the bell.
+- **Phones.** The bottom navigation and the toast use the 20px gutter. On desktop, the toast is centred on the content area (sidebar 216px, so +108px).
+
+### Verification
+- `pnpm check` passes. All 26 browser tests pass, run locally with the container's Chromium through an untracked config.
+- Measured in Chromium: the top bar and content edges are equal at 390, 1024, 1261, 1440 and 1920px on Overview, Settings and a concert page.
+- **Not run:** real devices.
+
+## 1 November 2026 — Phone layout pass
+
+### Completed
+- **One phone page header.** Wallet, Concerts and Trips use the same title style (36px semibold, 28px at 360px and below) with a round "+" beside it (`RoundAddButton` in `components/encore-ui/ui.tsx`). The wide "Add concert"/"Create trip" buttons are desktop-only.
+- **Concert page.**
+  - On phones, Edit sits beside the back link, so the title gets the full width. It breaks between words (`wrap-break-word`), not inside them; "THE IDOLM@STER" no longer splits as "IDOLM@S / TER".
+  - Date and time share a row, with the venue below, from 390px up.
+- **Trip page.** The tabs fill the row, with a 44px "+" beside them. The tab list is 44px tall, like other controls. Accessible names are unchanged ("Concert", "Edit concert").
+
+### Verification
+- `pnpm check` passes. All 26 browser tests pass, with local Chromium. A first draft renamed two buttons and broke three tests; the names were restored with screen-reader text.
+- No horizontal overflow at 320, 360, 390 or 430px on any route. An overflow found at 320px on the trip page was fixed.
+- Light and dark checked at 390px, and dark at 320px.
+- **Not run:** real devices.
+
+## 1 November 2026 — Draft: phone navigation by page
+
+### Completed (draft for owner review)
+- **Phone Overview** ("Your plans", `features/overview/ui/mobile-overview.tsx`):
+  - one dated list of every concert and trip, grouped by month, with undated concerts last;
+  - an All / Concerts / Trips filter with counts;
+  - the payment-due row kept at the top.
+  - Each row opens its card on the Concerts or Trips page (`?open=<id>`).
+- **Card stacks.** On phones, Concerts and Trips show the Wallet card stack for their kind. `MobileWallet` became `WalletDeck` (`features/wallet/ui/wallet-deck.tsx`), fixed to one kind, with no Tickets/Trips switch, and it shows every item. The desktop list and grid are unchanged; on phones they are hidden.
+  - Linked items open across pages: a concert's trip opens on Trips, and a trip's concert on Concerts.
+  - A card opened from the address does not move focus.
+- **Smaller fixes.**
+  - `countOf` (`lib/encore/model.ts`) fixes "1 concerts".
+  - `scripts/visual-snapshots.mjs` drives the new phone states and accepts `CHROMIUM_PATH`.
+
+### Behaviour changes to confirm
+- The phone deck now includes every concert and trip, not only the next three upcoming.
+- Search and the status filter are desktop-only for now.
+- The Reminder preferences link and the cover note under the old Wallet are gone; the bell still links to reminders.
+
+### Verification
+- `pnpm check` passes. All 26 browser tests pass, with local Chromium.
+- The visual capture runs all 195 states.
+- No horizontal overflow at 320–430px.
+- Light and dark checked at 390px.
+- **Not run:** real devices.
+- **Review fixes, against CLAUDE.md:**
+  - The phone Overview uses `PageHeading`, with no copied title markup, and its date comes from `DEMO_NOW` instead of a typed string.
+  - Shared rules moved to one place each:
+    - `ticketApplication` and `nextPaymentDue` in `lib/encore/model.ts`;
+    - `applicationTone` and `phoneColumnClass` (a `max-w-lg` column, not `500px`) in `components/encore-ui/ui.tsx`;
+    - the concerts list uses `applicationTone` too.
+  - One-letter domain variables in the new files were renamed.
+  - **Pre-existing, not changed:** hard-coded demo dates in the desktop Overview and Settings, and one-letter variables and payment checks repeated in the older screens.

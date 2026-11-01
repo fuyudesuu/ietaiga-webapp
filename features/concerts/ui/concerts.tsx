@@ -29,6 +29,7 @@ import {
   DateTile,
   ConcertMark,
   Pill,
+  applicationTone,
   Empty,
   Choice,
   panelClass,
@@ -47,6 +48,7 @@ import {
 import { useRecordId } from "@/lib/encore/navigation";
 import { withBasePath } from "@/lib/encore/paths";
 import { cn } from "@/lib/utils";
+import { WalletDeck } from "@/features/wallet";
 export function Concerts() {
   const { state, setEditor } = usePlanner();
   const [search, setSearch] = useState("");
@@ -83,106 +85,105 @@ export function Concerts() {
           </AddButton>
         }
       />
-      <div className="mb-6 flex justify-between gap-3 max-md:flex-wrap max-md:gap-3">
-        <div className="relative max-w-[440px] flex-1 max-md:w-full max-md:basis-full">
-          <Search
-            size={18}
-            className="absolute top-[13px] left-[13px] text-muted-foreground"
-          />
-          <Input
-            className="pl-10 text-small!"
-            aria-label="Search concerts"
-            placeholder="Search concerts, artists, or cities"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
+      <WalletDeck kind="tickets" />
+      {/* On phones the card stack replaces the searchable list. */}
+      <div className="max-md:hidden">
+        <div className="mb-6 flex justify-between gap-3 max-md:flex-wrap max-md:gap-3">
+          <div className="relative max-w-[440px] flex-1 max-md:w-full max-md:basis-full">
+            <Search
+              size={18}
+              className="absolute top-[13px] left-[13px] text-muted-foreground"
+            />
+            <Input
+              className="pl-10 text-small!"
+              aria-label="Search concerts"
+              placeholder="Search concerts, artists, or cities"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+          </div>
+          <Choice
+            className="w-[180px] max-md:max-w-none max-md:flex-1"
+            label="Filter concerts"
+            value={filter}
+            onChange={setFilter}
+            options={[
+              { value: "all", label: "All concerts" },
+              { value: "payment", label: "Payment needed" },
+              { value: "secured", label: "Ticket secured" },
+              { value: "wishlist", label: "No trip yet" },
+            ]}
           />
         </div>
-        <Choice
-          className="w-[180px] max-md:max-w-none max-md:flex-1"
-          label="Filter concerts"
-          value={filter}
-          onChange={setFilter}
-          options={[
-            { value: "all", label: "All concerts" },
-            { value: "payment", label: "Payment needed" },
-            { value: "secured", label: "Ticket secured" },
-            { value: "wishlist", label: "No trip yet" },
-          ]}
-        />
-      </div>
-      <div className="mt-0 mr-[55px] mb-2.5 ml-6 flex justify-between pl-1 text-caption tracking-wide text-muted-foreground max-md:hidden">
-        <span>PERFORMANCE</span>
-        <span>TICKET STATUS</span>
-      </div>
-      <div className="overflow-hidden border-t border-border">
-        {concerts.map((c) => {
-          const a = state.applications.find((a) => a.concertId === c.id);
-          return (
-            <a
-              href={withBasePath("/concerts/" + c.id)}
-              key={c.id}
-              className="group flex min-h-[93px] min-w-0 items-center gap-5 border-b border-border px-1 py-6 text-foreground last:border-0 max-[1251px]:gap-3 max-md:grid max-md:grid-cols-[40px_38px_minmax(0,1fr)] max-md:gap-2.5 max-md:px-0 max-md:py-5"
-            >
-              <DateTile
-                date={c.date}
-                className="max-md:w-auto max-md:min-w-0"
-              />
-              <ConcertMark
-                concert={c}
-                className="h-[60px] w-[53px] max-md:h-[42px] max-md:w-[38px]"
-              />
-              <div className="min-w-0 flex-1">
-                <h3 className="text-body font-semibold tracking-normal group-hover:text-primary">
-                  {c.title}
-                </h3>
-                <p className="mt-0.5 text-small wrap-anywhere text-muted-foreground">
-                  {c.subtitle}
-                </p>
-                <small className="mt-1 flex items-center gap-1 text-small text-muted-foreground max-[1251px]:flex-wrap max-md:text-label">
-                  <MapPin size={13} />
-                  {c.venue} · {c.city}
-                </small>
-              </div>
-              <Pill
-                className="max-lg:text-caption max-md:col-[3] max-md:justify-self-start"
-                tone={
-                  a?.payment === "Paid"
-                    ? "mint"
-                    : a?.result === "Won"
-                      ? "amber"
-                      : "neutral"
-                }
+        <div className="mt-0 mr-[55px] mb-2.5 ml-6 flex justify-between pl-1 text-caption tracking-wide text-muted-foreground max-md:hidden">
+          <span>PERFORMANCE</span>
+          <span>TICKET STATUS</span>
+        </div>
+        <div className="overflow-hidden border-t border-border">
+          {concerts.map((c) => {
+            const a = state.applications.find((a) => a.concertId === c.id);
+            return (
+              <a
+                href={withBasePath("/concerts/" + c.id)}
+                key={c.id}
+                className="group flex min-h-[93px] min-w-0 items-center gap-5 border-b border-border px-1 py-6 text-foreground last:border-0 max-[1251px]:gap-3 max-md:grid max-md:grid-cols-[40px_38px_minmax(0,1fr)] max-md:gap-2.5 max-md:px-0 max-md:py-5"
               >
-                {a ? appStatus(a) : "On the wishlist"}
-              </Pill>
-              <ArrowUpRight
-                size={18}
-                className="shrink-0 text-muted-foreground max-md:hidden"
-              />
-            </a>
-          );
-        })}
-        {concerts.length === 0 && (
-          <Empty
-            title="No concerts found"
-            description="Try another search or clear your filters."
-            action={
-              <Button
-                variant="outline"
-                onClick={() => {
-                  setSearch("");
-                  setFilter("all");
-                }}
-              >
-                Clear filters
-              </Button>
-            }
-          />
-        )}
+                <DateTile
+                  date={c.date}
+                  className="max-md:w-auto max-md:min-w-0"
+                />
+                <ConcertMark
+                  concert={c}
+                  className="h-[60px] w-[53px] max-md:h-[42px] max-md:w-[38px]"
+                />
+                <div className="min-w-0 flex-1">
+                  <h3 className="text-body font-semibold tracking-normal group-hover:text-primary">
+                    {c.title}
+                  </h3>
+                  <p className="mt-0.5 text-small wrap-anywhere text-muted-foreground">
+                    {c.subtitle}
+                  </p>
+                  <small className="mt-1 flex items-center gap-1 text-small text-muted-foreground max-[1251px]:flex-wrap max-md:text-label">
+                    <MapPin size={13} />
+                    {c.venue} · {c.city}
+                  </small>
+                </div>
+                <Pill
+                  className="max-lg:text-caption max-md:col-[3] max-md:justify-self-start"
+                  tone={applicationTone(a)}
+                >
+                  {a ? appStatus(a) : "On the wishlist"}
+                </Pill>
+                <ArrowUpRight
+                  size={18}
+                  className="shrink-0 text-muted-foreground max-md:hidden"
+                />
+              </a>
+            );
+          })}
+          {concerts.length === 0 && (
+            <Empty
+              title="No concerts found"
+              description="Try another search or clear your filters."
+              action={
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setSearch("");
+                    setFilter("all");
+                  }}
+                >
+                  Clear filters
+                </Button>
+              }
+            />
+          )}
+        </div>
+        <p className={fictionNoteClass}>
+          All performances, dates, and ticket outcomes in this demo are
+          fictional.
+        </p>
       </div>
-      <p className={fictionNoteClass}>
-        All performances, dates, and ticket outcomes in this demo are fictional.
-      </p>
     </>
   );
 }
@@ -205,21 +206,36 @@ export function ConcertDetail() {
   const applications = state.applications.filter((a) => a.concertId === c.id);
   return (
     <>
-      <a href={withBasePath("/concerts")} className={backLinkClass}>
-        <ArrowLeft size={16} />
-        All concerts
-      </a>
-      <div className="mb-6 flex items-center gap-6 max-md:mt-5 max-md:flex-wrap max-md:gap-3">
+      {/* On phones, Edit moves up beside the back link so the title gets
+          the full width. */}
+      <div className="flex items-center justify-between max-md:mb-4">
+        <a
+          href={withBasePath("/concerts")}
+          className={cn(backLinkClass, "max-md:mb-0")}
+        >
+          <ArrowLeft size={16} />
+          All concerts
+        </a>
+        <Button
+          variant="outline"
+          className="hidden max-md:inline-flex"
+          onClick={() => setEditor({ type: "concert", id: c.id })}
+        >
+          <Pencil size={15} />
+          Edit<span className="sr-only"> concert</span>
+        </Button>
+      </div>
+      <div className="mb-6 flex items-center gap-6 max-md:gap-4">
         <ConcertMark concert={c} large />
-        <div className="max-md:min-w-0 max-md:flex-1">
-          <h1 className="text-display leading-tight font-semibold tracking-tighter wrap-anywhere max-md:text-heading">
+        <div className="min-w-0 flex-1">
+          <h1 className="text-display leading-tight font-semibold tracking-tighter wrap-break-word max-md:text-heading">
             {c.title}
           </h1>
           <p className="mt-1 text-small text-muted-foreground">{c.subtitle}</p>
         </div>
         <Button
           variant="outline"
-          className="ml-auto max-md:ml-0"
+          className="max-md:hidden"
           onClick={() => setEditor({ type: "concert", id: c.id })}
         >
           <Pencil size={15} />
@@ -229,7 +245,7 @@ export function ConcertDetail() {
       <div
         className={cn(
           panelClass,
-          "mb-8 flex items-center gap-8 p-6 max-md:grid max-md:grid-cols-1 max-md:gap-4 max-md:p-5",
+          "mb-8 flex items-center gap-8 p-6 max-md:grid max-md:grid-cols-2 max-md:gap-4 max-md:p-5 max-[389px]:grid-cols-1",
         )}
       >
         <span className={factClass}>
@@ -244,7 +260,7 @@ export function ConcertDetail() {
             {c.time ? c.time + " JST" : "Time not announced"}
           </strong>
         </span>
-        <span className={factClass}>
+        <span className={cn(factClass, "max-md:col-span-2")}>
           <MapPin className={factIconClass} />
           <strong className={factTextClass}>
             {c.venue}

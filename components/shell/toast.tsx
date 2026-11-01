@@ -20,7 +20,7 @@ export function Toast({ message }: { message: string }) {
     <div
       role="status"
       data-state={message ? "open" : "closed"}
-      className="fixed bottom-6 left-[calc(50%+100px)] z-100 flex max-w-[calc(100vw-32px)] -translate-x-1/2 items-center gap-2.5 rounded-lg border-0 bg-foreground px-5 py-3 text-small text-background shadow-[0_8px_30px_#091b3326] duration-200 ease-out data-[state=closed]:animate-out data-[state=closed]:fill-mode-forwards data-[state=closed]:fade-out-0 data-[state=closed]:slide-out-to-bottom-2 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:slide-in-from-bottom-4 max-md:right-4 max-md:bottom-[100px] max-md:left-4 max-md:w-auto max-md:max-w-none max-md:translate-x-0"
+      className="fixed bottom-6 left-[calc(50%+108px)] z-100 flex max-w-[calc(100vw-32px)] -translate-x-1/2 items-center gap-2.5 rounded-lg border-0 bg-foreground px-5 py-3 text-small text-background shadow-[0_8px_30px_#091b3326] duration-200 ease-out data-[state=closed]:animate-out data-[state=closed]:fill-mode-forwards data-[state=closed]:fade-out-0 data-[state=closed]:slide-out-to-bottom-2 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:slide-in-from-bottom-4 max-md:right-5 max-md:bottom-[100px] max-md:left-5 max-md:w-auto max-md:max-w-none max-md:translate-x-0"
     >
       <Check size={17} />
       {shown}

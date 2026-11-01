@@ -52,3 +52,50 @@ test("unannounced timing stays explicitly unknown", () => {
   assert.equal(day(""), "Date not announced");
   assert.equal(instant(""), "Time not announced");
 });
+
+const { countOf, ticketApplication, nextPaymentDue } = await loadTypeScript(
+  "../lib/encore/model.ts",
+);
+
+test("counts read naturally in the singular and plural", () => {
+  assert.equal(countOf(0, "stay"), "0 stays");
+  assert.equal(countOf(1, "concert"), "1 concert");
+  assert.equal(countOf(3, "concert"), "3 concerts");
+});
+test("a concert's ticket shows its won round before earlier rounds", () => {
+  const state = structuredClone(seed);
+  // Put the pending round first: the won round must still be chosen.
+  state.applications.sort((first) => (first.id === "a2" ? -1 : 1));
+  assert.equal(ticketApplication(state, "idol").id, "a1");
+  assert.equal(ticketApplication(state, "love").id, "a3");
+  assert.equal(ticketApplication(state, "equal"), undefined);
+});
+test("the next payment is the earliest won, unpaid round of a known concert", () => {
+  assert.equal(nextPaymentDue(seed).id, "a1");
+  const state = structuredClone(seed);
+  state.applications.find((round) => round.id === "a1").payment = "Paid";
+  // a3 is unpaid but not won, a4 is won but paid: nothing is due.
+  assert.equal(nextPaymentDue(state), undefined);
+  state.applications.push(
+    {
+      ...state.applications[0],
+      id: "late",
+      payment: "Unpaid",
+      paymentDeadline: "2026-12-01T00:00:00Z",
+    },
+    {
+      ...state.applications[0],
+      id: "soon",
+      payment: "Unpaid",
+      paymentDeadline: "2026-10-05T00:00:00Z",
+    },
+    {
+      ...state.applications[0],
+      id: "orphan",
+      concertId: "deleted",
+      payment: "Unpaid",
+      paymentDeadline: "2026-10-02T00:00:00Z",
+    },
+  );
+  assert.equal(nextPaymentDue(state).id, "soon");
+});

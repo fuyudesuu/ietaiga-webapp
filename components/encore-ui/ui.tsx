@@ -10,7 +10,7 @@ import {
   SelectItem,
 } from "@/components/ui/select";
 import { type ReactNode } from "react";
-import { Concert, day } from "@/lib/encore/model";
+import { type Application, Concert, day } from "@/lib/encore/model";
 import { withBasePath } from "@/lib/encore/paths";
 /** Card surface used by most sections. */
 export const panelClass = "rounded-lg border border-border bg-card shadow-none";
@@ -55,7 +55,7 @@ export const sideHeadingClass = "text-small font-semibold";
 /** Segmented tabs (shadcn TabsList / TabsTrigger). The trigger needs an
     important size: shadcn controls inherit the page font via an unlayered rule. */
 export const tabsListClass =
-  "rounded-md bg-secondary p-1 group-data-[orientation=horizontal]/tabs:h-[43px]";
+  "rounded-md bg-secondary p-1 group-data-[orientation=horizontal]/tabs:h-11";
 export const tabsTriggerClass =
   "min-h-[34px] rounded-sm px-3 py-1.5 text-small! shadow-none data-[state=active]:bg-card data-[state=active]:text-primary group-data-[variant=default]/tabs-list:data-[state=active]:shadow-none dark:data-[state=active]:bg-card dark:data-[state=active]:text-primary max-md:px-2.5";
 
@@ -79,6 +79,15 @@ export function GlassTag({
   );
 }
 
+/** Phone-only screens: hidden on desktop, one readable column on phones. */
+export const phoneColumnClass =
+  "hidden max-md:mx-auto max-md:block max-md:max-w-lg";
+/** Status colour of a concert's ticket: paid, won and awaiting payment, or neither. */
+export function applicationTone(application: Application | undefined) {
+  if (application?.payment === "Paid") return "mint";
+  if (application?.result === "Won") return "amber";
+  return "neutral";
+}
 /** Status colours shared by pills and concert marks (tokens in globals.css). */
 export const toneClasses: Record<string, string> = {
   neutral: "",
@@ -127,9 +136,9 @@ export function PageHeading({
   action?: ReactNode;
 }) {
   return (
-    <header className="page-heading mb-8 flex items-center justify-between gap-6 max-lg:items-start max-md:mb-6 max-md:flex-wrap max-md:gap-5">
-      <div>
-        <h1 className="text-display leading-tight font-semibold tracking-tighter max-md:text-heading">
+    <header className="page-heading mb-8 flex items-center justify-between gap-6 max-lg:items-start max-md:mb-6 max-md:items-center max-md:gap-3">
+      <div className="min-w-0">
+        <h1 className="text-display leading-tight font-semibold tracking-tighter max-[360px]:text-heading">
           {title}
         </h1>
         {subtitle && (
@@ -142,18 +151,51 @@ export function PageHeading({
     </header>
   );
 }
+/** A page's add action: labelled on desktop, a round + beside the title on
+    phones. The label is text so the phone button can use it as its name. */
 export function AddButton({
   children,
   onClick,
 }: {
-  children: ReactNode;
+  children: string;
   onClick: () => void;
 }) {
   return (
-    <Button className="primary-button" onClick={onClick}>
-      <Plus size={17} />
-      {children}
-    </Button>
+    <>
+      <Button className="primary-button max-md:hidden" onClick={onClick}>
+        <Plus size={17} />
+        {children}
+      </Button>
+      <RoundAddButton
+        className="hidden max-md:grid"
+        label={children}
+        onClick={onClick}
+      />
+    </>
+  );
+}
+/** The phone page header's add action, beside the title on every page. */
+export function RoundAddButton({
+  label,
+  onClick,
+  className,
+}: {
+  label: string;
+  onClick: () => void;
+  className?: string;
+}) {
+  return (
+    <button
+      type="button"
+      aria-label={label}
+      onClick={onClick}
+      className={cn(
+        "grid size-12 shrink-0 place-items-center rounded-full bg-accent text-primary active:bg-secondary",
+        className,
+      )}
+    >
+      <Plus size={22} />
+    </button>
   );
 }
 export function Choice({
