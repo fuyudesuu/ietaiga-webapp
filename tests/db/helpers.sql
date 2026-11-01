@@ -63,4 +63,12 @@ language sql as $$
     false);
 $$;
 
+-- A Supabase "anonymous sign-in" user: role authenticated, is_anonymous true.
+create function tests.anonymous_account_claims(user_id uuid) returns void
+language sql as $$
+  select set_config('request.jwt.claims',
+    json_build_object('sub', user_id, 'role', 'authenticated', 'is_anonymous', true)::text,
+    false);
+$$;
+
 grant execute on all functions in schema tests to anon, authenticated;

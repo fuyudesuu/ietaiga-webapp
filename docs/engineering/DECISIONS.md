@@ -41,6 +41,32 @@ Short records of decisions that change hosting, runtime, authentication, persist
   - The post-login return path accepts same-site paths only (no open redirect).
   - Errors are logged as a category plus a correlation id, never tokens or codes.
 
+**Security review (2026-11-01).**
+
+An independent adversarial review of the schema found no cross-account access. Its 92 attack tests are kept in `tests/db/pentest.test.sql`.
+
+Fixed in the migration:
+
+- cover folders of deleted accounts are queued for Storage API removal (`private.storage_cleanup`);
+- cover object names must be `<owner>/<name>.(jpg|png|webp)`, and an asset's type must match its extension;
+- per-account caps on rows and cover files;
+- sign-up names are sanitized;
+- the migration asserts its role bypasses RLS;
+- trigger functions are not callable over RPC, and the API roles get no default privileges;
+- time zones must be real IANA zones;
+- restrictive policies shut out Supabase anonymous-sign-in users.
+
+Accepted, as content-free leaks:
+
+- primary keys are global, so a guessed UUID can be confirmed to exist;
+- planner estimates (`count=planned`) reveal rough table volume.
+
+Still required before launch:
+
+- the upload route validates real file content and strips metadata before storing;
+- the account-deletion worker removes queued folders;
+- the policy tests run against a real Supabase project (staging), because the test stand-in is not real Supabase storage or its role setup.
+
 **Alternatives.**
 
 - **Standard Next.js on a Node host:** rejected for now. It would be a hosting migration without a demonstrated need; Workers is already built and tested.

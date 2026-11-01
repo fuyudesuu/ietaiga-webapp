@@ -2,15 +2,41 @@
 --
 -- Security model (docs/engineering/DECISIONS.md, 2026-11-01):
 -- * Every user table carries owner_id = the Supabase Auth user. Row-level
---   security is enabled and forced; signed-in users reach only their own rows.
+--   security is enabled and forced (forcing guards against a future owner role
+--   without BYPASSRLS; on Supabase the API roles are what RLS restricts).
+--   Signed-in users reach only their own rows.
 --   Anonymous callers have no table privileges at all.
 -- * Cross-record links (concert -> trip, application -> concert, hotel -> trip,
 --   cover -> asset) use composite foreign keys on (owner_id, id), so a link to
 --   another account's record fails in the database even with a guessed id.
 -- * Cover images live in the private "covers" bucket under "<owner_id>/...".
--- * Deleting the auth user deletes everything they own (account deletion).
+-- * Deleting the auth user deletes every row they own and queues their cover
+--   files for removal through the Storage API (private.storage_cleanup).
+-- * The API roles get no default privileges: each later table or function
+--   must be granted explicitly, so a forgotten revoke cannot expose it.
+-- * Security review (tests/db/pentest.test.sql): primary keys are global, so a
+--   guessed UUID can be confirmed to exist (no content); planner estimates
+--   reveal rough row volume. Both accepted (DECISIONS.md, 2026-11-01).
 --
--- Forward fix only: this is the first migration; later changes add new files.
+-- Not yet applied anywhere. Once applied, change it only by adding migrations.
+
+-- This migration must run as a role that bypasses RLS (Supabase: postgres):
+-- the sign-up trigger writes profiles, which have no insert policy.
+do $$
+begin
+  if not (select rolsuper or rolbypassrls from pg_roles where rolname = current_user) then
+    raise exception 'run this migration as a role with BYPASSRLS (Supabase: postgres)';
+  end if;
+end;
+$$;
+
+-- New objects are not exposed to the API roles unless granted explicitly.
+alter default privileges in schema public
+  revoke all on tables from anon, authenticated;
+alter default privileges in schema public
+  revoke all on sequences from anon, authenticated;
+alter default privileges in schema public
+  revoke execute on functions from public, anon, authenticated;
 
 -- Shared trigger: keep updated_at honest without trusting the client.
 create function public.touch_updated_at()
@@ -39,6 +65,53 @@ begin
 end;
 $$;
 
+-- Time zone columns must name a real IANA zone, or reminders and display
+-- conversions would fail later. Arguments: the column names to check.
+create function public.check_time_zones()
+returns trigger
+language plpgsql
+set search_path = ''
+as $$
+declare
+  column_name text;
+  zone text;
+begin
+  foreach column_name in array tg_argv loop
+    zone := to_jsonb(new) ->> column_name;
+    if zone is not null and not exists (
+      select 1 from pg_catalog.pg_timezone_names where name = zone
+    ) then
+      raise exception 'unknown time zone in %', column_name using errcode = '22023';
+    end if;
+  end loop;
+  return new;
+end;
+$$;
+
+-- A generous per-account row cap, so one account cannot flood the database.
+-- Runs as the caller: under RLS the count covers only the caller's own rows.
+-- Argument: the maximum number of rows per owner in this table.
+create function public.enforce_owner_quota()
+returns trigger
+language plpgsql
+set search_path = ''
+as $$
+declare
+  existing bigint;
+begin
+  perform pg_catalog.pg_advisory_xact_lock(
+    pg_catalog.hashtextextended(tg_table_name || new.owner_id::text, 0));
+  execute format('select count(*) from %I.%I where owner_id = $1',
+    tg_table_schema, tg_table_name)
+    into existing using new.owner_id;
+  if existing >= tg_argv[0]::bigint then
+    raise exception 'limit of % % reached', tg_argv[0], tg_table_name
+      using errcode = '54000';
+  end if;
+  return new;
+end;
+$$;
+
 -- Profiles ------------------------------------------------------------------
 
 create table public.profiles (
@@ -62,10 +135,14 @@ security definer
 set search_path = ''
 as $$
 begin
+  -- Only a string name is used, without control or bidi-override characters.
   insert into public.profiles (id, display_name)
   values (
     new.id,
-    left(nullif(new.raw_user_meta_data ->> 'full_name', ''), 80)
+    case when jsonb_typeof(new.raw_user_meta_data -> 'full_name') = 'string' then
+      left(nullif(btrim(regexp_replace(new.raw_user_meta_data ->> 'full_name',
+        '[[:cntrl:]\u200e\u200f\u202a-\u202e\u2066-\u2069]', '', 'g')), ''), 80)
+    end
   );
   return new;
 end;
@@ -97,7 +174,12 @@ create table public.assets (
   height integer check (height between 1 and 10000),
   created_at timestamptz not null default now(),
   unique (owner_id, id),
-  check (split_part(object_key, '/', 1) = owner_id::text)
+  check (split_part(object_key, '/', 1) = owner_id::text),
+  check (
+    (mime_type = 'image/jpeg' and object_key like '%.jpg')
+    or (mime_type = 'image/png' and object_key like '%.png')
+    or (mime_type = 'image/webp' and object_key like '%.webp')
+  )
 );
 
 -- Trips -----------------------------------------------------------------------
@@ -236,6 +318,27 @@ create trigger keep_hotel_identity before update on public.hotels
 create trigger keep_asset_identity before update on public.assets
   for each row execute function public.keep_identity();
 
+create trigger check_profile_time_zone before insert or update on public.profiles
+  for each row execute function public.check_time_zones('time_zone');
+create trigger check_concert_time_zone before insert or update on public.concerts
+  for each row execute function public.check_time_zones('time_zone');
+create trigger check_application_time_zone before insert or update on public.applications
+  for each row execute function public.check_time_zones('deadline_time_zone');
+create trigger check_hotel_time_zone before insert or update on public.hotels
+  for each row execute function public.check_time_zones('time_zone');
+
+-- Per-account caps: far above personal use, low enough to stop flooding.
+create trigger trips_quota before insert on public.trips
+  for each row execute function public.enforce_owner_quota('500');
+create trigger concerts_quota before insert on public.concerts
+  for each row execute function public.enforce_owner_quota('2000');
+create trigger applications_quota before insert on public.applications
+  for each row execute function public.enforce_owner_quota('5000');
+create trigger hotels_quota before insert on public.hotels
+  for each row execute function public.enforce_owner_quota('2000');
+create trigger assets_quota before insert on public.assets
+  for each row execute function public.enforce_owner_quota('1000');
+
 create trigger touch_trips before update on public.trips
   for each row execute function public.touch_updated_at();
 create trigger touch_concerts before update on public.concerts
@@ -244,6 +347,11 @@ create trigger touch_applications before update on public.applications
   for each row execute function public.touch_updated_at();
 create trigger touch_hotels before update on public.hotels
   for each row execute function public.touch_updated_at();
+
+-- Trigger functions are not API endpoints.
+revoke all on function public.touch_updated_at(), public.keep_identity(),
+  public.check_time_zones(), public.enforce_owner_quota()
+  from public, anon, authenticated;
 
 -- Privileges and row-level security --------------------------------------------
 
@@ -325,6 +433,61 @@ create policy "hotels: owner edits" on public.hotels
 create policy "hotels: owner deletes" on public.hotels
   for delete to authenticated using ((select auth.uid()) = owner_id);
 
+-- Supabase "anonymous sign-ins" create users with the authenticated role. They
+-- are off for Encore; if ever turned on, they still reach no planning data.
+create policy "profiles: no anonymous accounts" on public.profiles as restrictive
+  for all to authenticated
+  using (not coalesce(((select auth.jwt()) ->> 'is_anonymous')::boolean, false))
+  with check (not coalesce(((select auth.jwt()) ->> 'is_anonymous')::boolean, false));
+create policy "assets: no anonymous accounts" on public.assets as restrictive
+  for all to authenticated
+  using (not coalesce(((select auth.jwt()) ->> 'is_anonymous')::boolean, false))
+  with check (not coalesce(((select auth.jwt()) ->> 'is_anonymous')::boolean, false));
+create policy "trips: no anonymous accounts" on public.trips as restrictive
+  for all to authenticated
+  using (not coalesce(((select auth.jwt()) ->> 'is_anonymous')::boolean, false))
+  with check (not coalesce(((select auth.jwt()) ->> 'is_anonymous')::boolean, false));
+create policy "concerts: no anonymous accounts" on public.concerts as restrictive
+  for all to authenticated
+  using (not coalesce(((select auth.jwt()) ->> 'is_anonymous')::boolean, false))
+  with check (not coalesce(((select auth.jwt()) ->> 'is_anonymous')::boolean, false));
+create policy "applications: no anonymous accounts" on public.applications as restrictive
+  for all to authenticated
+  using (not coalesce(((select auth.jwt()) ->> 'is_anonymous')::boolean, false))
+  with check (not coalesce(((select auth.jwt()) ->> 'is_anonymous')::boolean, false));
+create policy "hotels: no anonymous accounts" on public.hotels as restrictive
+  for all to authenticated
+  using (not coalesce(((select auth.jwt()) ->> 'is_anonymous')::boolean, false))
+  with check (not coalesce(((select auth.jwt()) ->> 'is_anonymous')::boolean, false));
+
+-- Account deletion: cover files ---------------------------------------------------
+
+-- Storage objects are not rows the database can cascade (the files live in
+-- object storage). Deleting an auth user queues their folder; the account
+-- deletion worker removes it through the Storage API with the service role,
+-- then clears the queue entry. The private schema is not exposed to the API.
+create schema private;
+revoke all on schema private from public, anon, authenticated;
+create table private.storage_cleanup (
+  owner_id uuid primary key,
+  requested_at timestamptz not null default now()
+);
+create function private.queue_storage_cleanup()
+returns trigger
+language plpgsql
+security definer
+set search_path = ''
+as $$
+begin
+  insert into private.storage_cleanup (owner_id) values (old.id)
+  on conflict do nothing;
+  return old;
+end;
+$$;
+revoke all on function private.queue_storage_cleanup() from public, anon, authenticated;
+create trigger queue_storage_cleanup after delete on auth.users
+  for each row execute function private.queue_storage_cleanup();
+
 -- Private cover storage ---------------------------------------------------------
 
 insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
@@ -336,13 +499,42 @@ values ('covers', 'covers', false, 12 * 1024 * 1024,
 create policy "covers: owner reads" on storage.objects
   for select to authenticated
   using (bucket_id = 'covers' and (storage.foldername(name))[1] = (select auth.uid())::text);
+-- The number of cover files in the caller's own folder. Definer rights only
+-- so the storage policy can count without recursing into its own policies; it
+-- takes no input and counts nothing but the caller's folder.
+create function public.own_cover_file_count()
+returns bigint
+language sql
+stable
+security definer
+set search_path = ''
+as $$
+  select count(*) from storage.objects
+  where bucket_id = 'covers'
+    and (storage.foldername(name))[1] = (select auth.uid())::text
+$$;
+revoke all on function public.own_cover_file_count() from public, anon;
+grant execute on function public.own_cover_file_count() to authenticated;
+
+-- Writes must also use the asset key shape (one folder, image extension only)
+-- and stay under a per-account file cap. Content checks happen in the upload
+-- route before the file is stored; the session token never reaches page scripts.
 create policy "covers: owner adds" on storage.objects
   for insert to authenticated
-  with check (bucket_id = 'covers' and (storage.foldername(name))[1] = (select auth.uid())::text);
+  with check (
+    bucket_id = 'covers'
+    and (storage.foldername(name))[1] = (select auth.uid())::text
+    and name ~ '^[0-9a-f-]{36}/[A-Za-z0-9_-]{1,100}\.(jpg|png|webp)$'
+    and public.own_cover_file_count() < 1000
+  );
 create policy "covers: owner replaces" on storage.objects
   for update to authenticated
   using (bucket_id = 'covers' and (storage.foldername(name))[1] = (select auth.uid())::text)
-  with check (bucket_id = 'covers' and (storage.foldername(name))[1] = (select auth.uid())::text);
+  with check (
+    bucket_id = 'covers'
+    and (storage.foldername(name))[1] = (select auth.uid())::text
+    and name ~ '^[0-9a-f-]{36}/[A-Za-z0-9_-]{1,100}\.(jpg|png|webp)$'
+  );
 create policy "covers: owner removes" on storage.objects
   for delete to authenticated
   using (bucket_id = 'covers' and (storage.foldername(name))[1] = (select auth.uid())::text);
