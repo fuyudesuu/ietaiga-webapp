@@ -10,7 +10,7 @@
     "build": "vinext build",
     "build:pages": "ENCORE_STATIC_EXPORT=1 vinext build && node scripts/pages-artifact.mjs",
     "start": "CLOUDFLARE_CF_FETCH_ENABLED=false WRANGLER_SEND_METRICS=false wrangler dev --config dist/server/wrangler.json --local --persist-to .wrangler/state --ip 127.0.0.1",
-    "lint": "eslint . --ignore-pattern dist --ignore-pattern .next",
+    "lint": "eslint . --ignore-pattern dist --ignore-pattern .next --ignore-pattern .claude",
     "test:db": "node scripts/test-db.mjs",
     "check:scale": "node scripts/check-scale.mjs",
     "check:boundaries": "depcruise app components features lib hooks --config .dependency-cruiser.cjs",
@@ -22,6 +22,8 @@
     "check": "tsc --noEmit && pnpm lint && pnpm format:check && pnpm check:scale && pnpm check:boundaries && pnpm test && pnpm build"
   },
   "dependencies": {
+    "@supabase/ssr": "0.12.7",
+    "@supabase/supabase-js": "2.118.0",
     "class-variance-authority": "0.7.1",
     "clsx": "2.1.1",
     "lucide-react": "^1.31.0",
@@ -30,7 +32,9 @@
     "radix-ui": "^1.6.7",
     "react": "19.2.6",
     "react-dom": "19.2.6",
-    "tailwind-merge": "3.6.0"
+    "server-only": "0.0.1",
+    "tailwind-merge": "3.6.0",
+    "zod": "4.6.7"
   },
   "devDependencies": {
     "@cloudflare/vite-plugin": "1.37.1",
