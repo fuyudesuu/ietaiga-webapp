@@ -23,10 +23,20 @@ export function plainResponse(status: number, message: string): Response {
  * Logs an auth failure by category and a correlation id only: never tokens,
  * codes, cookies or provider messages that could contain them.
  */
-export function logAuthFailure(category: string): string {
+export function logAuthFailure(
+  category: string,
+  cause?: { name?: string; code?: string },
+): string {
   const correlationId = crypto.randomUUID();
+  // An error's name and code are fixed identifiers; its message is never logged.
   console.error(
-    JSON.stringify({ event: "auth_failure", category, correlationId }),
+    JSON.stringify({
+      event: "auth_failure",
+      category,
+      errorName: cause?.name,
+      errorCode: cause?.code,
+      correlationId,
+    }),
   );
   return correlationId;
 }

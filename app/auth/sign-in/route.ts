@@ -1,5 +1,5 @@
 import {
-  authConfig,
+  routeAuthConfig,
   isSameSiteRequest,
   safeReturnPath,
   createRequestClient,
@@ -11,7 +11,9 @@ import {
 // Starts "Continue with Discord". POST from the sign-in page only: the PKCE
 // verifier cookie set here ties the provider's answer to this browser.
 export async function POST(request: Request) {
-  const config = authConfig();
+  const loaded = routeAuthConfig();
+  if ("response" in loaded) return loaded.response;
+  const config = loaded.config;
   if (!config)
     return plainResponse(503, "Sign-in is not set up on this deployment.");
   const headers = {
@@ -32,7 +34,8 @@ export async function POST(request: Request) {
     options: {
       redirectTo: callback.toString(),
       skipBrowserRedirect: true,
-      // Login needs only who you are: no guilds, messages or email.
+      // Login asks only who you are: no servers or messages. Supabase's Discord
+      // provider may add "email" itself; check the consent screen on staging.
       scopes: "identify",
     },
   });

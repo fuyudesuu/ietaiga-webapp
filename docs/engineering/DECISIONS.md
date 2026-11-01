@@ -20,7 +20,7 @@ Short records of decisions that change hosting, runtime, authentication, persist
   - `owner_id` and `id` are immutable.
   - Cover images live in a private `covers` bucket under `<owner_id>/`.
 - **Identity.**
-  - Supabase Auth with the Discord provider, scope `identify` only. Login is separate from any notification consent.
+  - Supabase Auth with the Discord provider. The app requests only `identify`; Supabase's provider is expected to add `email`, so the email address is treated as stored account data (to confirm on staging). No server or message access. Login is separate from any notification consent.
 - **Sessions.**
   - `@supabase/ssr` with the PKCE flow, run only in server route handlers.
   - Cookies are `HttpOnly`, `SameSite=Lax`, `Secure` outside localhost, with a 30-day cap. PKCE verifier cookies are capped at 10 minutes.
@@ -61,11 +61,31 @@ Accepted, as content-free leaks:
 - primary keys are global, so a guessed UUID can be confirmed to exist;
 - planner estimates (`count=planned`) reveal rough table volume.
 
+A second review attacked the sign-in code and the running Workers build. It found no exploitable critical or high issue. Fixed:
+
+- sign-out always clears the session cookies, even when the token refresh fails;
+- the return path is re-checked after dot-segment normalisation, and the callback checks the final origin;
+- rejected or tampered tokens count as signed out, while a rejected API key is a configuration error;
+- `__Host-` cookie names on https stop sibling subdomains from planting sessions;
+- security headers on every response: frame-ancestors and X-Frame-Options, base-uri, object-src, form-action, nosniff, Referrer-Policy (`no-referrer` on `/auth/*`), Permissions-Policy, and HSTS on https;
+- secret and service-role keys are refused as the publishable key;
+- the PKCE flow id is used, so two tabs can sign in at once;
+- cookies are cleared even with sign-in switched off;
+- invalid settings return `no-store` errors, and logs carry error names and codes, never messages.
+
+Its tests are in `tests/identity-security.test.mjs`.
+
 Still required before launch:
 
 - the upload route validates real file content and strips metadata before storing;
 - the account-deletion worker removes queued folders;
-- the policy tests run against a real Supabase project (staging), because the test stand-in is not real Supabase storage or its role setup.
+- the policy tests run against a real Supabase project (staging), because the test stand-in is not real Supabase storage or its role setup;
+- a Cloudflare rate-limiting rule on `/auth/*` (SETUP-SUPABASE.md);
+- a script-source Content Security Policy with per-request nonces;
+- any future GET handler or page must have no side effects, because the session cookie is SameSite=Lax; Server Actions need their own CSRF check;
+- `next` (types only; the Worker runs vinext's server) is bumped past its advisories, and vinext security releases are tracked.
+
+Known limitation: signing out while Supabase Auth is unreachable takes about 25 seconds (the library retries the refresh) before the cookies are cleared.
 
 **Alternatives.**
 

@@ -43,8 +43,8 @@ function SignInForm() {
         </Button>
       </form>
       <p className="mt-4 text-small leading-relaxed text-muted-foreground">
-        Encore only asks Discord who you are. It can’t read your servers or
-        messages, and reminders are set up separately.
+        Encore asks Discord who you are (your name and email address). It can’t
+        read your servers or messages, and reminders are set up separately.
       </p>
     </div>
   );

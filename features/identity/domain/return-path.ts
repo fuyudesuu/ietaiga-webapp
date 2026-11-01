@@ -19,6 +19,10 @@ export function safeReturnPath(value: string | null | undefined): string {
   }
   if (parsed.origin !== base) return "/";
   // Never bounce back into the auth routes themselves.
-  if (parsed.pathname.startsWith("/auth/")) return "/";
-  return parsed.pathname + parsed.search + parsed.hash;
+  if (/^\/auth(\/|$)/i.test(parsed.pathname)) return "/";
+  const path = parsed.pathname + parsed.search + parsed.hash;
+  // Dot segments normalise "/.//evil" to "//evil": protocol-relative, so
+  // another site. Check again after normalising.
+  if (path.startsWith("//")) return "/";
+  return path;
 }

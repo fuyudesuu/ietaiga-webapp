@@ -47,9 +47,11 @@ Under **Workers → your worker → Settings → Variables and Secrets**, add:
 
 The publishable key isn't strictly secret, but storing it as a secret keeps it out of logs and screenshots. With none of the three set, the deployment runs as the demo. A partial or invalid set stops sign-in with an error naming the setting, never its value.
 
+Then, in the Cloudflare dashboard under **Security → WAF → Rate limiting rules**, add a rule for paths starting with `/auth/`, for example 20 requests per minute per IP, with the action **Block** for 1 minute. This stops scripted sign-in floods using up Supabase's limits for everyone.
+
 ## 5. Check it
 
-1. Open `SITE/sign-in` and choose **Continue with Discord**. Approve and you return to Encore.
+1. Open `SITE/sign-in` and choose **Continue with Discord**. On Discord's consent screen, note which permissions are listed (name, and probably email). Approve and you return to Encore.
 2. In Supabase **Authentication → Users** you appear once, and **Table Editor → profiles** has your row.
 3. Sign in from a second browser with a different Discord account. Neither account can see the other's data. The database tests (`pnpm test:db`, also in CI) prove this against the policies; repeating them against staging is a launch requirement.
 

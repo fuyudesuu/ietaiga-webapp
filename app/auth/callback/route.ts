@@ -1,5 +1,5 @@
 import {
-  authConfig,
+  routeAuthConfig,
   safeReturnPath,
   createRequestClient,
   logAuthFailure,
@@ -10,7 +10,9 @@ import {
 // Discord (through Supabase Auth) returns here with a one-time code. It only
 // becomes a session together with this browser's PKCE verifier cookie.
 export async function GET(request: Request) {
-  const config = authConfig();
+  const loaded = routeAuthConfig();
+  if ("response" in loaded) return loaded.response;
+  const config = loaded.config;
   if (!config)
     return plainResponse(503, "Sign-in is not set up on this deployment.");
   const url = new URL(request.url);
@@ -25,11 +27,23 @@ export async function GET(request: Request) {
     return signIn(url.searchParams.has("error") ? "cancelled" : "failed");
 
   const { client, respond } = createRequestClient(request, config);
-  const { error } = await client.auth.exchangeCodeForSession(code);
+  const flowId = url.searchParams.get("sb_flow_id");
+  const { error } = await client.auth.exchangeCodeForSession(
+    code,
+    flowId ? { flowId } : undefined,
+  );
   if (error) {
-    logAuthFailure("callback_exchange");
+    logAuthFailure("callback_exchange", error);
     return respond(signIn("failed"));
   }
-  const next = safeReturnPath(url.searchParams.get("next"));
-  return respond(redirectTo(new URL(next, config.siteOrigin).toString()));
+  // The return path is same-site by construction; check the final address too.
+  const target = new URL(
+    safeReturnPath(url.searchParams.get("next")),
+    config.siteOrigin,
+  );
+  const destination =
+    target.origin === config.siteOrigin
+      ? target
+      : new URL("/", config.siteOrigin);
+  return respond(redirectTo(destination.toString()));
 }

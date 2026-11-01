@@ -22,10 +22,37 @@ const siteOrigin = z
   )
   .transform((value) => new URL(value).origin);
 
+/** The role inside a legacy JWT-style Supabase key, if it is one. */
+function legacyKeyRole(key: string): string | undefined {
+  const payload = key.split(".")[1];
+  if (!payload) return undefined;
+  try {
+    const claims: unknown = JSON.parse(
+      atob(payload.replace(/-/g, "+").replace(/_/g, "/")),
+    );
+    return typeof claims === "object" && claims !== null && "role" in claims
+      ? String(claims.role)
+      : undefined;
+  } catch {
+    // Not a JWT: an opaque key (sb_publishable_...), which has no role.
+    return undefined;
+  }
+}
+
 const schema = z.object({
   ENCORE_SITE_URL: siteOrigin,
   SUPABASE_URL: httpsOrigin,
-  SUPABASE_PUBLISHABLE_KEY: z.string().min(20).max(512),
+  // The publishable (anon) key only. A secret or service-role key would make
+  // every query bypass row-level security, so it is refused outright.
+  SUPABASE_PUBLISHABLE_KEY: z
+    .string()
+    .min(20)
+    .max(512)
+    .refine(
+      (key) =>
+        !key.startsWith("sb_secret_") && legacyKeyRole(key) !== "service_role",
+      "Use the publishable key, never a secret or service-role key.",
+    ),
 });
 
 export type AuthConfig = {
