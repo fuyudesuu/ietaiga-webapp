@@ -45,18 +45,24 @@ const sidebarMaterial = [
   "solid:*:data-[slot=sidebar-inner]:bg-card solid:*:data-[slot=sidebar-inner]:backdrop-filter-none",
   "not-supports-[backdrop-filter:blur(1px)]:*:data-[slot=sidebar-inner]:bg-card",
 ].join(" ");
+// One page column: the top bar, the page and the footer share its width and
+// side gutter, so their edges line up at every width.
+const pageColumn =
+  "mx-auto w-full max-w-[1440px] px-8 max-[1251px]:px-6 max-md:px-5";
+// The bar's inner padding matches the cards' (p-6), so its text lines up with
+// the text inside them. The sidebar logo shares its top and height.
 const topbarClass = cn(
-  "sticky top-3 z-20 mx-6 mt-4 flex h-[58px] items-center justify-between rounded-lg border border-border px-5 backdrop-blur-[22px] backdrop-saturate-[1.3]",
+  "flex h-[58px] items-center justify-between rounded-lg border border-border px-6 backdrop-blur-[22px] backdrop-saturate-[1.3]",
   glassSurface,
-  "max-[1251px]:mx-5 max-md:top-2 max-md:mx-4 max-md:mt-2.5 max-md:h-14 max-md:px-3",
+  "max-md:h-14 max-md:px-4",
 );
 const mobileNavClass = cn(
-  "hidden max-md:fixed max-md:right-4 max-md:bottom-[max(12px,env(safe-area-inset-bottom))] max-md:left-4 max-md:z-30 max-md:flex max-md:justify-around max-md:rounded-xl max-md:border max-md:border-border max-md:px-1 max-md:py-1.5 max-md:shadow-[0_8px_32px_#14233e18] max-md:backdrop-blur-[28px] max-md:backdrop-saturate-[1.4]",
+  "hidden max-md:fixed max-md:right-5 max-md:bottom-[max(12px,env(safe-area-inset-bottom))] max-md:left-5 max-md:z-30 max-md:flex max-md:justify-around max-md:rounded-xl max-md:border max-md:border-border max-md:px-1 max-md:py-1.5 max-md:shadow-[0_8px_32px_#14233e18] max-md:backdrop-blur-[28px] max-md:backdrop-saturate-[1.4]",
   glassSurface,
 );
 // shadcn's menu button: override its size, colours and active state.
 const navLinkClass = [
-  "h-12 gap-3 rounded-lg px-4 py-0 text-body leading-snug text-sidebar-foreground",
+  "h-12 gap-3 rounded-lg px-3 py-0 text-body leading-snug text-sidebar-foreground",
   "hover:text-sidebar-foreground active:text-sidebar-foreground",
   "data-[active=true]:bg-sidebar-accent data-[active=true]:font-semibold data-[active=true]:text-primary data-[active=true]:hover:text-primary",
   "[&>svg]:size-5 [&>svg]:stroke-[1.7]",
@@ -75,7 +81,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         Skip to content
       </a>
       <Sidebar className={sidebarMaterial}>
-        <SidebarHeader className="px-6 pt-8 pb-10">
+        <SidebarHeader className="mt-4 mb-6 h-[58px] justify-center px-6 py-0">
           <a
             href={withBasePath("/")}
             className="flex items-center gap-2.5 text-heading font-bold tracking-tighter text-foreground"
@@ -133,91 +139,96 @@ export function AppShell({ children }: { children: ReactNode }) {
               </a>
             ))}
           </div>
-          <div className="mx-6 mt-auto mb-6 pt-14 text-small text-muted-foreground">
-            <Bell size={20} className="mb-2.5 text-primary" />
-            <p>Concerts, stays, and every deadline in between.</p>
-            <a
-              href={withBasePath("/settings#reminders")}
-              className="mt-3 flex items-center gap-1.5 text-primary"
-            >
-              Reminder preferences <ChevronRight size={14} className="mb-2.5" />
-            </a>
-          </div>
         </SidebarContent>
         <SidebarFooter className="border-t border-border px-6 py-5">
           <a
             href={withBasePath("/settings")}
-            className="flex items-center gap-2.5 text-small text-foreground"
+            className="flex items-center gap-3 text-small text-foreground"
           >
-            <span className={cn(avatarClass, "size-[38px]")}>A</span>
-            <span>
+            <span className={cn(avatarClass, "size-8")}>A</span>
+            <span className="min-w-0 flex-1 truncate">
               Aki
               <small className="block text-label text-muted-foreground">
                 Personal space
               </small>
             </span>
-            <Settings2 size={16} className="ml-auto" />
+            <Settings2 size={16} className="shrink-0" />
           </a>
         </SidebarFooter>
       </Sidebar>
       <div className="min-w-0 flex-1">
-        <header className={topbarClass}>
-          <a
-            href={withBasePath("/")}
-            className="hidden text-title font-bold tracking-tighter text-foreground max-md:block"
-          >
-            encore.
-          </a>
-          <div className="flex items-center gap-2.5 text-small text-muted-foreground max-md:hidden">
-            <span>Your space</span>
-            <ChevronRight size={13} />
-            <span className="text-foreground">
-              {path.startsWith("/trips")
-                ? "Trips"
-                : path.startsWith("/concerts")
-                  ? "Concerts"
-                  : path.startsWith("/settings")
-                    ? "Settings"
-                    : "Overview"}
-            </span>
-          </div>
-          <div className="flex items-center gap-4 max-md:gap-2">
-            <span className="text-label text-muted-foreground max-md:text-caption">
-              Sample plans
-            </span>
-            <span className="flex items-center gap-1.5 border-l border-border pl-4 text-label text-muted-foreground max-md:hidden">
-              <Globe2 size={14} />
-              {(state.preferences.zone.split("/").pop() || "UTC").replaceAll(
-                "_",
-                " ",
-              )}
-            </span>
-            <Button
-              asChild
-              variant="ghost"
-              size="icon"
-              aria-label="Reminder settings"
-            >
-              <a href={withBasePath("/settings#reminders")}>
-                <Bell size={19} />
-              </a>
-            </Button>
+        <div
+          className={cn(
+            pageColumn,
+            "sticky top-4 z-20 mt-4 max-md:top-2 max-md:mt-2.5",
+          )}
+        >
+          <header className={topbarClass}>
             <a
-              href={withBasePath("/settings")}
-              className={cn(avatarClass, "size-8 text-small max-md:hidden")}
-              aria-label="Account settings"
+              href={withBasePath("/")}
+              className="hidden text-title font-bold tracking-tighter text-foreground max-md:block"
             >
-              A
+              encore.
             </a>
-          </div>
-        </header>
+            <div className="flex items-center gap-2.5 text-small text-muted-foreground max-md:hidden">
+              <span>Your space</span>
+              <ChevronRight size={13} />
+              <span className="text-foreground">
+                {path.startsWith("/trips")
+                  ? "Trips"
+                  : path.startsWith("/concerts")
+                    ? "Concerts"
+                    : path.startsWith("/settings")
+                      ? "Settings"
+                      : "Overview"}
+              </span>
+            </div>
+            <div className="flex items-center gap-4 max-md:gap-2">
+              <span className="text-label text-muted-foreground max-md:text-caption">
+                Sample plans
+              </span>
+              <span className="flex items-center gap-1.5 border-l border-border pl-4 text-label text-muted-foreground max-md:hidden">
+                <Globe2 size={14} />
+                {(state.preferences.zone.split("/").pop() || "UTC").replaceAll(
+                  "_",
+                  " ",
+                )}
+              </span>
+              <Button
+                asChild
+                variant="ghost"
+                size="icon"
+                aria-label="Reminder settings"
+              >
+                <a href={withBasePath("/settings#reminders")}>
+                  <Bell size={19} />
+                </a>
+              </Button>
+              <a
+                href={withBasePath("/settings")}
+                className={cn(avatarClass, "size-8 text-small max-md:hidden")}
+                aria-label="Account settings"
+              >
+                A
+              </a>
+            </div>
+          </header>
+        </div>
         <main
           id="main-content"
-          className="m-auto min-h-[calc(100vh-134px)] max-w-[1440px] px-8 pt-8 pb-12 max-[1251px]:px-6 max-[1251px]:py-8 max-md:min-h-[calc(100dvh-100px)] max-md:px-5 max-md:pt-6 max-md:pb-[112px] max-md:has-[#wallet-panel]:pt-6 max-md:has-[#wallet-panel]:pb-8 min-[1550px]:pt-12"
+          className={cn(
+            pageColumn,
+            "min-h-[calc(100vh-134px)] pt-8 pb-12 max-[1251px]:py-8 max-md:min-h-[calc(100dvh-100px)] max-md:pt-6 max-md:pb-[112px] max-md:has-[#wallet-panel]:pt-6 max-md:has-[#wallet-panel]:pb-8 min-[1550px]:pt-12",
+          )}
         >
           {children}
         </main>
-        <footer className="flex justify-between gap-4 px-8 pb-6 text-caption text-muted-foreground max-md:flex-col max-md:gap-1 max-md:px-5 max-md:pb-[110px]">
+        <footer
+          className={cn(
+            pageColumn,
+            "flex justify-between gap-4 pb-6 text-caption text-muted-foreground max-md:flex-col max-md:gap-1 max-md:pb-[110px]",
+          )}
+        >
           <span>Encore · Personal concert planner</span>
           <span>Fictional plans · Saved on this browser</span>
         </footer>
