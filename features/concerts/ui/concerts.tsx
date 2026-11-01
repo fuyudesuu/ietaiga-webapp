@@ -29,6 +29,7 @@ import {
   DateTile,
   ConcertMark,
   Pill,
+  applicationTone,
   Empty,
   Choice,
   panelClass,
@@ -149,13 +150,7 @@ export function Concerts() {
                 </div>
                 <Pill
                   className="max-lg:text-caption max-md:col-[3] max-md:justify-self-start"
-                  tone={
-                    a?.payment === "Paid"
-                      ? "mint"
-                      : a?.result === "Won"
-                        ? "amber"
-                        : "neutral"
-                  }
+                  tone={applicationTone(a)}
                 >
                   {a ? appStatus(a) : "On the wishlist"}
                 </Pill>

@@ -10,7 +10,7 @@ import {
   SelectItem,
 } from "@/components/ui/select";
 import { type ReactNode } from "react";
-import { Concert, day } from "@/lib/encore/model";
+import { type Application, Concert, day } from "@/lib/encore/model";
 import { withBasePath } from "@/lib/encore/paths";
 /** Card surface used by most sections. */
 export const panelClass = "rounded-lg border border-border bg-card shadow-none";
@@ -80,6 +80,15 @@ export function GlassTag({
 }
 
 /** Status colours shared by pills and concert marks (tokens in globals.css). */
+/** Phone-only screens: hidden on desktop, one readable column on phones. */
+export const phoneColumnClass =
+  "hidden max-md:mx-auto max-md:block max-md:max-w-lg";
+/** Status colour of a concert's ticket: paid, won and awaiting payment, or neither. */
+export function applicationTone(application: Application | undefined) {
+  if (application?.payment === "Paid") return "mint";
+  if (application?.result === "Won") return "amber";
+  return "neutral";
+}
 export const toneClasses: Record<string, string> = {
   neutral: "",
   amber: "bg-amber-bg text-amber-text",

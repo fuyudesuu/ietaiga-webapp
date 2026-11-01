@@ -14,15 +14,21 @@ import {
   day,
   due,
   money,
+  nextPaymentDue,
+  ticketApplication,
+  DEMO_NOW,
   type Application,
   type Concert,
   type Trip,
 } from "@/lib/encore/model";
 import {
+  applicationTone,
   ConcertMark,
   DateTile,
+  PageHeading,
   Pill,
   RoundAddButton,
+  phoneColumnClass,
 } from "@/components/encore-ui/ui";
 import { walletCardHref } from "@/features/wallet";
 import { cn } from "@/lib/utils";
@@ -41,11 +47,7 @@ const rowClass =
   "grid min-h-[88px] grid-cols-[40px_40px_minmax(0,1fr)_16px] items-center gap-3 border-b border-border py-4 text-foreground last:border-0";
 const markClass = "h-11 w-10";
 
-function concertTone(application: Application | undefined) {
-  if (application?.payment === "Paid") return "mint";
-  if (application?.result === "Won") return "amber";
-  return "neutral";
-}
+const tripsFirst = (entry: PlanEntry) => (entry.kind === "trip" ? -1 : 1);
 function monthLabel(date: string) {
   return date
     ? day(date, { month: "long", year: "numeric" })
@@ -80,9 +82,9 @@ export function MobileOverview() {
     )
     // Undated concerts go last; a trip starts before the concerts in it.
     .sort(
-      (a, b) =>
-        (a.date || "9999").localeCompare(b.date || "9999") ||
-        (a.kind === "trip" ? -1 : 1) - (b.kind === "trip" ? -1 : 1),
+      (first, second) =>
+        (first.date || "9999").localeCompare(second.date || "9999") ||
+        tripsFirst(first) - tripsFirst(second),
     );
   const months = entries.reduce<{ label: string; entries: PlanEntry[] }[]>(
     (groups, entry) => {
@@ -99,36 +101,23 @@ export function MobileOverview() {
     concerts: state.concerts.length,
     trips: state.trips.length,
   };
-  const payment = state.applications
-    .filter(
-      (a) =>
-        a.result === "Won" &&
-        a.payment === "Unpaid" &&
-        state.concerts.some((c) => c.id === a.concertId),
-    )
-    .sort((a, b) =>
-      (a.paymentDeadline || "9999").localeCompare(b.paymentDeadline || "9999"),
-    )[0];
+  const payment = nextPaymentDue(state);
   const paymentConcert = state.concerts.find(
-    (c) => c.id === payment?.concertId,
+    (concert) => concert.id === payment?.concertId,
   );
 
   return (
-    <section className="hidden max-md:mx-auto max-md:block max-md:max-w-[500px]">
-      <div className="mb-6 flex items-center justify-between gap-3">
-        <div>
-          <h1 className="text-display leading-tight font-semibold tracking-tighter max-[360px]:text-heading">
-            Your plans
-          </h1>
-          <p className="mt-2 text-label text-muted-foreground">
-            Thu, 1 Oct · Concerts and journeys ahead
-          </p>
-        </div>
-        <RoundAddButton
-          label="Add concert"
-          onClick={() => setEditor({ type: "concert" })}
-        />
-      </div>
+    <section className={phoneColumnClass}>
+      <PageHeading
+        title="Your plans"
+        subtitle={`${day(DEMO_NOW, { weekday: "short", day: "numeric", month: "short" })} · Concerts and journeys ahead`}
+        action={
+          <RoundAddButton
+            label="Add concert"
+            onClick={() => setEditor({ type: "concert" })}
+          />
+        }
+      />
       {payment && paymentConcert ? (
         <a
           className="flex w-full items-center gap-3 border-y border-border py-4 text-left"
@@ -182,26 +171,20 @@ export function MobileOverview() {
               <ConcertRow
                 key={"c-" + entry.concert.id}
                 concert={entry.concert}
-                application={
-                  state.applications.find(
-                    (a) =>
-                      a.concertId === entry.concert.id && a.result === "Won",
-                  ) ??
-                  state.applications.find(
-                    (a) => a.concertId === entry.concert.id,
-                  )
-                }
+                application={ticketApplication(state, entry.concert.id)}
               />
             ) : (
               <TripRow
                 key={"t-" + entry.trip.id}
                 trip={entry.trip}
                 concerts={
-                  state.concerts.filter((c) => c.tripId === entry.trip.id)
-                    .length
+                  state.concerts.filter(
+                    (concert) => concert.tripId === entry.trip.id,
+                  ).length
                 }
                 stays={
-                  state.hotels.filter((h) => h.tripId === entry.trip.id).length
+                  state.hotels.filter((hotel) => hotel.tripId === entry.trip.id)
+                    .length
                 }
               />
             ),
@@ -235,7 +218,7 @@ function ConcertRow({
         <span className="mt-0.5 block truncate text-label text-muted-foreground">
           {concert.venue} · {concert.city}
         </span>
-        <Pill tone={concertTone(application)} className="mt-2 text-caption">
+        <Pill tone={applicationTone(application)} className="mt-2 text-caption">
           {application ? appStatus(application) : "On the wishlist"}
         </Pill>
       </span>

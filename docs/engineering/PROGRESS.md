@@ -398,3 +398,11 @@ The owner reviews the visual changes and retests on the phone. Then stage D, whi
 - No horizontal overflow at 320–430px.
 - Light and dark checked at 390px.
 - **Not run:** real devices.
+- **Review fixes, against CLAUDE.md:**
+  - The phone Overview uses `PageHeading`, with no copied title markup, and its date comes from `DEMO_NOW` instead of a typed string.
+  - Shared rules moved to one place each:
+    - `ticketApplication` and `nextPaymentDue` in `lib/encore/model.ts`;
+    - `applicationTone` and `phoneColumnClass` (a `max-w-lg` column, not `500px`) in `components/encore-ui/ui.tsx`;
+    - the concerts list uses `applicationTone` too.
+  - One-letter domain variables in the new files were renamed.
+  - **Pre-existing, not changed:** hard-coded demo dates in the desktop Overview and Settings, and one-letter variables and payment checks repeated in the older screens.

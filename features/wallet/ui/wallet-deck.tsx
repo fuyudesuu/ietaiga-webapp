@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useRef, useState, type PointerEvent } from "react";
 import { usePlanner } from "@/lib/encore/store";
-import { appStatus, countOf, day } from "@/lib/encore/model";
+import { appStatus, countOf, day, ticketApplication } from "@/lib/encore/model";
 import { WalletCard, type WalletCardItem } from "./wallet-card";
 import {
   TicketDetails,
@@ -10,6 +10,7 @@ import {
 } from "./wallet-details";
 import { CARD_HEIGHT, CARD_PEEK, useWalletMotion } from "./use-wallet-motion";
 import { withBasePath } from "@/lib/encore/paths";
+import { phoneColumnClass } from "@/components/encore-ui/ui";
 
 export type WalletKind = "tickets" | "trips";
 
@@ -45,33 +46,40 @@ export function WalletDeck({ kind }: { kind: WalletKind }) {
   const items: WalletCardItem[] =
     kind === "tickets"
       ? [...state.concerts]
-          .sort((a, b) => (a.date || "9999").localeCompare(b.date || "9999"))
-          .map((c) => {
-            const application =
-              state.applications.find(
-                (a) => a.concertId === c.id && a.result === "Won",
-              ) ?? state.applications.find((a) => a.concertId === c.id);
+          .sort((first, second) =>
+            (first.date || "9999").localeCompare(second.date || "9999"),
+          )
+          .map((concert) => {
+            const application = ticketApplication(state, concert.id);
             return {
-              id: c.id,
-              title: c.title,
-              subtitle: c.subtitle,
-              date: c.date ? day(c.date) : "Date TBA",
-              location: c.venue,
+              id: concert.id,
+              title: concert.title,
+              subtitle: concert.subtitle,
+              date: concert.date ? day(concert.date) : "Date TBA",
+              location: concert.venue,
               status: application ? appStatus(application) : "No application",
-              image: c.image,
+              image: concert.image,
             };
           })
       : [...state.trips]
-          .sort((a, b) => a.start.localeCompare(b.start))
-          .map((t) => ({
-            id: t.id,
-            title: t.cities,
-            subtitle: t.title,
-            date: `${day(t.start)} – ${day(t.end)}`,
-            location: `${countOf(state.concerts.filter((c) => c.tripId === t.id).length, "concert")} · ${countOf(state.hotels.filter((h) => h.tripId === t.id).length, "stay")}`,
-            status: t.status,
-            image: t.image,
-          }));
+          .sort((first, second) => first.start.localeCompare(second.start))
+          .map((trip) => {
+            const concerts = state.concerts.filter(
+              (concert) => concert.tripId === trip.id,
+            ).length;
+            const stays = state.hotels.filter(
+              (hotel) => hotel.tripId === trip.id,
+            ).length;
+            return {
+              id: trip.id,
+              title: trip.cities,
+              subtitle: trip.title,
+              date: `${day(trip.start)} – ${day(trip.end)}`,
+              location: `${countOf(concerts, "concert")} · ${countOf(stays, "stay")}`,
+              status: trip.status,
+              image: trip.image,
+            };
+          });
   const cards = useWalletMotion(
     selected,
     items.map((item) => item.id),
@@ -79,10 +87,12 @@ export function WalletDeck({ kind }: { kind: WalletKind }) {
   );
   const concert =
     kind === "tickets"
-      ? state.concerts.find((c) => c.id === selected)
+      ? state.concerts.find((candidate) => candidate.id === selected)
       : undefined;
   const trip =
-    kind === "trips" ? state.trips.find((t) => t.id === selected) : undefined;
+    kind === "trips"
+      ? state.trips.find((candidate) => candidate.id === selected)
+      : undefined;
 
   function close() {
     const id = selected;
@@ -140,7 +150,7 @@ export function WalletDeck({ kind }: { kind: WalletKind }) {
 
   return (
     <section
-      className="hidden max-md:mx-auto max-md:block max-md:max-w-[500px]"
+      className={phoneColumnClass}
       aria-label={kind === "tickets" ? "Concert cards" : "Trip cards"}
     >
       <div
