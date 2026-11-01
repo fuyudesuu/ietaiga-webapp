@@ -337,3 +337,22 @@ Owner to retest on the phone. Then the consistency pass.
 
 ### Next action
 The owner reviews the visual changes and retests on the phone. Then stage D, which needs decisions on hosting (Workers), the database (Supabase) and a Discord app.
+
+## 1 November 2026 — Shell alignment
+
+### Completed
+- **One page column.** The top bar, the page and the footer share one column: the same 1440px limit and the same 32/24/20px gutter. Previously the bar overhung the content by 8px on desktop, 4px on phones and 140px at 1920px.
+- **Top bar.**
+  - Its inner padding matches the cards' (24px), so the breadcrumb text lines up with the card text below it.
+  - The sticky offset equals its top margin, so it doesn't shift when scrolling.
+- **Sidebar.**
+  - The logo shares the top bar's top and height.
+  - Nav icons sit on the same 24px line as the rest of the sidebar.
+  - The profile row stays on one line.
+  - The reminder promo was removed: it was clipped at common window heights and duplicated the bell.
+- **Phones.** The bottom navigation and the toast use the 20px gutter. On desktop, the toast is centred on the content area (sidebar 216px, so +108px).
+
+### Verification
+- `pnpm check` passes. All 26 browser tests pass, run locally with the container's Chromium through an untracked config.
+- Measured in Chromium: the top bar and content edges are equal at 390, 1024, 1261, 1440 and 1920px on Overview, Settings and a concert page.
+- **Not run:** real devices.
