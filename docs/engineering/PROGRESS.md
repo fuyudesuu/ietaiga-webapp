@@ -13,18 +13,23 @@
 ## Update at each task boundary
 
 ### Task and revision
+
 Name the bounded task and current source revision/branch when available.
 
 ### Completed
+
 List actual outcomes and key files, not intentions.
 
 ### Verification
+
 Record exact commands and results. Distinguish passed, failed and not run, including whether tests used actual DB policies or mocks.
 
 ### Remaining risks/blockers
+
 Record only actionable facts, without secrets or private user data.
 
 ### Next action
+
 Write the single next concrete step and its exit condition.
 
 ---
@@ -32,9 +37,11 @@ Write the single next concrete step and its exit condition.
 ## 27 September 2026 — Baseline import and GitHub Pages test build
 
 ### Task and revision
+
 Replace the repository contents with the exported mobile prototype (source commit `56249a1`), then add a static GitHub Pages build for UI testing. Branch `claude/optimistic-ritchie-x37nds`. This is not stage A of `REFACTOR-PLAN.md`.
 
 ### Baseline (unmodified export, before any change)
+
 - `sha256sum -c SOURCE-FILES.sha256` — all tracked source files match.
 - `pnpm install --frozen-lockfile` (pnpm 11.25.0, Node 22.22) — pass.
 - `pnpm exec tsc --noEmit` — pass.
@@ -43,6 +50,7 @@ Replace the repository contents with the exported mobile prototype (source commi
 - `pnpm build` (Vinext/Cloudflare) — pass.
 
 ### Completed
+
 - `pnpm build:pages`: `ENCORE_STATIC_EXPORT=1` switches `next.config.ts` to `output: "export"` with `basePath` from `ENCORE_BASE_PATH`; `scripts/pages-artifact.mjs` assembles `dist/pages`. The default build and runtime are unchanged.
 - `patches/vinext@1.0.0-beta.5.patch` (via `pnpm patch`): the static-export prerenderer requested routes without `basePath`, so every route returned 404. The patch prefixes the three prerender request URLs with `config.basePath`. Remove when upstream fixes it.
 - `lib/encore/paths.ts` `withBasePath()` applied to root-absolute links, images and `commitAndNavigate`. Fixture image paths stay unchanged in stored data and are prefixed at render time.
@@ -50,17 +58,20 @@ Replace the repository contents with the exported mobile prototype (source commi
 - `.github/workflows/ci.yml` (typecheck, tests, prettier, both builds) and `.github/workflows/pages.yml` (deploy on `main`).
 
 ### Verification
+
 - `pnpm exec tsc --noEmit` — pass. `pnpm test` — 6 pass. Prettier check on `app components/encore lib/encore tests` — pass. `pnpm build` — pass. `ENCORE_BASE_PATH=/ietaiga-webapp pnpm build:pages` — 14 routes pre-rendered.
 - `pnpm lint` — 19 problems (3 errors, 16 warnings). The 3 errors are the baseline ones above in untouched files. The 7 `no-html-link-for-pages` errors no longer appear only because hrefs are now `withBasePath(...)` calls the rule cannot read; the anchors themselves are unchanged. This is not a lint fix.
 - Headless Chromium against `dist/pages` served under `/ietaiga-webapp/` by a local server mimicking Pages (`X` → `X.html`, missing → `404.html`), at 390×844 and 1280×900, light scheme: all six routes render with images; no root-relative link lacks the base path; creating a concert lands on its fallback page and survives reload; an unknown concert id shows "Concert not found".
 - Not run: real GitHub Pages deploy, dark mode, reduced motion, keyboard pass, real devices.
 
 ### Remaining risks/blockers
+
 - Pages must be enabled with source "GitHub Actions" by a repository admin; deploys only run from `main`.
 - Links to browser-created records open via one 404 → redirect hop on Pages (expected, visible in devtools).
 - Lint is not in CI until the 3 baseline errors are resolved.
 
 ### Next action
+
 Stage A from `START-HERE.md`: make `pnpm lint` pass without suppressions (decide the native-anchor rule explicitly), add import-boundary checks with fixtures, and add lint to CI. Exit: `pnpm lint` and CI are green on a clean tree and fail on fixture violations.
 
 ---
@@ -68,9 +79,11 @@ Stage A from `START-HERE.md`: make `pnpm lint` pass without suppressions (decide
 ## 27 September 2026 — Stage A: engineering baseline and quality gates
 
 ### Task and revision
+
 Stage A of `REFACTOR-PLAN.md`, on `claude/optimistic-ritchie-x37nds` from `main` at `e4d6e54`. No UI, route or stored-data-format changes.
 
 ### Completed
+
 - **Lint passes with no suppressions.** `lib/encore/demo-storage.ts` turns browser storage into an external store read with `useSyncExternalStore`. This replaces the load-then-setState effect and the save effect in `lib/encore/store.tsx`. Edits are now written to localStorage synchronously inside `update`, before listeners re-render, so save-before-navigation no longer depends on an effect running inside `flushSync`. A failed write still shows the existing storage notice. `web-tools.tsx` updates its ref in an effect instead of during render. Unused imports were removed.
 - **Two Next.js rules disabled project-wide, with written reasons** in `eslint.config.mjs`:
   - `no-html-link-for-pages`: native anchors are intentional.
@@ -81,11 +94,12 @@ Stage A of `REFACTOR-PLAN.md`, on `claude/optimistic-ritchie-x37nds` from `main`
   - features may only use each other through `contracts/` or `index.ts`;
   - shared code must not import features;
   - no import cycles.
-  The current source has no violations and no legacy exceptions. `tests/boundaries.test.mjs` runs the rules against `tests/boundaries/fixtures` and proves a direct, an alias and a re-export violation all fail, while a type-only contract import passes.
+    The current source has no violations and no legacy exceptions. `tests/boundaries.test.mjs` runs the rules against `tests/boundaries/fixtures` and proves a direct, an alias and a re-export violation all fail, while a type-only contract import passes.
 - **Scripts:** `pnpm test` now discovers `tests/*.test.mjs`. Added `format:check`, `check:boundaries`, and `check`, which runs every gate plus the default build.
 - **CI:** `.github/workflows/ci.yml` now also runs lint, the format check and the boundary check.
 
 ### Verification
+
 - `pnpm check` exits 0:
   - tsc passes;
   - lint shows 0 problems (baseline: 10 errors, 16 warnings);
@@ -103,19 +117,23 @@ Stage A of `REFACTOR-PLAN.md`, on `claude/optimistic-ritchie-x37nds` from `main`
 - Not run: dark mode, reduced motion, a keyboard-only pass, real devices, or a storage-full scenario in a real browser (covered by unit tests only).
 
 ### Behavior note
+
 The first visit no longer writes the untouched seed to localStorage. Storage is written on the first edit. What is shown and exported is unchanged.
 
 ### Remaining risks/blockers
+
 - Branch protection (requiring CI before merge) is not enabled, and I cannot verify or change it. A repo admin must set it under Settings → Branches.
 - Domain purity is checked by imports only. Browser globals used without an import are not detected.
 
 ### Organization review (27 September 2026)
+
 - 46 of 61 vendored `components/ui` files are unreachable from the app. About 13 dependencies are used only by them: recharts, react-hook-form, embla, cmdk, vaul, sonner, input-otp, react-day-picker, react-resizable-panels, next-themes, @base-ui, @shadcn/react. date-fns, zod and @hookform/resolvers are not used at all.
 - Unused Sites starter scaffolding: `app/chatgpt-auth.ts`, `db/`, `drizzle/`, `drizzle.config.ts`, `examples/`. `SOURCE-EXPORT.md` asks to keep the hosting helper until a runtime decision, so remove these with that decision.
 - The root holds 9 handoff/history documents: README-HANDOFF, START-HERE, SOURCE-EXPORT, SOURCE-FILES.sha256, WORK_LOG, PRODUCT, DESIGN, `.impeccable/`, and `.openai/`. Candidates to move under `docs/`.
 - Code is organized by screen (`components/encore/*`), not by the planned `features/<name>/` layout. Largest files: `app/styles/features.css` (1,435 lines), `responsive.css` (847), `forms.tsx` (668), `trips.tsx` (555), `concerts.tsx` (509). This is the stage B/C work.
 
 ### Next action
+
 Stage B: extract the concert editor from `components/encore/forms.tsx` into `features/concerts/` with characterization tests, keeping the store behind an explicit adapter. Exit: create/edit/cancel/validation/image flows behave as before, the new module passes the boundary rules, and `pnpm check` is green.
 
 ---
@@ -123,9 +141,11 @@ Stage B: extract the concert editor from `components/encore/forms.tsx` into `fea
 ## 28 September 2026 — Repository reorganization (added to PR #3)
 
 ### Task and revision
+
 The owner approved a drafted reorganization: tidy the root, remove unused code, keep the Cloudflare Workers and Pages builds, and create feature folders. It was added to PR #3 as four commits after `a12fb29`. Only moves and deletions: no logic or UI changes.
 
 ### Completed
+
 1. **Docs out of the root.** `PRODUCT.md` → `docs/product/`. `DESIGN.md` and `.impeccable/` → `docs/design/`. The old README, `WORK_LOG.md`, the handoff notes and the source-export records → `docs/history/`. The new root `README.md` describes the project as it is now.
 2. **Unused code removed.** 46 unreachable shadcn components, 16 packages (plus drizzle-kit), and the unused Sites starter files (`app/chatgpt-auth.ts`, `db/`, `drizzle/`, `examples/`). The vendored shadcn CSS moved to `app/styles/vendor/` and is excluded from formatting.
 3. **Sites tooling removed.** The Cloudflare Workers build (`pnpm build`/`start`) and the Pages build are kept. `dev` and `build` call Vinext directly. Recorded in `docs/engineering/DECISIONS.md`.
@@ -137,6 +157,7 @@ The owner approved a drafted reorganization: tidy the root, remove unused code, 
    - `.claude/rules` path globs, the format script paths and the boundary-check paths were updated.
 
 ### Verification
+
 - `pnpm check` exits 0 after commits 2, 3 and 4: tsc, lint with 0 problems, Prettier, boundary rules (56 modules on the final commit), 19/19 tests, and the build. Commit 1 changes only docs; the format check was run on it.
 - `pnpm install --frozen-lockfile` works from a clean `node_modules`.
 - `pnpm dev` serves `/trips/autumn` with a 200.
@@ -151,6 +172,7 @@ The owner approved a drafted reorganization: tidy the root, remove unused code, 
 - Not run: dark mode, reduced motion, keyboard-only use, real devices, an actual Cloudflare deploy.
 
 ### Next action
+
 Stage B: split `features/editors/ui/forms.tsx` so the concert editor lives in `features/concerts/`, with characterization tests. Exit: concert create/edit/cancel/validation/image flows unchanged and `pnpm check` green.
 
 ---
@@ -158,9 +180,11 @@ Stage B: split `features/editors/ui/forms.tsx` so the concert editor lives in `f
 ## 2 October 2026 — Stage B: editors split by feature, and the editor scrolling fix
 
 ### Task
+
 The owner asked for stage B (characterize the editors, move each one into its feature, keep only the dialog in a small host) and a fix for the editor form's scrolling on phones.
 
 ### Completed (one commit each)
+
 1. **Characterization tests first.** Playwright (`@playwright/test` 1.56.1) runs 19 browser tests against the GitHub Pages export, served by `scripts/serve-pages.mjs`. They cover each editor: initial values, optional and JST dates, amounts, validation messages in order, cancel/discard, the cover image, save in place and save-then-open-page, and the exact saved demo record. They passed on the unchanged `forms.tsx` before any move. `pnpm test:e2e` runs them; CI installs Chromium and runs them after `pnpm build:pages`.
 2. **Concert editor** → `features/concerts/ui/concert-editor.tsx`.
    - Shared parts moved to `components/encore-ui/`: the `EditorForm` frame (heading, error, actions, save handling), the fields and the image field.
@@ -180,6 +204,7 @@ The owner asked for stage B (characterize the editors, move each one into its fe
 **Temporary adapters.** Each editor reads and saves through a `*-demo-store.ts` hook over the browser demo store: concerts (concerts and applications), trips, stays and reminders. Removal task: replace each with an owner-scoped repository in stage D (reminders in D/E).
 
 ### Verification
+
 - `pnpm check` exits 0:
   - tsc;
   - lint with 0 problems;
@@ -192,11 +217,14 @@ The owner asked for stage B (characterize the editors, move each one into its fe
 - Not run: real iOS/Android devices (including the on-screen keyboard over the dialog), keyboard-only use, reduced motion, and the GitHub CI run (pending push).
 
 ### Known issues kept (behavior-preserving refactor)
+
 - A blank price is saved as 0, not as unknown. This breaks the "unknown amounts are null" invariant. The tests record it, so fixing it is a deliberate, visible change.
 - Select values are trusted from the form (`as` casts), and an unexpected error still shows as a form message.
 
 ### Next action
+
 Owner's choice:
+
 - (a) Fix blank amounts to stay unknown. This needs `amount: number | null` in the model, a demo-storage migration and display changes.
 - (b) Stage C for the editors: move the remaining field, image-picker and form-grid styles from `features.css`/`responsive.css`/`wallet.css` into the editor CSS Modules.
 
@@ -205,6 +233,7 @@ Owner's choice:
 ## 4 October 2026 — Stage C for the editors
 
 ### Completed
+
 - **Image picker** styles moved from `wallet.css` into `components/encore-ui/item-image-field.module.css`. Only the image field used them.
 - **Field labels and two-column rows** moved into `components/encore-ui/form-fields.module.css`. Editors now use a `FieldRow` component, which stacks to one column under 768px. Labels use the 0.875rem size that actually rendered: `responsive.css` overrode the 0.8rem in `features.css`.
 - **Global rules deleted:**
@@ -216,6 +245,7 @@ Owner's choice:
   - `.form-help`, `.form-callout` and `.form-error`, shared by Trips and Settings.
 
 ### Verification
+
 - **Screenshots:** 78 deterministic screenshots, byte-identical before and after. They cover:
   - each editor, at the top and scrolled to the end;
   - a validation error;
@@ -223,15 +253,19 @@ Owner's choice:
   - at 320px, 390px and 1280px, in light and dark mode.
 
   Two baseline runs were identical, which confirms the screenshots are deterministic.
+
 - **Checks:** `pnpm check` exits 0 (74 modules, 25 unit tests). `pnpm test:e2e` passes 25/25.
 - **Not run:** real devices.
 
 ### Found while surveying motion, not fixed here
+
 - **Toast:** `.app-toast` uses `animation: toast-in`, but no `@keyframes toast-in` exists, so the toast appears without animation.
 - **Editor dialog:** the `editor-arrive` animation in `shell.css` (blur plus `margin-top`) replaces the dialog's open and close animations. The dialog likely disappears on close without animating.
 
 ### Next action
+
 Owner's choice:
+
 - an animation pass, proposed separately: fix the toast and dialog motion first;
 - keeping blank amounts as unknown;
 - the hosting/backend decision for stage D.
@@ -241,9 +275,11 @@ Owner's choice:
 ## 5 October 2026 — All styling moved to Tailwind
 
 ### Decision
+
 The owner chose Tailwind for all styling, to keep the UI consistent, with Motion for animation later. It is recorded in `DECISIONS.md` (2026-10-05). `CLAUDE.md`, `ARCHITECTURE.md`, `REFACTOR-PLAN.md` and the frontend rule were updated, replacing the earlier CSS Modules target.
 
 ### Completed (one commit per step, on the stage C branch)
+
 1. **Snapshot tool.** `scripts/visual-snapshots.mjs` (`pnpm visual`) captures every route at 5 widths in light, dark and solid, plus interactive states:
    - the editors and an error state;
    - the Trips tabs;
@@ -251,6 +287,7 @@ The owner chose Tailwind for all styling, to keep the UI consistent, with Motion
    - Wallet cards.
 
    It compares two captures pixel by pixel with a small anti-aliasing tolerance and writes diff images. Two captures of the same build match.
+
 2. **Editors.** The four CSS Modules became utilities.
    - Type scale tokens (`caption` … `display`) and tone colours were added to `@theme`.
    - `tailwind-merge` was taught the type scale.
@@ -262,6 +299,7 @@ The owner chose Tailwind for all styling, to keep the UI consistent, with Motion
    - About 800 global selectors were deleted, including rules no markup used.
 
 ### Verification
+
 - After every step, the visual snapshots of the new build matched the previous build, with no differing screenshots. Coverage grew from 144 to 195 screenshots.
 - Differences found along the way were fixed before committing, not accepted. Examples:
   - `tailwind-merge` dropping a `leading-*`;
@@ -276,11 +314,14 @@ The owner chose Tailwind for all styling, to keep the UI consistent, with Motion
   - browsers without `backdrop-filter`.
 
 ### Known limits
+
 - Overrides of the shadcn control skins still need important utilities (`text-small!`, `px-3!`) until the skins in `globals.css` move into a cascade layer.
 - The phone "add" floating button was hidden at every width before the change and still is.
 
 ### Next action
+
 The consistency pass. The code still uses many off-scale values:
+
 - 26 distinct arbitrary font sizes;
 - 36 spacing values;
 - 12 radii;
@@ -292,9 +333,11 @@ Rounding them to the token scale is a deliberate visual change, to be shown to t
 ## 6 October 2026 — Phone form fixes, outline borders, dark-mode flash, page fade
 
 ### Task and revision
+
 Owner report from a phone: the editor form moved sideways when swiped and its fields looked uneven, the "Mark submitted" row looked off, and dark mode flashed white between pages.
 
 ### Completed
+
 - **Default border colour.** There was no base `border-color`, so every bare `border` (outline buttons such as "Mark submitted", "Edit concert", "Cancel", the sidebar edge) drew in the text colour. A base-layer rule now uses the `--border` token.
 - **Even fields.** Selects and the primary button are 44px, like text inputs and outline buttons. Date and time inputs drop Safari's native pill look (`appearance: none`, `min-width: 0`, left-aligned), and the editor's fields area clips sideways overflow, so a wide native control cannot pan the form.
 - **"Mark submitted" row.** It now matches the other round actions: a bold "Submit your application" title over "Closes <deadline>".
@@ -302,21 +345,25 @@ Owner report from a phone: the editor form moved sideways when swiped and its fi
 - **Page fade.** Navigation is full page loads, so pages cross-fade with a cross-document view transition (0.2s; off with reduced motion; browsers without support just load).
 
 ### Verification
+
 - `pnpm check` passes. 26 browser tests pass, including the new `theme.spec.ts` (a saved dark theme paints dark with the app's scripts blocked).
 - Visual compare against the previous build: the only differences are the border colour, the 2px taller selects and primary button, and the new row text.
 - In Chromium, a link click starts a view transition, and nothing overflows the screen at 320 and 390px.
 - **Not run:** iPhone Safari (no WebKit here). The sideways-swipe fix follows Safari's known date-input behaviour but is unconfirmed on a device.
 
 ### Next action
+
 Owner to retest on the phone. Then the consistency pass.
 
 ## 26 October 2026 — Consistency pass: one token scale
 
 ### Completed
+
 - Every component type size, weight, letter-spacing, line height, radius and spacing value now comes from the scale in DECISIONS.md (2026-10-26). 356 values were rounded across 13 files, and the shadcn skins in `globals.css` use the radius and type tokens.
 - `pnpm check:scale` (in `pnpm check`) fails on new off-scale values.
 
 ### Verification
+
 - `pnpm check` passes. All 26 browser tests pass.
 - All 195 snapshots differ from the previous build, as intended. Reviewed side by side at 390 and 1280px (Overview, concert, trip, Wallet, editors): sizes and spacing move by a few pixels, with no wrapping or overflow regressions.
 - A first attempt mapped weight 550 to medium, which renders regular with Arial; it now maps to semibold.
@@ -325,22 +372,26 @@ Owner to retest on the phone. Then the consistency pass.
 ## 26 October 2026 — Animation polish
 
 ### Completed
+
 - **Editor dialog:** it now fades and settles out on close (0.16s). Its opening animation had been overriding the closing one.
 - **"Saved" toast:** it slides in and fades out, in `components/shell/toast.tsx`.
 - **Wallet cards:** Motion springs (DECISIONS.md, 2026-10-26), lazy-loaded at 22KB gzip. They keep their velocity when a tap interrupts them.
 
 ### Verification
+
 - `pnpm check` passes. All 26 browser tests pass. All 195 snapshots match the consistency-pass build, so resting states are unchanged.
 - Wallet, in Chromium: card positions mid-animation are within a few pixels of the old curve, and end positions are identical. A tap during the animation produces no frame jump. With reduced motion, cards move without animating.
 - The dialog opacity falls to 0 before unmount, and the toast fades in and out without a flicker.
 - **Not run:** real devices (iPhone Safari in particular).
 
 ### Next action
+
 The owner reviews the visual changes and retests on the phone. Then stage D, which needs decisions on hosting (Workers), the database (Supabase) and a Discord app.
 
 ## 1 November 2026 — Shell alignment
 
 ### Completed
+
 - **One page column.** The top bar, the page and the footer share one column: the same 1440px limit and the same 32/24/20px gutter. Previously the bar overhung the content by 8px on desktop, 4px on phones and 140px at 1920px.
 - **Top bar.**
   - Its inner padding matches the cards' (24px), so the breadcrumb text lines up with the card text below it.
@@ -353,6 +404,7 @@ The owner reviews the visual changes and retests on the phone. Then stage D, whi
 - **Phones.** The bottom navigation and the toast use the 20px gutter. On desktop, the toast is centred on the content area (sidebar 216px, so +108px).
 
 ### Verification
+
 - `pnpm check` passes. All 26 browser tests pass, run locally with the container's Chromium through an untracked config.
 - Measured in Chromium: the top bar and content edges are equal at 390, 1024, 1261, 1440 and 1920px on Overview, Settings and a concert page.
 - **Not run:** real devices.
@@ -360,6 +412,7 @@ The owner reviews the visual changes and retests on the phone. Then stage D, whi
 ## 1 November 2026 — Phone layout pass
 
 ### Completed
+
 - **One phone page header.** Wallet, Concerts and Trips use the same title style (36px semibold, 28px at 360px and below) with a round "+" beside it (`RoundAddButton` in `components/encore-ui/ui.tsx`). The wide "Add concert"/"Create trip" buttons are desktop-only.
 - **Concert page.**
   - On phones, Edit sits beside the back link, so the title gets the full width. It breaks between words (`wrap-break-word`), not inside them; "THE IDOLM@STER" no longer splits as "IDOLM@S / TER".
@@ -367,6 +420,7 @@ The owner reviews the visual changes and retests on the phone. Then stage D, whi
 - **Trip page.** The tabs fill the row, with a 44px "+" beside them. The tab list is 44px tall, like other controls. Accessible names are unchanged ("Concert", "Edit concert").
 
 ### Verification
+
 - `pnpm check` passes. All 26 browser tests pass, with local Chromium. A first draft renamed two buttons and broke three tests; the names were restored with screen-reader text.
 - No horizontal overflow at 320, 360, 390 or 430px on any route. An overflow found at 320px on the trip page was fixed.
 - Light and dark checked at 390px, and dark at 320px.
@@ -375,6 +429,7 @@ The owner reviews the visual changes and retests on the phone. Then stage D, whi
 ## 1 November 2026 — Draft: phone navigation by page
 
 ### Completed (draft for owner review)
+
 - **Phone Overview** ("Your plans", `features/overview/ui/mobile-overview.tsx`):
   - one dated list of every concert and trip, grouped by month, with undated concerts last;
   - an All / Concerts / Trips filter with counts;
@@ -388,11 +443,13 @@ The owner reviews the visual changes and retests on the phone. Then stage D, whi
   - `scripts/visual-snapshots.mjs` drives the new phone states and accepts `CHROMIUM_PATH`.
 
 ### Behaviour changes to confirm
+
 - The phone deck now includes every concert and trip, not only the next three upcoming.
 - Search and the status filter are desktop-only for now.
 - The Reminder preferences link and the cover note under the old Wallet are gone; the bell still links to reminders.
 
 ### Verification
+
 - `pnpm check` passes. All 26 browser tests pass, with local Chromium.
 - The visual capture runs all 195 states.
 - No horizontal overflow at 320–430px.
@@ -406,3 +463,41 @@ The owner reviews the visual changes and retests on the phone. Then stage D, whi
     - the concerts list uses `applicationTone` too.
   - One-letter domain variables in the new files were renamed.
   - **Pre-existing, not changed:** hard-coded demo dates in the desktop Overview and Settings, and one-letter variables and payment checks repeated in the older screens.
+
+## 1 November 2026 — Stage D: database, sign-in and the first repository
+
+### Completed
+
+- **Decision.** Workers, Supabase and Discord sign-in, with server-only sessions (DECISIONS.md, 2026-11-01). Owner runbook: `docs/engineering/SETUP-SUPABASE.md`.
+- **Schema** (`supabase/migrations/20261101000000_initial_schema.sql`).
+  - Profiles, trips, concerts, applications, hotels and assets.
+  - Forced RLS, with no privileges for anonymous callers.
+  - Composite `(owner_id, id)` links, immutable owner and id.
+  - A private `covers` bucket; account-deletion cascade with a storage cleanup queue.
+  - Per-account caps; time zone validation; sign-up name sanitising.
+- **Database tests** (`pnpm test:db`, in CI). 150 tests on a throwaway PostgreSQL 16 with a minimal Supabase stand-in:
+  - 58 isolation tests: two users and an anonymous caller;
+  - 92 adversarial tests from the independent security review.
+- **Sign-in** (`features/identity`, `app/auth/*`, `/sign-in`).
+  - Discord through Supabase Auth with the PKCE flow.
+  - HttpOnly, SameSite=Lax session cookies (30 days); PKCE verifier cookies last 10 minutes.
+  - POST-only sign-in and sign-out with a same-site Origin check; redirects built from `ENCORE_SITE_URL`; same-site return paths only.
+  - `no-store` on every auth response; failures logged as a category and correlation id only.
+- **Trips repository** (`features/trips/server`): owner-scoped through the user's own session, with a strict input contract. Not wired to the UI yet.
+- **Import boundaries.** Browser code cannot import `@supabase`, and the dependency rules now see installed packages' `dist` code.
+
+### Verification
+
+- `pnpm check` passes. Unit tests: 36. `pnpm test:db`: 150. Browser tests: 29, with local Chromium.
+- The Workers build was run locally with placeholder Supabase settings:
+  - cross-site and Origin-less sign-in and sign-out are refused (403), and GET sign-in returns 405;
+  - a `next=//evil` return path falls back to `/`;
+  - cookie flags and lifetimes are as designed.
+- **Not run:** a real Supabase project and real Discord sign-in. They need the owner's accounts, and supabase.com is not reachable from the build sandbox.
+
+### Next action
+
+- The owner creates staging Supabase and Discord apps (runbook).
+- Run the migration and policy tests against staging.
+- Wire Trips to the repository: a server-rendered list, create and edit, with session refresh middleware.
+- Build the upload route (content validation) and the account-deletion worker.
