@@ -495,6 +495,20 @@ The owner reviews the visual changes and retests on the phone. Then stage D, whi
   - cookie flags and lifetimes are as designed.
 - **Not run:** a real Supabase project and real Discord sign-in. They need the owner's accounts, and supabase.com is not reachable from the build sandbox.
 
+### Security review of sign-in (second Opus review)
+
+- No exploitable critical or high issue. Fixed, with the review's tests kept in `tests/identity-security.test.mjs`:
+  - sign-out always clears the cookies;
+  - the return path is re-checked after dot-segment normalisation;
+  - rejected tokens count as signed out;
+  - `__Host-` cookie names;
+  - security headers through `middleware.ts`;
+  - secret keys are refused;
+  - the PKCE flow id is used.
+- Each fix was checked live on the Workers build.
+- Unit tests now number 52.
+- A third review, verifying the fixes, is running.
+
 ### Next action
 
 - The owner creates staging Supabase and Discord apps (runbook).
