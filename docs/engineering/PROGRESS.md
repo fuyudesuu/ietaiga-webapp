@@ -507,7 +507,13 @@ The owner reviews the visual changes and retests on the phone. Then stage D, whi
   - the PKCE flow id is used.
 - Each fix was checked live on the Workers build.
 - Unit tests now number 52.
-- A third review, verifying the fixes, is running.
+- A third review verified the fixes by mutation testing. It found one regression and some gaps, all now fixed (DECISIONS.md):
+  - the time-zone trigger's cost became a foreign key;
+  - functions are no longer executable by PUBLIC by default;
+  - anonymous accounts cannot store covers;
+  - the publishable-key check allows only publishable or `anon` keys;
+  - cookie handling during sign-out.
+- Totals: unit tests 58; `pnpm test:db` 154 (58 isolation, 92 attack, 4 regression).
 
 ### Next action
 

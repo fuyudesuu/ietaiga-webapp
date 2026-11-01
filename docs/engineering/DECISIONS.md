@@ -75,6 +75,22 @@ A second review attacked the sign-in code and the running Workers build. It foun
 
 Its tests are in `tests/identity-security.test.mjs`.
 
+A third review checked the fixes by reverting them; each critical one made its test fail. It found one regression, now fixed: a per-row time-zone trigger made bulk writes about 400× slower (a denial-of-service lever). Time zones are now a foreign key to `private.time_zones`.
+
+It also fixed:
+
+- new public functions are no longer executable by PUBLIC by default (a per-schema revoke cannot remove that global default);
+- anonymous-sign-in users cannot store cover files;
+- the publishable-key check allows only publishable or `anon` keys, so a whitespace-padded secret key is refused;
+- sign-out no longer fails on malformed cookie names, and clears only Encore's own auth cookies;
+- the cover-count function runs with the caller's rights and uses a prefix match.
+
+Its tests are in `tests/db/review-regressions.test.sql` and `tests/identity-review.test.mjs`. Still untested by automation, but verified live:
+
+- the middleware wiring of the security headers;
+- the callback's final-origin check (unreachable today);
+- the Sec-Fetch-Site check on sign-out when sign-in is off.
+
 Still required before launch:
 
 - the upload route validates real file content and strips metadata before storing;

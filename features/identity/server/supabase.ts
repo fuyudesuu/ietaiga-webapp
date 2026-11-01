@@ -24,6 +24,20 @@ export function authCookieName(siteOrigin: string) {
     : "encore-auth";
 }
 
+// RFC 6265 cookie-name token; other names (spaces, non-ASCII) would make
+// serialising a deletion throw.
+const COOKIE_NAME = /^[!#$%&'*+\-.^_`|~0-9A-Za-z]+$/;
+
+/** True for the auth cookie itself, its chunks (".0") and verifiers ("-..."). */
+function isAuthCookie(name: string, base: string) {
+  return (
+    COOKIE_NAME.test(name) &&
+    (name === base ||
+      name.startsWith(base + ".") ||
+      name.startsWith(base + "-"))
+  );
+}
+
 /** Lifetime for a cookie the Supabase library sets; 0 (deletion) is kept. */
 function cappedMaxAge(name: string, requested: number | undefined) {
   const limit = name.includes("code-verifier")
@@ -81,11 +95,7 @@ export function createRequestClient(request: Request, config: AuthConfig) {
   function clearAuthCookies() {
     // The session, its chunks (".0", ".1") and verifiers ("-code-verifier").
     for (const { name } of incoming())
-      if (
-        name === cookieName ||
-        name.startsWith(cookieName + ".") ||
-        name.startsWith(cookieName + "-")
-      )
+      if (isAuthCookie(name, cookieName))
         pending.push(
           serializeCookieHeader(name, "", { ...attributes, maxAge: 0 }),
         );
@@ -117,7 +127,10 @@ export function createRequestClient(request: Request, config: AuthConfig) {
  */
 export function clearStaleAuthCookies(request: Request, response: Response) {
   for (const { name } of parseCookieHeader(request.headers.get("cookie") ?? ""))
-    if (name.startsWith("__Host-encore-auth") || name.startsWith("encore-auth"))
+    if (
+      isAuthCookie(name, "__Host-encore-auth") ||
+      isAuthCookie(name, "encore-auth")
+    )
       response.headers.append(
         "Set-Cookie",
         serializeCookieHeader(name, "", {

@@ -35,8 +35,10 @@ alter default privileges in schema public
   revoke all on tables from anon, authenticated;
 alter default privileges in schema public
   revoke all on sequences from anon, authenticated;
+alter default privileges
+  revoke execute on functions from public;
 alter default privileges in schema public
-  revoke execute on functions from public, anon, authenticated;
+  revoke execute on functions from anon, authenticated;
 
 -- Shared trigger: keep updated_at honest without trusting the client.
 create function public.touch_updated_at()
@@ -65,29 +67,6 @@ begin
 end;
 $$;
 
--- Time zone columns must name a real IANA zone, or reminders and display
--- conversions would fail later. Arguments: the column names to check.
-create function public.check_time_zones()
-returns trigger
-language plpgsql
-set search_path = ''
-as $$
-declare
-  column_name text;
-  zone text;
-begin
-  foreach column_name in array tg_argv loop
-    zone := to_jsonb(new) ->> column_name;
-    if zone is not null and not exists (
-      select 1 from pg_catalog.pg_timezone_names where name = zone
-    ) then
-      raise exception 'unknown time zone in %', column_name using errcode = '22023';
-    end if;
-  end loop;
-  return new;
-end;
-$$;
-
 -- A generous per-account row cap, so one account cannot flood the database.
 -- Runs as the caller: under RLS the count covers only the caller's own rows.
 -- Argument: the maximum number of rows per owner in this table.
@@ -112,13 +91,24 @@ begin
 end;
 $$;
 
+-- Server-side tables the API never exposes.
+create schema private;
+revoke all on schema private from public, anon, authenticated;
+
+-- Time zone columns reference the IANA zones known to the database (a foreign
+-- key is a cheap index lookup per write). Updating the list is a migration.
+create table private.time_zones (name text primary key);
+insert into private.time_zones
+select name from pg_catalog.pg_timezone_names
+where name not in ('posixrules', 'localtime', 'Factory');
+
 -- Profiles ------------------------------------------------------------------
 
 create table public.profiles (
   id uuid primary key references auth.users (id) on delete cascade,
   display_name text check (char_length(display_name) <= 80),
   time_zone text not null default 'Asia/Tokyo'
-    check (char_length(time_zone) between 1 and 64),
+    references private.time_zones (name),
   default_currency text not null default 'JPY'
     check (default_currency in ('JPY', 'USD', 'AUD', 'SGD')),
   created_at timestamptz not null default now(),
@@ -218,7 +208,7 @@ create table public.concerts (
   -- Date and time are local to the event's time zone; either may be unknown.
   local_date date,
   local_time time,
-  time_zone text not null default 'Asia/Tokyo' check (char_length(time_zone) between 1 and 64),
+  time_zone text not null default 'Asia/Tokyo' references private.time_zones (name),
   status text not null default 'planned' check (status in ('planned', 'cancelled', 'completed')),
   source_url text check (char_length(source_url) <= 2000 and source_url ~ '^https://'),
   notes text not null default '' check (char_length(notes) <= 5000),
@@ -260,7 +250,7 @@ create table public.applications (
   payment_due_at timestamptz,
   collection_from_at timestamptz,
   deadline_time_zone text not null default 'Asia/Tokyo'
-    check (char_length(deadline_time_zone) between 1 and 64),
+    references private.time_zones (name),
   -- Integer minor units; an unknown amount is null, never zero.
   amount_minor bigint check (amount_minor >= 0 and amount_minor <= 100000000000),
   currency text check (currency in ('JPY', 'USD', 'AUD', 'SGD')),
@@ -285,7 +275,7 @@ create table public.hotels (
   location text not null default '' check (char_length(location) <= 200),
   check_in date not null,
   check_out date not null,
-  time_zone text not null default 'Asia/Tokyo' check (char_length(time_zone) between 1 and 64),
+  time_zone text not null default 'Asia/Tokyo' references private.time_zones (name),
   booking_url text check (char_length(booking_url) <= 2000 and booking_url ~ '^https://'),
   -- Private: never sent in reminders or shared messages.
   booking_reference text check (char_length(booking_reference) <= 200),
@@ -318,15 +308,6 @@ create trigger keep_hotel_identity before update on public.hotels
 create trigger keep_asset_identity before update on public.assets
   for each row execute function public.keep_identity();
 
-create trigger check_profile_time_zone before insert or update on public.profiles
-  for each row execute function public.check_time_zones('time_zone');
-create trigger check_concert_time_zone before insert or update on public.concerts
-  for each row execute function public.check_time_zones('time_zone');
-create trigger check_application_time_zone before insert or update on public.applications
-  for each row execute function public.check_time_zones('deadline_time_zone');
-create trigger check_hotel_time_zone before insert or update on public.hotels
-  for each row execute function public.check_time_zones('time_zone');
-
 -- Per-account caps: far above personal use, low enough to stop flooding.
 create trigger trips_quota before insert on public.trips
   for each row execute function public.enforce_owner_quota('500');
@@ -350,7 +331,7 @@ create trigger touch_hotels before update on public.hotels
 
 -- Trigger functions are not API endpoints.
 revoke all on function public.touch_updated_at(), public.keep_identity(),
-  public.check_time_zones(), public.enforce_owner_quota()
+  public.enforce_owner_quota()
   from public, anon, authenticated;
 
 -- Privileges and row-level security --------------------------------------------
@@ -466,8 +447,6 @@ create policy "hotels: no anonymous accounts" on public.hotels as restrictive
 -- object storage). Deleting an auth user queues their folder; the account
 -- deletion worker removes it through the Storage API with the service role,
 -- then clears the queue entry. The private schema is not exposed to the API.
-create schema private;
-revoke all on schema private from public, anon, authenticated;
 create table private.storage_cleanup (
   owner_id uuid primary key,
   requested_at timestamptz not null default now()
@@ -499,22 +478,26 @@ values ('covers', 'covers', false, 12 * 1024 * 1024,
 create policy "covers: owner reads" on storage.objects
   for select to authenticated
   using (bucket_id = 'covers' and (storage.foldername(name))[1] = (select auth.uid())::text);
--- The number of cover files in the caller's own folder. Definer rights only
--- so the storage policy can count without recursing into its own policies; it
--- takes no input and counts nothing but the caller's folder.
+-- The number of cover files in the caller's own folder. A function, so the
+-- insert policy can count without referring to its own table; it runs with
+-- the caller's rights, so RLS limits it to the caller's files anyway.
 create function public.own_cover_file_count()
 returns bigint
 language sql
 stable
-security definer
 set search_path = ''
 as $$
   select count(*) from storage.objects
   where bucket_id = 'covers'
-    and (storage.foldername(name))[1] = (select auth.uid())::text
+    and starts_with(name, (select auth.uid())::text || '/')
 $$;
 revoke all on function public.own_cover_file_count() from public, anon;
 grant execute on function public.own_cover_file_count() to authenticated;
+
+create policy "covers: no anonymous accounts" on storage.objects as restrictive
+  for all to authenticated
+  using (bucket_id <> 'covers' or not coalesce(((select auth.jwt()) ->> 'is_anonymous')::boolean, false))
+  with check (bucket_id <> 'covers' or not coalesce(((select auth.jwt()) ->> 'is_anonymous')::boolean, false));
 
 -- Writes must also use the asset key shape (one folder, image extension only)
 -- and stay under a per-account file cap. Content checks happen in the upload

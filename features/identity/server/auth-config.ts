@@ -50,7 +50,8 @@ const schema = z.object({
     .max(512)
     .refine(
       (key) =>
-        !key.startsWith("sb_secret_") && legacyKeyRole(key) !== "service_role",
+        /^sb_publishable_[A-Za-z0-9_-]+$/.test(key) ||
+        legacyKeyRole(key) === "anon",
       "Use the publishable key, never a secret or service-role key.",
     ),
 });
