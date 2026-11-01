@@ -205,21 +205,36 @@ export function ConcertDetail() {
   const applications = state.applications.filter((a) => a.concertId === c.id);
   return (
     <>
-      <a href={withBasePath("/concerts")} className={backLinkClass}>
-        <ArrowLeft size={16} />
-        All concerts
-      </a>
-      <div className="mb-6 flex items-center gap-6 max-md:mt-5 max-md:flex-wrap max-md:gap-3">
+      {/* On phones, Edit moves up beside the back link so the title gets
+          the full width. */}
+      <div className="flex items-center justify-between max-md:mb-4">
+        <a
+          href={withBasePath("/concerts")}
+          className={cn(backLinkClass, "max-md:mb-0")}
+        >
+          <ArrowLeft size={16} />
+          All concerts
+        </a>
+        <Button
+          variant="outline"
+          className="hidden max-md:inline-flex"
+          onClick={() => setEditor({ type: "concert", id: c.id })}
+        >
+          <Pencil size={15} />
+          Edit<span className="sr-only"> concert</span>
+        </Button>
+      </div>
+      <div className="mb-6 flex items-center gap-6 max-md:gap-4">
         <ConcertMark concert={c} large />
-        <div className="max-md:min-w-0 max-md:flex-1">
-          <h1 className="text-display leading-tight font-semibold tracking-tighter wrap-anywhere max-md:text-heading">
+        <div className="min-w-0 flex-1">
+          <h1 className="text-display leading-tight font-semibold tracking-tighter wrap-break-word max-md:text-heading">
             {c.title}
           </h1>
           <p className="mt-1 text-small text-muted-foreground">{c.subtitle}</p>
         </div>
         <Button
           variant="outline"
-          className="ml-auto max-md:ml-0"
+          className="max-md:hidden"
           onClick={() => setEditor({ type: "concert", id: c.id })}
         >
           <Pencil size={15} />
@@ -229,7 +244,7 @@ export function ConcertDetail() {
       <div
         className={cn(
           panelClass,
-          "mb-8 flex items-center gap-8 p-6 max-md:grid max-md:grid-cols-1 max-md:gap-4 max-md:p-5",
+          "mb-8 flex items-center gap-8 p-6 max-md:grid max-md:grid-cols-2 max-md:gap-4 max-md:p-5 max-[389px]:grid-cols-1",
         )}
       >
         <span className={factClass}>
@@ -244,7 +259,7 @@ export function ConcertDetail() {
             {c.time ? c.time + " JST" : "Time not announced"}
           </strong>
         </span>
-        <span className={factClass}>
+        <span className={cn(factClass, "max-md:col-span-2")}>
           <MapPin className={factIconClass} />
           <strong className={factTextClass}>
             {c.venue}

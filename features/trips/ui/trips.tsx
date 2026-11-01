@@ -268,8 +268,13 @@ export function TripDetail() {
       <div className={detailGridClass}>
         <div>
           <Tabs defaultValue="itinerary">
-            <div className="mb-5 flex items-center justify-between gap-3 max-md:flex-wrap max-md:gap-3">
-              <TabsList className={tabsListClass}>
+            <div className="mb-5 flex items-center justify-between gap-3 max-[360px]:gap-2">
+              <TabsList
+                className={cn(
+                  tabsListClass,
+                  "max-md:min-w-0 max-md:flex-1 max-md:*:min-w-0 max-[360px]:*:px-1",
+                )}
+              >
                 <TabsTrigger className={tabsTriggerClass} value="itinerary">
                   Itinerary
                 </TabsTrigger>
@@ -282,10 +287,11 @@ export function TripDetail() {
               </TabsList>
               <Button
                 variant="outline"
+                className="max-md:size-11 max-md:p-0"
                 onClick={() => setEditor({ type: "concert", tripId: t.id })}
               >
                 <Plus size={15} />
-                Concert
+                <span className="max-md:sr-only">Concert</span>
               </Button>
             </div>
             <TabsContent value="itinerary">

@@ -55,7 +55,7 @@ export const sideHeadingClass = "text-small font-semibold";
 /** Segmented tabs (shadcn TabsList / TabsTrigger). The trigger needs an
     important size: shadcn controls inherit the page font via an unlayered rule. */
 export const tabsListClass =
-  "rounded-md bg-secondary p-1 group-data-[orientation=horizontal]/tabs:h-[43px]";
+  "rounded-md bg-secondary p-1 group-data-[orientation=horizontal]/tabs:h-11";
 export const tabsTriggerClass =
   "min-h-[34px] rounded-sm px-3 py-1.5 text-small! shadow-none data-[state=active]:bg-card data-[state=active]:text-primary group-data-[variant=default]/tabs-list:data-[state=active]:shadow-none dark:data-[state=active]:bg-card dark:data-[state=active]:text-primary max-md:px-2.5";
 
@@ -127,9 +127,9 @@ export function PageHeading({
   action?: ReactNode;
 }) {
   return (
-    <header className="page-heading mb-8 flex items-center justify-between gap-6 max-lg:items-start max-md:mb-6 max-md:flex-wrap max-md:gap-5">
-      <div>
-        <h1 className="text-display leading-tight font-semibold tracking-tighter max-md:text-heading">
+    <header className="page-heading mb-8 flex items-center justify-between gap-6 max-lg:items-start max-md:mb-6 max-md:items-center max-md:gap-3">
+      <div className="min-w-0">
+        <h1 className="text-display leading-tight font-semibold tracking-tighter max-[360px]:text-heading">
           {title}
         </h1>
         {subtitle && (
@@ -150,10 +150,41 @@ export function AddButton({
   onClick: () => void;
 }) {
   return (
-    <Button className="primary-button" onClick={onClick}>
-      <Plus size={17} />
-      {children}
-    </Button>
+    <>
+      <Button className="primary-button max-md:hidden" onClick={onClick}>
+        <Plus size={17} />
+        {children}
+      </Button>
+      <RoundAddButton
+        className="hidden max-md:grid"
+        label={String(children)}
+        onClick={onClick}
+      />
+    </>
+  );
+}
+/** The phone page header's add action, beside the title on every page. */
+export function RoundAddButton({
+  label,
+  onClick,
+  className,
+}: {
+  label: string;
+  onClick: () => void;
+  className?: string;
+}) {
+  return (
+    <button
+      type="button"
+      aria-label={label}
+      onClick={onClick}
+      className={cn(
+        "grid size-12 shrink-0 place-items-center rounded-full bg-accent text-primary active:bg-secondary",
+        className,
+      )}
+    >
+      <Plus size={22} />
+    </button>
   );
 }
 export function Choice({

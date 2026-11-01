@@ -356,3 +356,18 @@ The owner reviews the visual changes and retests on the phone. Then stage D, whi
 - `pnpm check` passes. All 26 browser tests pass, run locally with the container's Chromium through an untracked config.
 - Measured in Chromium: the top bar and content edges are equal at 390, 1024, 1261, 1440 and 1920px on Overview, Settings and a concert page.
 - **Not run:** real devices.
+
+## 1 November 2026 — Phone layout pass
+
+### Completed
+- **One phone page header.** Wallet, Concerts and Trips use the same title style (36px semibold, 28px at 360px and below) with a round "+" beside it (`RoundAddButton` in `components/encore-ui/ui.tsx`). The wide "Add concert"/"Create trip" buttons are desktop-only.
+- **Concert page.**
+  - On phones, Edit sits beside the back link, so the title gets the full width. It breaks between words (`wrap-break-word`), not inside them; "THE IDOLM@STER" no longer splits as "IDOLM@S / TER".
+  - Date and time share a row, with the venue below, from 390px up.
+- **Trip page.** The tabs fill the row, with a 44px "+" beside them. The tab list is 44px tall, like other controls. Accessible names are unchanged ("Concert", "Edit concert").
+
+### Verification
+- `pnpm check` passes. All 26 browser tests pass, with local Chromium. A first draft renamed two buttons and broke three tests; the names were restored with screen-reader text.
+- No horizontal overflow at 320, 360, 390 or 430px on any route. An overflow found at 320px on the trip page was fixed.
+- Light and dark checked at 390px, and dark at 320px.
+- **Not run:** real devices.

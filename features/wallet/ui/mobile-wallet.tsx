@@ -3,7 +3,6 @@ import { useEffect, useRef, useState, type PointerEvent } from "react";
 import {
   ArrowRight,
   Clock3,
-  Plus,
   Ticket,
   Luggage,
   CheckCircle2,
@@ -18,6 +17,7 @@ import {
 } from "./wallet-details";
 import { CARD_HEIGHT, CARD_PEEK, useWalletMotion } from "./use-wallet-motion";
 import { withBasePath } from "@/lib/encore/paths";
+import { RoundAddButton } from "@/components/encore-ui/ui";
 
 type WalletTab = "tickets" | "trips";
 
@@ -149,7 +149,7 @@ export function MobileWallet() {
         <div>
           <h1
             id="wallet-title"
-            className="text-display leading-tight font-bold tracking-tighter max-[360px]:text-heading"
+            className="text-display leading-tight font-semibold tracking-tighter max-[360px]:text-heading"
           >
             Your wallet
           </h1>
@@ -157,15 +157,12 @@ export function MobileWallet() {
             Thu, 1 Oct · Your next live moments
           </p>
         </div>
-        <button
-          className="grid size-[46px] shrink-0 place-items-center rounded-full bg-accent text-primary active:bg-secondary"
-          aria-label={tab === "tickets" ? "Add concert" : "Add trip"}
+        <RoundAddButton
+          label={tab === "tickets" ? "Add concert" : "Add trip"}
           onClick={() =>
             setEditor({ type: tab === "tickets" ? "concert" : "trip" })
           }
-        >
-          <Plus size={23} />
-        </button>
+        />
       </div>
       {payment && paymentConcert ? (
         <button
