@@ -47,6 +47,7 @@ import {
 import { useRecordId } from "@/lib/encore/navigation";
 import { withBasePath } from "@/lib/encore/paths";
 import { cn } from "@/lib/utils";
+import { WalletDeck } from "@/features/wallet";
 export function Concerts() {
   const { state, setEditor } = usePlanner();
   const [search, setSearch] = useState("");
@@ -83,106 +84,111 @@ export function Concerts() {
           </AddButton>
         }
       />
-      <div className="mb-6 flex justify-between gap-3 max-md:flex-wrap max-md:gap-3">
-        <div className="relative max-w-[440px] flex-1 max-md:w-full max-md:basis-full">
-          <Search
-            size={18}
-            className="absolute top-[13px] left-[13px] text-muted-foreground"
-          />
-          <Input
-            className="pl-10 text-small!"
-            aria-label="Search concerts"
-            placeholder="Search concerts, artists, or cities"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
+      <WalletDeck kind="tickets" />
+      {/* On phones the card stack replaces the searchable list. */}
+      <div className="max-md:hidden">
+        <div className="mb-6 flex justify-between gap-3 max-md:flex-wrap max-md:gap-3">
+          <div className="relative max-w-[440px] flex-1 max-md:w-full max-md:basis-full">
+            <Search
+              size={18}
+              className="absolute top-[13px] left-[13px] text-muted-foreground"
+            />
+            <Input
+              className="pl-10 text-small!"
+              aria-label="Search concerts"
+              placeholder="Search concerts, artists, or cities"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+          </div>
+          <Choice
+            className="w-[180px] max-md:max-w-none max-md:flex-1"
+            label="Filter concerts"
+            value={filter}
+            onChange={setFilter}
+            options={[
+              { value: "all", label: "All concerts" },
+              { value: "payment", label: "Payment needed" },
+              { value: "secured", label: "Ticket secured" },
+              { value: "wishlist", label: "No trip yet" },
+            ]}
           />
         </div>
-        <Choice
-          className="w-[180px] max-md:max-w-none max-md:flex-1"
-          label="Filter concerts"
-          value={filter}
-          onChange={setFilter}
-          options={[
-            { value: "all", label: "All concerts" },
-            { value: "payment", label: "Payment needed" },
-            { value: "secured", label: "Ticket secured" },
-            { value: "wishlist", label: "No trip yet" },
-          ]}
-        />
-      </div>
-      <div className="mt-0 mr-[55px] mb-2.5 ml-6 flex justify-between pl-1 text-caption tracking-wide text-muted-foreground max-md:hidden">
-        <span>PERFORMANCE</span>
-        <span>TICKET STATUS</span>
-      </div>
-      <div className="overflow-hidden border-t border-border">
-        {concerts.map((c) => {
-          const a = state.applications.find((a) => a.concertId === c.id);
-          return (
-            <a
-              href={withBasePath("/concerts/" + c.id)}
-              key={c.id}
-              className="group flex min-h-[93px] min-w-0 items-center gap-5 border-b border-border px-1 py-6 text-foreground last:border-0 max-[1251px]:gap-3 max-md:grid max-md:grid-cols-[40px_38px_minmax(0,1fr)] max-md:gap-2.5 max-md:px-0 max-md:py-5"
-            >
-              <DateTile
-                date={c.date}
-                className="max-md:w-auto max-md:min-w-0"
-              />
-              <ConcertMark
-                concert={c}
-                className="h-[60px] w-[53px] max-md:h-[42px] max-md:w-[38px]"
-              />
-              <div className="min-w-0 flex-1">
-                <h3 className="text-body font-semibold tracking-normal group-hover:text-primary">
-                  {c.title}
-                </h3>
-                <p className="mt-0.5 text-small wrap-anywhere text-muted-foreground">
-                  {c.subtitle}
-                </p>
-                <small className="mt-1 flex items-center gap-1 text-small text-muted-foreground max-[1251px]:flex-wrap max-md:text-label">
-                  <MapPin size={13} />
-                  {c.venue} · {c.city}
-                </small>
-              </div>
-              <Pill
-                className="max-lg:text-caption max-md:col-[3] max-md:justify-self-start"
-                tone={
-                  a?.payment === "Paid"
-                    ? "mint"
-                    : a?.result === "Won"
-                      ? "amber"
-                      : "neutral"
-                }
+        <div className="mt-0 mr-[55px] mb-2.5 ml-6 flex justify-between pl-1 text-caption tracking-wide text-muted-foreground max-md:hidden">
+          <span>PERFORMANCE</span>
+          <span>TICKET STATUS</span>
+        </div>
+        <div className="overflow-hidden border-t border-border">
+          {concerts.map((c) => {
+            const a = state.applications.find((a) => a.concertId === c.id);
+            return (
+              <a
+                href={withBasePath("/concerts/" + c.id)}
+                key={c.id}
+                className="group flex min-h-[93px] min-w-0 items-center gap-5 border-b border-border px-1 py-6 text-foreground last:border-0 max-[1251px]:gap-3 max-md:grid max-md:grid-cols-[40px_38px_minmax(0,1fr)] max-md:gap-2.5 max-md:px-0 max-md:py-5"
               >
-                {a ? appStatus(a) : "On the wishlist"}
-              </Pill>
-              <ArrowUpRight
-                size={18}
-                className="shrink-0 text-muted-foreground max-md:hidden"
-              />
-            </a>
-          );
-        })}
-        {concerts.length === 0 && (
-          <Empty
-            title="No concerts found"
-            description="Try another search or clear your filters."
-            action={
-              <Button
-                variant="outline"
-                onClick={() => {
-                  setSearch("");
-                  setFilter("all");
-                }}
-              >
-                Clear filters
-              </Button>
-            }
-          />
-        )}
+                <DateTile
+                  date={c.date}
+                  className="max-md:w-auto max-md:min-w-0"
+                />
+                <ConcertMark
+                  concert={c}
+                  className="h-[60px] w-[53px] max-md:h-[42px] max-md:w-[38px]"
+                />
+                <div className="min-w-0 flex-1">
+                  <h3 className="text-body font-semibold tracking-normal group-hover:text-primary">
+                    {c.title}
+                  </h3>
+                  <p className="mt-0.5 text-small wrap-anywhere text-muted-foreground">
+                    {c.subtitle}
+                  </p>
+                  <small className="mt-1 flex items-center gap-1 text-small text-muted-foreground max-[1251px]:flex-wrap max-md:text-label">
+                    <MapPin size={13} />
+                    {c.venue} · {c.city}
+                  </small>
+                </div>
+                <Pill
+                  className="max-lg:text-caption max-md:col-[3] max-md:justify-self-start"
+                  tone={
+                    a?.payment === "Paid"
+                      ? "mint"
+                      : a?.result === "Won"
+                        ? "amber"
+                        : "neutral"
+                  }
+                >
+                  {a ? appStatus(a) : "On the wishlist"}
+                </Pill>
+                <ArrowUpRight
+                  size={18}
+                  className="shrink-0 text-muted-foreground max-md:hidden"
+                />
+              </a>
+            );
+          })}
+          {concerts.length === 0 && (
+            <Empty
+              title="No concerts found"
+              description="Try another search or clear your filters."
+              action={
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setSearch("");
+                    setFilter("all");
+                  }}
+                >
+                  Clear filters
+                </Button>
+              }
+            />
+          )}
+        </div>
+        <p className={fictionNoteClass}>
+          All performances, dates, and ticket outcomes in this demo are
+          fictional.
+        </p>
       </div>
-      <p className={fictionNoteClass}>
-        All performances, dates, and ticket outcomes in this demo are fictional.
-      </p>
     </>
   );
 }

@@ -371,3 +371,30 @@ The owner reviews the visual changes and retests on the phone. Then stage D, whi
 - No horizontal overflow at 320, 360, 390 or 430px on any route. An overflow found at 320px on the trip page was fixed.
 - Light and dark checked at 390px, and dark at 320px.
 - **Not run:** real devices.
+
+## 1 November 2026 — Draft: phone navigation by page
+
+### Completed (draft for owner review)
+- **Phone Overview** ("Your plans", `features/overview/ui/mobile-overview.tsx`):
+  - one dated list of every concert and trip, grouped by month, with undated concerts last;
+  - an All / Concerts / Trips filter with counts;
+  - the payment-due row kept at the top.
+  - Each row opens its card on the Concerts or Trips page (`?open=<id>`).
+- **Card stacks.** On phones, Concerts and Trips show the Wallet card stack for their kind. `MobileWallet` became `WalletDeck` (`features/wallet/ui/wallet-deck.tsx`), fixed to one kind, with no Tickets/Trips switch, and it shows every item. The desktop list and grid are unchanged; on phones they are hidden.
+  - Linked items open across pages: a concert's trip opens on Trips, and a trip's concert on Concerts.
+  - A card opened from the address does not move focus.
+- **Smaller fixes.**
+  - `countOf` (`lib/encore/model.ts`) fixes "1 concerts".
+  - `scripts/visual-snapshots.mjs` drives the new phone states and accepts `CHROMIUM_PATH`.
+
+### Behaviour changes to confirm
+- The phone deck now includes every concert and trip, not only the next three upcoming.
+- Search and the status filter are desktop-only for now.
+- The Reminder preferences link and the cover note under the old Wallet are gone; the bell still links to reminders.
+
+### Verification
+- `pnpm check` passes. All 26 browser tests pass, with local Chromium.
+- The visual capture runs all 195 states.
+- No horizontal overflow at 320–430px.
+- Light and dark checked at 390px.
+- **Not run:** real devices.

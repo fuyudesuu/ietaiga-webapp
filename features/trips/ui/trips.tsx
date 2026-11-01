@@ -63,6 +63,7 @@ import {
 } from "@/components/encore-ui/ui";
 import { withBasePath } from "@/lib/encore/paths";
 import { cn } from "@/lib/utils";
+import { WalletDeck } from "@/features/wallet";
 const hasPhoto = (trip: Trip) => trip.cities.toLowerCase().includes("tokyo");
 const tripYearClass = "text-label text-muted-foreground";
 const mutedIconClass = "text-muted-foreground";
@@ -94,7 +95,9 @@ export function Trips() {
           </AddButton>
         }
       />
-      <div className="grid grid-cols-2 gap-6 max-lg:grid-cols-1">
+      <WalletDeck kind="trips" />
+      {/* On phones the card stack replaces the trip grid. */}
+      <div className="grid grid-cols-2 gap-6 max-lg:grid-cols-1 max-md:hidden">
         {state.trips.map((t) => (
           <a
             key={t.id}

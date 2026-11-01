@@ -88,6 +88,9 @@ export type Editor =
   | { type: "reminder"; id: string }
   | null;
 export const DEMO_NOW = "2026-10-01T03:00:00Z";
+/** "1 concert", "3 concerts". */
+export const countOf = (count: number, noun: string) =>
+  `${count} ${noun}${count === 1 ? "" : "s"}`;
 export const money = (amount: number, currency: Currency) =>
   new Intl.NumberFormat("en", {
     style: "currency",

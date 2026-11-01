@@ -1,5 +1,4 @@
 "use client";
-import { MobileWallet } from "@/features/wallet";
 import { useState } from "react";
 import {
   ArrowRight,
@@ -46,6 +45,7 @@ import {
 } from "@/components/encore-ui/ui";
 import { cn } from "@/lib/utils";
 import { withBasePath } from "@/lib/encore/paths";
+import { MobileOverview } from "./mobile-overview";
 
 const clearStateClass =
   "flex items-center gap-4 px-5 py-8 text-muted-foreground";
@@ -57,7 +57,7 @@ export function Overview() {
       <div className="max-md:hidden">
         <DesktopOverview />
       </div>
-      <MobileWallet />
+      <MobileOverview />
     </>
   );
 }
