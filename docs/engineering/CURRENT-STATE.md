@@ -11,7 +11,7 @@ The mobile prototype is a separate Site/source checkout from the original deskto
 ## Implemented
 
 - React/TypeScript screens for overview, concerts, applications, trips, hotels and settings.
-- Mobile Wallet with image-backed cards, Tickets/Trips tabs, selection, animation and linked details.
+- Phone navigation (November 2026): the Overview lists every concert and trip by month with an All / Concerts / Trips filter; Concerts and Trips each show a Wallet card stack (image-backed cards, selection, spring animation, linked details; `?open=<id>` opens a card).
 - Browser-local persistence, image compression, sample data and simulated Discord settings.
 - Strict TypeScript, ESLint/Prettier configuration and six domain tests.
 - Route files delegate to UI components. The current runtime is Vinext/Vite with a Sites/Cloudflare build wrapper, despite Next.js-compatible imports.

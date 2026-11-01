@@ -79,7 +79,6 @@ export function GlassTag({
   );
 }
 
-/** Status colours shared by pills and concert marks (tokens in globals.css). */
 /** Phone-only screens: hidden on desktop, one readable column on phones. */
 export const phoneColumnClass =
   "hidden max-md:mx-auto max-md:block max-md:max-w-lg";
@@ -89,6 +88,7 @@ export function applicationTone(application: Application | undefined) {
   if (application?.result === "Won") return "amber";
   return "neutral";
 }
+/** Status colours shared by pills and concert marks (tokens in globals.css). */
 export const toneClasses: Record<string, string> = {
   neutral: "",
   amber: "bg-amber-bg text-amber-text",
@@ -151,11 +151,13 @@ export function PageHeading({
     </header>
   );
 }
+/** A page's add action: labelled on desktop, a round + beside the title on
+    phones. The label is text so the phone button can use it as its name. */
 export function AddButton({
   children,
   onClick,
 }: {
-  children: ReactNode;
+  children: string;
   onClick: () => void;
 }) {
   return (
@@ -166,7 +168,7 @@ export function AddButton({
       </Button>
       <RoundAddButton
         className="hidden max-md:grid"
-        label={String(children)}
+        label={children}
         onClick={onClick}
       />
     </>

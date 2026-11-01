@@ -6,7 +6,10 @@ const basePath = process.env.ENCORE_BASE_PATH ?? "";
 /** Open an app route, e.g. "/concerts/love", under the Pages base path. */
 export async function openRoute(page: Page, route: string) {
   await page.goto(basePath + route);
-  await expect(page.locator("main h1").first()).toBeVisible();
+  // Phone and desktop layouts each have a heading; one of them is hidden.
+  await expect(
+    page.locator("main h1").filter({ visible: true }).first(),
+  ).toBeVisible();
 }
 
 /** The path and query of the current page, without the base path. */
