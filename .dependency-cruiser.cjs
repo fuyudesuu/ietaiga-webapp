@@ -31,12 +31,20 @@ module.exports = {
       from: { path: DOMAIN },
       to: {
         path: [
-          "(^|/)node_modules/(react|react-dom|next|drizzle-orm|@cloudflare|@base-ui|radix-ui)/",
+          "(^|/)node_modules/(react|react-dom|next|drizzle-orm|@cloudflare|@base-ui|radix-ui|@supabase)/",
           "^cloudflare:",
           "(^|/)(app|components|db)/",
           "(^|/)features/[^/]+/(ui|server)/",
         ],
       },
+    },
+    {
+      name: "client-uses-no-supabase",
+      severity: "error",
+      comment:
+        "Browser code never talks to Supabase directly: sessions are httpOnly cookies and every query runs in a server route as the signed-in user. Keep provider SDKs in features/*/server.",
+      from: { path: CLIENT },
+      to: { path: "(^|/)node_modules/@supabase/" },
     },
     {
       name: "no-deep-feature-imports",
@@ -68,7 +76,7 @@ module.exports = {
   ],
   options: {
     doNotFollow: { path: "node_modules" },
-    exclude: { path: "(^|/)(dist|\\.vinext|\\.wrangler)/" },
+    exclude: { path: "^(dist|\\.vinext|\\.wrangler|\\.claude)/" },
     tsPreCompilationDeps: true,
     tsConfig: { fileName: "tsconfig.json" },
     enhancedResolveOptions: {

@@ -2,13 +2,138 @@
 
 Short records of decisions that change hosting, runtime, authentication, persistence, caching or delivery guarantees. Newest first.
 
+## 2026-11-01 — Stage D: Cloudflare Workers, Supabase, Discord sign-in with server-only sessions
+
+**Status.** Accepted for implementation. It takes effect when the owner provisions the accounts (docs/engineering/SETUP-SUPABASE.md). Until then, deployments run as the demo and GitHub Pages stays the public preview.
+
+**Context.** The MVP needs private accounts that work across devices (MVP-01), private cover images (MVP-09) and later reminders. The repository already builds for Cloudflare Workers through Vinext. The product spec recommends Supabase (Postgres, Auth, Storage) with Discord login.
+
+**Decision.**
+
+- **Hosting.**
+  - The app runs on Cloudflare Workers (the existing Vinext build). The static GitHub Pages export stays a demo with no sign-in: route handlers are not exported.
+  - Workers reads its settings from `process.env` (`nodejs_compat_populate_process_env`).
+- **Data.**
+  - Supabase Postgres holds the data, with versioned SQL migrations in `supabase/migrations/`.
+  - Every user table has `owner_id`, forced row-level security and policies for `authenticated` only. Anonymous callers have no privileges.
+  - Links between records use composite `(owner_id, id)` foreign keys, so the database itself rejects cross-account links.
+  - `owner_id` and `id` are immutable.
+  - Cover images live in a private `covers` bucket under `<owner_id>/`.
+- **Identity.**
+  - Supabase Auth with the Discord provider. The app requests only `identify`; Supabase's provider is expected to add `email`, so the email address is treated as stored account data (to confirm on staging). No server or message access. Login is separate from any notification consent.
+- **Sessions.**
+  - `@supabase/ssr` with the PKCE flow, run only in server route handlers.
+  - Cookies are `HttpOnly`, `SameSite=Lax`, `Secure` outside localhost, with a 30-day cap. PKCE verifier cookies are capped at 10 minutes.
+  - Auth responses are `Cache-Control: no-store`.
+- **Who the user is.**
+  - Authorization decisions use `auth.getUser()`, which checks with the Auth server. A decoded cookie alone is never trusted.
+  - An Auth outage is an error, not "signed out".
+- **Key and query handling.**
+  - The app uses only the publishable (anon) key, and every query runs as the signed-in user under RLS.
+  - The service-role key is not used by the web app. A later privileged worker (reminders, account cleanup) must isolate it and check ownership itself.
+- **Browser and server boundary.**
+  - Browser code never imports a Supabase SDK; dependency-cruiser enforces this with `client-uses-no-supabase`.
+  - All data access happens in server code under `features/*/server`.
+- **Request forgery and redirects.**
+  - Sign-in start and sign-out are POST-only.
+  - They require a same-site `Origin` or `Sec-Fetch-Site` header (CSRF).
+  - Redirect targets are built from the configured `ENCORE_SITE_URL`, never the request's Host header.
+  - The post-login return path accepts same-site paths only (no open redirect).
+  - Errors are logged as a category plus a correlation id, never tokens or codes.
+
+**Security review (2026-11-01).**
+
+An independent adversarial review of the schema found no cross-account access. Its 92 attack tests are kept in `tests/db/pentest.test.sql`.
+
+Fixed in the migration:
+
+- cover folders of deleted accounts are queued for Storage API removal (`private.storage_cleanup`);
+- cover object names must be `<owner>/<name>.(jpg|png|webp)`, and an asset's type must match its extension;
+- per-account caps on rows and cover files;
+- sign-up names are sanitized;
+- the migration asserts its role bypasses RLS;
+- trigger functions are not callable over RPC, and the API roles get no default privileges;
+- time zones must be real IANA zones;
+- restrictive policies shut out Supabase anonymous-sign-in users.
+
+Accepted, as content-free leaks:
+
+- primary keys are global, so a guessed UUID can be confirmed to exist;
+- planner estimates (`count=planned`) reveal rough table volume.
+
+A second review attacked the sign-in code and the running Workers build. It found no exploitable critical or high issue. Fixed:
+
+- sign-out always clears the session cookies, even when the token refresh fails;
+- the return path is re-checked after dot-segment normalisation, and the callback checks the final origin;
+- rejected or tampered tokens count as signed out, while a rejected API key is a configuration error;
+- `__Host-` cookie names on https stop sibling subdomains from planting sessions;
+- security headers on every response: frame-ancestors and X-Frame-Options, base-uri, object-src, form-action, nosniff, Referrer-Policy (`no-referrer` on `/auth/*`), Permissions-Policy, and HSTS on https;
+- secret and service-role keys are refused as the publishable key;
+- the PKCE flow id is used, so two tabs can sign in at once;
+- cookies are cleared even with sign-in switched off;
+- invalid settings return `no-store` errors, and logs carry error names and codes, never messages.
+
+Its tests are in `tests/identity-security.test.mjs`.
+
+A third review checked the fixes by reverting them; each critical one made its test fail. It found one regression, now fixed: a per-row time-zone trigger made bulk writes about 400× slower (a denial-of-service lever). Time zones are now a foreign key to `private.time_zones`.
+
+It also fixed:
+
+- new public functions are no longer executable by PUBLIC by default (a per-schema revoke cannot remove that global default);
+- anonymous-sign-in users cannot store cover files;
+- the publishable-key check allows only publishable or `anon` keys, so a whitespace-padded secret key is refused;
+- sign-out no longer fails on malformed cookie names, and clears only Encore's own auth cookies;
+- the cover-count function runs with the caller's rights and uses a prefix match.
+
+Its tests are in `tests/db/review-regressions.test.sql` and `tests/identity-review.test.mjs`. Still untested by automation, but verified live:
+
+- the middleware wiring of the security headers;
+- the callback's final-origin check (unreachable today);
+- the Sec-Fetch-Site check on sign-out when sign-in is off.
+
+Still required before launch:
+
+- the upload route validates real file content and strips metadata before storing;
+- the account-deletion worker removes queued folders;
+- the policy tests run against a real Supabase project (staging), because the test stand-in is not real Supabase storage or its role setup;
+- a Cloudflare rate-limiting rule on `/auth/*` (SETUP-SUPABASE.md);
+- a script-source Content Security Policy with per-request nonces;
+- any future GET handler or page must have no side effects, because the session cookie is SameSite=Lax; Server Actions need their own CSRF check;
+- `next` (types only; the Worker runs vinext's server) is bumped past its advisories, and vinext security releases are tracked.
+
+Known limitation: signing out while Supabase Auth is unreachable takes about 25 seconds (the library retries the refresh) before the cookies are cleared.
+
+**Alternatives.**
+
+- **Standard Next.js on a Node host:** rejected for now. It would be a hosting migration without a demonstrated need; Workers is already built and tested.
+- **A browser Supabase client:** rejected. It would expose session tokens to page scripts and spread data access into UI code.
+- **A custom session system:** rejected (MVP: managed authentication).
+
+**Security and operations impact.**
+
+- Account isolation is proven by `pnpm test:db`, which runs the policies on real PostgreSQL as two users and an anonymous caller. CI runs it.
+- The tests use a minimal Supabase stand-in (`tests/db/supabase-shim.sql`). Before launch, the same tests must also pass against a real Supabase project (staging).
+- The owner must configure in Supabase: redirect allowlist, site URL, Discord provider, rate limits and leaked-password settings where applicable.
+
+**Rollout.**
+
+1. Merge with no accounts configured: no behaviour change.
+2. The owner creates staging Supabase and Discord apps and sets the secrets.
+3. Run the migration and policy tests on staging.
+4. Wire the first flow (trips) to the server repository.
+5. Production follows the release checklist in MVP.md.
+
+**Rollback.** Unset the sign-in settings: the deployment returns to the demo. Database rollback is forward-fix only (new migrations).
+
 ## 2026-11-01 — Phone navigation: a plan list on Overview, card stacks per page
 
 **Context.** On phones, the Overview was the Wallet: a Tickets/Trips switch above one card stack showing up to three items. The owner asked for:
+
 - each card type on its own page;
 - one Overview page that lists every concert and trip, with a filter.
 
 **Decision.**
+
 - **Phone Overview ("Your plans"):** a dated list of every concert and trip, grouped by month, with an All / Concerts / Trips filter and the next payment due at the top.
 - **Concerts and Trips on phones:** each shows the card stack for its kind (`WalletDeck`), with every item. The desktop list and grid are unchanged.
 - **Links:** a row or a linked item opens the card on its page, at `/concerts?open=<id>` or `/trips?open=<id>`.
@@ -17,6 +142,7 @@ Short records of decisions that change hosting, runtime, authentication, persist
 **Alternatives.** Keeping the Tickets/Trips switch on the Overview: rejected by the owner.
 
 **Impact.**
+
 - The Wallet design is kept, but split across pages.
 - Search and the status filter remain desktop-only for now.
 - Rollback: revert the change; no data is affected.
@@ -41,14 +167,14 @@ Short records of decisions that change hosting, runtime, authentication, persist
 
 **Decision.** Every component value comes from this scale (tokens in `app/globals.css`, Tailwind defaults otherwise):
 
-| | Steps |
-|---|---|
-| Type | `caption` 12, `label` 13, `small` 14, `body` 16, `lead` 18, `title` 22, `heading` 28, `display` 36px |
-| Weight | normal, medium, semibold; bold only for the wordmark and the Wallet title |
-| Letter-spacing | `tight` −0.02em, `tighter` −0.035em, `wide` 0.06em, normal |
-| Line height | `tight`, `snug`, `normal`, `relaxed` |
-| Radius | `xs` 4, `sm` 8, `md` 10, `lg` 14, `xl` 20px, `full` |
-| Spacing | 2, 4, 6, 8, 10, 12, 16, 20, 24, 32, 40, 48px |
+|                | Steps                                                                                                |
+| -------------- | ---------------------------------------------------------------------------------------------------- |
+| Type           | `caption` 12, `label` 13, `small` 14, `body` 16, `lead` 18, `title` 22, `heading` 28, `display` 36px |
+| Weight         | normal, medium, semibold; bold only for the wordmark and the Wallet title                            |
+| Letter-spacing | `tight` −0.02em, `tighter` −0.035em, `wide` 0.06em, normal                                           |
+| Line height    | `tight`, `snug`, `normal`, `relaxed`                                                                 |
+| Radius         | `xs` 4, `sm` 8, `md` 10, `lg` 14, `xl` 20px, `full`                                                  |
+| Spacing        | 2, 4, 6, 8, 10, 12, 16, 20, 24, 32, 40, 48px                                                         |
 
 - Off-scale values were rounded to the nearest step, rounding down on a tie.
 - Weights 550–570 became semibold, not medium. The font stack is the system font: on Arial-only systems 550 rendered bold and 500 renders regular, so semibold keeps the look there and is close on Apple's variable fonts.

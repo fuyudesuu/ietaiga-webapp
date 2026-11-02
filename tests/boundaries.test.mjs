@@ -84,3 +84,11 @@ test("a cycle between features is rejected", () => {
     rulesFor("features/concerts/contracts/concert.ts").has("no-circular"),
   );
 });
+
+test("browser code cannot import the Supabase SDK", () => {
+  assert.ok(
+    rulesFor("features/identity/ui/uses-supabase.tsx").has(
+      "client-uses-no-supabase",
+    ),
+  );
+});

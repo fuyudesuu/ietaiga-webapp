@@ -21,8 +21,12 @@ jobs:
       - run: pnpm exec tsc --noEmit
       - run: pnpm lint
       - run: pnpm format:check
+      - run: pnpm check:scale
       - run: pnpm check:boundaries
       - run: pnpm test
+      # Account-isolation policies against a real PostgreSQL (preinstalled on
+      # the GitHub Ubuntu runner).
+      - run: pnpm test:db
       - run: pnpm build
       - run: pnpm build:pages
         env:

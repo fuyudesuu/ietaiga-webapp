@@ -24,7 +24,8 @@ export default defineConfig(async () => {
         inspectorPort: false,
         config: {
           main: "vinext/server/fetch-handler",
-          compatibility_flags: ["nodejs_compat"],
+          // process.env carries the deployment's vars and secrets (sign-in config).
+          compatibility_flags: ["nodejs_compat", "nodejs_compat_populate_process_env"],
         },
       }),
     ],
