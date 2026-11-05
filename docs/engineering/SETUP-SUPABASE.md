@@ -35,6 +35,17 @@ Never paste a secret into chat, an issue, a commit or a screenshot. Each secret 
    - **Redirect URLs:** exactly `SITE/auth/callback`. No wildcards.
 4. Keep the default rate limits. Session settings: a refresh-token reuse interval of 10 seconds and refresh-token rotation on (the default).
 
+## Automatic deploys
+
+`.github/workflows/deploy-worker.yml` deploys the Worker after CI passes on `main`. You can also start it by hand: open the Actions tab, choose **Deploy Worker**, then **Run workflow**. It skips until these two secrets exist:
+
+1. **Cloudflare API token.** In the Cloudflare dashboard open **My Profile → API Tokens → Create Token** and use the **Edit Cloudflare Workers** template. Limit **Account Resources** to your account and **Zone Resources** to none, or only the zone you will use. Create it and copy the token once.
+2. **Account ID.** Shown on the Cloudflare dashboard's **Workers & Pages** overview, in the right-hand column.
+3. In GitHub open the repository's **Settings → Secrets and variables → Actions → New repository secret**. Add `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID`.
+4. Run **Deploy Worker** by hand once. The Worker `encore-concert-travel` appears under **Workers & Pages**, at `https://encore-concert-travel.<your-subdomain>.workers.dev`. That address is `SITE` below.
+
+Deploys keep the variables you set in the dashboard (`keep_vars`), and secrets are always kept. To stop deploys, delete the token in Cloudflare; the workflow then fails at the deploy step until the secret is removed or replaced.
+
 ## 4. Cloudflare Worker settings
 
 Under **Workers → your worker → Settings → Variables and Secrets**, add:
