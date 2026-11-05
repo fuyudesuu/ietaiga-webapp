@@ -24,8 +24,14 @@ export default defineConfig(async () => {
         inspectorPort: false,
         config: {
           main: "vinext/server/fetch-handler",
+          // Deploys keep the variables set in the Cloudflare dashboard
+          // (ENCORE_SITE_URL, SUPABASE_URL); secrets are always kept.
+          keep_vars: true,
           // process.env carries the deployment's vars and secrets (sign-in config).
-          compatibility_flags: ["nodejs_compat", "nodejs_compat_populate_process_env"],
+          compatibility_flags: [
+            "nodejs_compat",
+            "nodejs_compat_populate_process_env",
+          ],
         },
       }),
     ],

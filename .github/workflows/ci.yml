@@ -10,7 +10,9 @@ permissions:
 
 jobs:
   check:
-    runs-on: ubuntu-latest
+    # Pinned: Playwright 1.56 cannot install Chromium on Ubuntu 26.04, which
+    # ubuntu-latest became in November 2026. Move up together with Playwright.
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4 # version from package.json "packageManager"

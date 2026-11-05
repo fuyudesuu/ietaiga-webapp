@@ -1,0 +1,64 @@
+name: Deploy Worker
+
+# Deploys the Cloudflare Workers build (sign-in and the real database) after
+# CI passes on main, or when started by hand. Until the repository has the
+# CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID secrets, it skips without
+# failing. Setup: docs/engineering/SETUP-SUPABASE.md, "Automatic deploys".
+
+on:
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: worker-deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    # Only code that passed CI on a push to this repository's main branch.
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.workflow_run.conclusion == 'success' &&
+       github.event.workflow_run.event == 'push' &&
+       github.event.workflow_run.head_repository.full_name == github.repository)
+    runs-on: ubuntu-24.04
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+    steps:
+      - name: Check that Cloudflare is set up
+        id: configured
+        run: |
+          if [ -z "$CLOUDFLARE_API_TOKEN" ] || [ -z "$CLOUDFLARE_ACCOUNT_ID" ]; then
+            echo "::notice::Skipping the Worker deploy: add the CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID repository secrets to enable it."
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          fi
+      - uses: actions/checkout@v4
+        if: steps.configured.outputs.ready == 'true'
+        with:
+          # The exact commit CI tested (the branch head when started by hand).
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+          persist-credentials: false
+      - uses: pnpm/action-setup@v4
+        if: steps.configured.outputs.ready == 'true'
+      - uses: actions/setup-node@v4
+        if: steps.configured.outputs.ready == 'true'
+        with:
+          node-version: 22
+      - run: pnpm install --frozen-lockfile
+        if: steps.configured.outputs.ready == 'true'
+      - run: pnpm build
+        if: steps.configured.outputs.ready == 'true'
+      - name: Deploy to Cloudflare Workers
+        if: steps.configured.outputs.ready == 'true'
+        env:
+          WRANGLER_SEND_METRICS: "false"
+        run: pnpm exec wrangler deploy --config dist/server/wrangler.json
